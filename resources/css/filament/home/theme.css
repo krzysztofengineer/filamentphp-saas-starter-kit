@@ -1,0 +1,20 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/Home/**/*';
+@source '../../../../app/Filament/Schemas/**/*';
+@source '../../../../resources/views/filament/home/**/*';
+@source '../../../../resources/views/filament/schemas/**/*';
+
+@media (min-width: 1024px) {
+    .fi-topbar-nav-groups {
+        margin-inline: auto !important;
+    }
+
+    .fi-topbar-end {
+        margin-inline-start: 0 !important;
+    }
+}
+
+[x-cloak] {
+    display: none !important;
+}

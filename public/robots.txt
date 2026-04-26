@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /app/
+Disallow: /billing/
+Disallow: /exports/
+Disallow: /push/
+Disallow: /share/
+
+Sitemap: https://bebik.pl/sitemap.xml
