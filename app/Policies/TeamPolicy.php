@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Team;
 use App\Models\User;
+use App\TeamRole;
 
 class TeamPolicy
 {
@@ -14,7 +15,7 @@ class TeamPolicy
 
     public function update(User $user, Team $team): bool
     {
-        return $team->canBeManagedBy($user);
+        return $team->members()->where('user_id', $user->id)->first()?->pivot?->role !== TeamRole::Member;
     }
 
     public function delete(User $user, Team $team): bool

@@ -13,8 +13,7 @@ it('logs out the user', function () {
     visit('/app')
         ->click('[aria-label="User menu"]')
         ->click('Sign out')
-        ->assertPathIs('/')
-        ->debug();
+        ->assertPathIs('/');
 
     assertGuest();
 });

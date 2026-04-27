@@ -2,13 +2,12 @@
 
 namespace App\Filament\Clusters\TeamSettings;
 
-use App\Models\Team;
-use App\Models\User;
 use BackedEnum;
 use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Auth;
 
 class TeamSettingsCluster extends Cluster
 {
@@ -30,13 +29,6 @@ class TeamSettingsCluster extends Cluster
 
     public static function canAccess(): bool
     {
-        $tenant = Filament::getTenant();
-        $user = auth()->user();
-
-        if (! $tenant instanceof Team || ! $user instanceof User) {
-            return false;
-        }
-
-        return $tenant->canBeManagedBy($user);
+        return Auth::user()?->can('update', Filament::getTenant());
     }
 }
