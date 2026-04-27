@@ -36,12 +36,6 @@ it('renders the account settings page without javascript errors', function () {
     visit('/app/'.$user->teams()->first()->uuid.'/account/settings')->assertNoJavaScriptErrors();
 });
 
-it('renders the account billing page without javascript errors', function () {
-    $user = User::factory()->withTeam()->create();
-    actingAs($user);
-    visit('/app/'.$user->teams()->first()->uuid.'/account/subscription')->assertNoJavaScriptErrors();
-});
-
 it('renders the account advanced page without javascript errors', function () {
     $user = User::factory()->withTeam()->create();
     actingAs($user);
@@ -60,8 +54,24 @@ it('renders the team members page without javascript errors', function () {
     visit('/app/'.$user->teams()->first()->uuid.'/settings/members')->assertNoJavaScriptErrors();
 });
 
+it('renders the team subscription page without javascript errors', function () {
+    $user = User::factory()->withTeam()->create();
+    actingAs($user);
+    visit('/app/'.$user->teams()->first()->uuid.'/settings/subscription')->assertNoJavaScriptErrors();
+});
+
 it('renders the team advanced page without javascript errors', function () {
     $user = User::factory()->withTeam()->create();
     actingAs($user);
     visit('/app/'.$user->teams()->first()->uuid.'/settings/advanced')->assertNoJavaScriptErrors();
+});
+
+it('renders the create team page without javascript errors', function () {
+    $user = User::factory()->create();
+    actingAs($user);
+    visit('/app/new')->assertNoJavaScriptErrors();
+});
+
+it('renders the password reset request page without javascript errors', function () {
+    visit('/app/password-reset/request')->assertNoJavaScriptErrors();
 });

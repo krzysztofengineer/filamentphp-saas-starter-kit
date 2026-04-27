@@ -2,6 +2,7 @@
 
 namespace App\Filament\Schemas\Components\Marketing;
 
+use App\Filament\Schemas\Components\Marketing\Concerns\HasEyebrow;
 use App\Filament\Schemas\Components\Marketing\Concerns\HasTagline;
 use Closure;
 use Filament\Schemas\Components\Component;
@@ -9,6 +10,7 @@ use Filament\Schemas\Components\Concerns\HasHeading;
 
 class FaqSection extends Component
 {
+    use HasEyebrow;
     use HasHeading;
     use HasTagline;
 

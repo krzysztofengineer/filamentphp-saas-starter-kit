@@ -12,8 +12,9 @@ class TransferTeamOwnership
     public function __invoke(Team $team, User $currentOwner, User $newOwner): void
     {
         DB::transaction(function () use ($team, $currentOwner, $newOwner) {
+            $team->users()->updateExistingPivot($newOwner->id, ['role' => TeamRole::Administrator->value]);
             $team->users()->updateExistingPivot($currentOwner->id, ['role' => TeamRole::Member->value]);
-            $team->users()->updateExistingPivot($newOwner->id, ['role' => TeamRole::Owner->value]);
+            $team->update(['user_id' => $newOwner->id]);
         });
     }
 }

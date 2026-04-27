@@ -2,13 +2,14 @@
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Clusters\AccountSettings\Pages\AccountBilling;
 use App\Filament\Support\CategoryHeading;
 use App\Models\Invitation;
 use App\Models\Team;
-use App\Models\User;
+use App\TeamRole;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\TextSize;
@@ -16,6 +17,7 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
@@ -27,8 +29,6 @@ class TeamInvitationsTable extends TableWidget
 
     public function table(Table $table): Table
     {
-        $canInvite = $this->canInvite();
-
         return $table
             ->heading(CategoryHeading::make('heroicon-o-envelope', 'primary', 'Invitations'))
             ->description('Pending invitations — recipients will see them after they sign in.')
@@ -43,37 +43,33 @@ class TeamInvitationsTable extends TableWidget
                             ->color('gray')
                             ->size(TextSize::Small),
                     ]),
+                    SelectColumn::make('role')
+                        ->options(self::roleOptions())
+                        ->selectablePlaceholder(false)
+                        ->native(false)
+                        ->extraAttributes(['data-testid' => 'invitation-role-select'])
+                        ->grow(false),
                 ]),
             ])
             ->headerActions([
                 $this->inviteAction()->extraAttributes(['data-testid' => 'invite-button']),
             ])
             ->recordActions([
-                $this->revokeInvitationAction(),
+                ActionGroup::make([
+                    $this->revokeInvitationAction(),
+                ]),
             ])
             ->paginated(false)
             ->emptyStateIcon('heroicon-o-envelope')
             ->emptyStateHeading('No pending invitations')
-            ->emptyStateDescription($canInvite
-                ? 'Invite someone by email to give them access to this team.'
-                : 'Inviting members requires the Starter or Pro plan.'
-            )
-            ->emptyStateActions($canInvite
-                ? [
-                    $this->inviteAction()
-                        ->name('inviteFromEmptyState')
-                        ->extraAttributes(['data-testid' => 'invite-button-empty'])
-                        ->button()
-                        ->outlined(),
-                ]
-                : [
-                    Action::make('upgradeFromEmptyState')
-                        ->label('Upgrade plan')
-                        ->icon(Heroicon::OutlinedArrowUpCircle)
-                        ->button()
-                        ->url(fn (): ?string => $this->subscriptionUrl()),
-                ]
-            );
+            ->emptyStateDescription('Invite someone by email to give them access to this team.')
+            ->emptyStateActions([
+                $this->inviteAction()
+                    ->name('inviteFromEmptyState')
+                    ->extraAttributes(['data-testid' => 'invite-button-empty'])
+                    ->button()
+                    ->outlined(),
+            ]);
     }
 
     private function getInvitations(): Collection
@@ -88,35 +84,18 @@ class TeamInvitationsTable extends TableWidget
         return $team->invitations()->whereNull('accepted_at')->orderBy('created_at')->get();
     }
 
-    private function canInvite(): bool
-    {
-        /** @var User|null $user */
-        $user = auth()->user();
-
-        return $user !== null && $user->canInviteMembers();
-    }
-
-    private function subscriptionUrl(): ?string
-    {
-        /** @var Team|null $team */
-        $team = Filament::getTenant();
-
-        return $team === null ? null : AccountBilling::getUrl(tenant: $team);
-    }
-
     private function inviteAction(): Action
     {
         return Action::make('invite')
             ->label('Invite member')
             ->icon(Heroicon::OutlinedUserPlus)
-            ->disabled(fn (): bool => ! $this->canInvite())
-            ->tooltip(fn (): ?string => $this->canInvite() ? null : 'Available on the Starter or Pro plan')
             ->modalWidth(Width::Medium)
             ->modalIcon(Heroicon::OutlinedUserPlus)
             ->modalHeading('Invite a new team member')
-            ->modalDescription('Enter their email — they will see the invitation after signing in.')
+            ->modalDescription('Enter their email and pick a role — they will see the invitation after signing in.')
             ->modalSubmitActionLabel('Send invitation')
             ->modalSubmitAction(fn (Action $action) => $action->extraAttributes(['data-testid' => 'invite-submit-button']))
+            ->fillForm(['role' => TeamRole::Member->value])
             ->schema([
                 TextInput::make('email')
                     ->label('Email')
@@ -126,6 +105,13 @@ class TeamInvitationsTable extends TableWidget
                     ->placeholder('teammate@example.com')
                     ->prefixIcon(Heroicon::OutlinedEnvelope)
                     ->extraInputAttributes(['data-testid' => 'invite-email']),
+                Select::make('role')
+                    ->label('Role')
+                    ->options(self::roleOptions())
+                    ->required()
+                    ->native(false)
+                    ->prefixIcon(Heroicon::OutlinedShieldCheck)
+                    ->extraAttributes(['data-testid' => 'invite-role']),
             ])
             ->action(function (array $data): void {
                 /** @var Team|null $team */
@@ -135,22 +121,8 @@ class TeamInvitationsTable extends TableWidget
                     return;
                 }
 
-                /** @var User $user */
-                $user = auth()->user();
-
-                if (! $user->canInviteMembers()) {
-                    Notification::make()
-                        ->danger()
-                        ->title('Free plan · invitations not available')
-                        ->body('Inviting members requires the Starter or Pro plan.')
-                        ->send();
-
-                    $this->redirect(AccountBilling::getUrl(tenant: $team));
-
-                    return;
-                }
-
                 $email = strtolower(trim($data['email']));
+                $role = TeamRole::from($data['role']);
 
                 if ($team->users()->where('email', $email)->exists()) {
                     Notification::make()
@@ -174,6 +146,7 @@ class TeamInvitationsTable extends TableWidget
                     'team_id' => $team->id,
                     'invited_by_user_id' => auth()->id(),
                     'email' => $email,
+                    'role' => $role->value,
                 ]);
 
                 Notification::make()
@@ -213,5 +186,15 @@ class TeamInvitationsTable extends TableWidget
 
                 $this->resetTable();
             });
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function roleOptions(): array
+    {
+        return collect(TeamRole::cases())
+            ->mapWithKeys(fn (TeamRole $role): array => [$role->value => $role->label()])
+            ->all();
     }
 }

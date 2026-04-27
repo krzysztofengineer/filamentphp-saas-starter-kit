@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Auth;
 
+use Filament\Actions\Action;
 use Filament\Auth\Pages\Register;
 use Filament\Forms\Components\Checkbox;
 use Filament\Schemas\Components\Component;
@@ -79,5 +80,11 @@ class CustomRegister extends Register
             ->default(false)
             ->dehydrated(false)
             ->extraAttributes(['data-testid' => 'register-privacy']);
+    }
+
+    public function getRegisterFormAction(): Action
+    {
+        return parent::getRegisterFormAction()
+            ->extraAttributes(['data-testid' => 'register-submit']);
     }
 }

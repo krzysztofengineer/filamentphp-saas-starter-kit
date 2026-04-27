@@ -7,6 +7,7 @@ use App\Filament\Clusters\TeamSettings\TeamSettingsCluster;
 use App\Filament\Support\CategoryHeading;
 use App\Models\Team;
 use App\Models\User;
+use App\TeamRole;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -36,13 +37,20 @@ class TeamAdvanced extends Page implements HasActions, HasForms
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldExclamation;
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 5;
 
     protected string $view = 'filament.clusters.team-settings.pages.team-advanced';
 
     public static function canAccess(): bool
     {
-        return TeamSettingsCluster::canAccess();
+        $tenant = Filament::getTenant();
+        $user = auth()->user();
+
+        if (! $tenant instanceof Team || ! $user instanceof User) {
+            return false;
+        }
+
+        return $tenant->canBeDeletedBy($user);
     }
 
     public function getTitle(): string
@@ -65,7 +73,7 @@ class TeamAdvanced extends Page implements HasActions, HasForms
         return $schema->components([
             Section::make()
                 ->heading(CategoryHeading::make('heroicon-o-arrows-right-left', 'primary', 'Transfer ownership'))
-                ->description('Hand off the owner role to another team member. After the transfer you become a regular member and lose access to team settings.')
+                ->description('Hand off your administrator role to another member. They become an Administrator and you become a regular member.')
                 ->footerActions([
                     $this->transferOwnershipAction(),
                 ])
@@ -85,8 +93,13 @@ class TeamAdvanced extends Page implements HasActions, HasForms
     {
         /** @var Team $team */
         $team = Filament::getTenant();
+        /** @var User|null $actor */
+        $actor = auth()->user();
 
-        $candidates = $team->members()->orderBy('name')->get();
+        $candidates = $team->users()
+            ->where('users.id', '!=', $actor?->id)
+            ->orderBy('users.name')
+            ->get();
 
         return Action::make('transferOwnership')
             ->label('Transfer ownership')
@@ -97,35 +110,43 @@ class TeamAdvanced extends Page implements HasActions, HasForms
             ->modalWidth(Width::Medium)
             ->modalIcon(Heroicon::OutlinedArrowsRightLeft)
             ->modalHeading('Transfer ownership')
-            ->modalDescription('The new owner will take over team settings, members, and deletion. You will lose those permissions.')
+            ->modalDescription('The new administrator will take over team settings, members, and deletion. You will become a regular member and lose those permissions.')
             ->modalSubmitActionLabel('Transfer')
             ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'transfer-ownership-confirm']))
             ->disabled($candidates->isEmpty())
             ->schema([
-                Select::make('new_owner_id')
-                    ->label('New owner')
+                Select::make('new_admin_id')
+                    ->label('New administrator')
                     ->options($candidates->pluck('name', 'id'))
                     ->required()
+                    ->native(false)
                     ->prefixIcon(Heroicon::OutlinedUser)
                     ->extraAttributes(['data-testid' => 'transfer-ownership-select']),
             ])
             ->action(function (array $data): void {
                 /** @var Team $team */
                 $team = Filament::getTenant();
-                $currentOwner = auth()->user();
-                $newOwner = User::find($data['new_owner_id']);
+                /** @var User $actor */
+                $actor = auth()->user();
+                $newAdmin = User::find($data['new_admin_id']);
 
-                if (! $newOwner || ! $team->members()->whereKey($newOwner->id)->exists()) {
+                if (! $newAdmin || ! $team->users()->whereKey($newAdmin->id)->exists()) {
                     Notification::make()->danger()->title('That user is not a team member.')->send();
 
                     return;
                 }
 
-                (new TransferTeamOwnership)($team, $currentOwner, $newOwner);
+                if ($team->roleFor($actor) !== TeamRole::Administrator) {
+                    Notification::make()->danger()->title('Only administrators can transfer ownership.')->send();
+
+                    return;
+                }
+
+                (new TransferTeamOwnership)($team, $actor, $newAdmin);
 
                 Notification::make()
                     ->success()
-                    ->title('Ownership transferred to '.$newOwner->name.'.')
+                    ->title('Ownership transferred to '.$newAdmin->name.'.')
                     ->send();
 
                 $this->redirect(Filament::getUrl($team));

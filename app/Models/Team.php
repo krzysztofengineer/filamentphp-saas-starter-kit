@@ -9,11 +9,12 @@ use Filament\Support\Colors\Color;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Laravel\Cashier\Billable;
 
 class Team extends Model implements HasAvatar
 {
     /** @use HasFactory<TeamFactory> */
-    use HasFactory;
+    use Billable, HasFactory;
 
     protected $fillable = [
         'name',
@@ -44,9 +45,14 @@ class Team extends Model implements HasAvatar
         return $this->belongsToMany(User::class)->withPivot('role');
     }
 
-    public function owners()
+    public function administrators()
     {
-        return $this->users()->wherePivot('role', TeamRole::Owner->value);
+        return $this->users()->wherePivot('role', TeamRole::Administrator->value);
+    }
+
+    public function managers()
+    {
+        return $this->users()->wherePivot('role', TeamRole::Manager->value);
     }
 
     public function members()
@@ -66,14 +72,24 @@ class Team extends Model implements HasAvatar
         return $pivot?->role ? TeamRole::from($pivot->role) : null;
     }
 
-    public function isOwnedBy(User $user): bool
+    public function isAdministeredBy(User $user): bool
     {
-        return $this->roleFor($user) === TeamRole::Owner;
+        return $this->roleFor($user) === TeamRole::Administrator;
+    }
+
+    public function canBeManagedBy(User $user): bool
+    {
+        return $this->roleFor($user)?->canManageTeam() === true;
+    }
+
+    public function canBeDeletedBy(User $user): bool
+    {
+        return $this->roleFor($user)?->canDeleteTeam() === true;
     }
 
     public function getFilamentAvatarUrl(): ?string
     {
-        $bg = Color::convertToHex(Color::Blue[600]);
+        $bg = Color::convertToHex(Color::Red[600]);
         $fg = '#ffffff';
         $initial = trim((string) $this->name) === '' ? 'T' : strtoupper(mb_substr($this->name, 0, 1));
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Schemas\Components\Marketing;
 
+use App\Filament\Schemas\Components\Marketing\Concerns\HasEyebrow;
 use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasDescription;
@@ -11,9 +12,12 @@ use Illuminate\Contracts\Support\Htmlable;
 class HeroSection extends Component
 {
     use HasDescription;
+    use HasEyebrow;
     use HasHeading;
 
     protected string $view = 'filament.schemas.marketing.hero-section';
+
+    protected string|Htmlable|Closure|null $headingAccent = null;
 
     protected string|Htmlable|Closure|null $primaryCtaLabel = null;
 
@@ -23,12 +27,34 @@ class HeroSection extends Component
 
     protected string|Closure|null $secondaryCtaUrl = null;
 
+    protected string|Closure|null $command = null;
+
+    protected string|Htmlable|Closure|null $commandHint = null;
+
+    /** @var array<int, string>|Closure */
+    protected array|Closure $stackPills = [];
+
+    protected bool|Closure $showInception = true;
+
+    protected string|Closure|null $host = null;
+
     public static function make(): static
     {
         $static = app(static::class);
         $static->configure();
 
         return $static;
+    }
+
+    /**
+     * Tail of the heading rendered in the accent color.
+     * For example, heading "Ship the page" + accent "you're reading."
+     */
+    public function headingAccent(string|Htmlable|Closure|null $headingAccent): static
+    {
+        $this->headingAccent = $headingAccent;
+
+        return $this;
     }
 
     public function primaryCta(string|Htmlable|Closure|null $label, string|Closure|null $url): static
@@ -45,6 +71,47 @@ class HeroSection extends Component
         $this->secondaryCtaUrl = $url;
 
         return $this;
+    }
+
+    public function command(string|Closure|null $command, string|Htmlable|Closure|null $hint = null): static
+    {
+        $this->command = $command;
+        $this->commandHint = $hint;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<int, string>|Closure  $pills
+     */
+    public function stackPills(array|Closure $pills): static
+    {
+        $this->stackPills = $pills;
+
+        return $this;
+    }
+
+    public function showInception(bool|Closure $show = true): static
+    {
+        $this->showInception = $show;
+
+        return $this;
+    }
+
+    /**
+     * Public-facing host shown in the inception browser frame's address bar.
+     * Defaults to the host portion of `config('app.url')`.
+     */
+    public function host(string|Closure|null $host): static
+    {
+        $this->host = $host;
+
+        return $this;
+    }
+
+    public function getHeadingAccent(): string|Htmlable|null
+    {
+        return $this->evaluate($this->headingAccent);
     }
 
     public function getPrimaryCtaLabel(): string|Htmlable|null
@@ -65,5 +132,41 @@ class HeroSection extends Component
     public function getSecondaryCtaUrl(): ?string
     {
         return $this->evaluate($this->secondaryCtaUrl);
+    }
+
+    public function getCommand(): ?string
+    {
+        return $this->evaluate($this->command);
+    }
+
+    public function getCommandHint(): string|Htmlable|null
+    {
+        return $this->evaluate($this->commandHint);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getStackPills(): array
+    {
+        return $this->evaluate($this->stackPills) ?? [];
+    }
+
+    public function shouldShowInception(): bool
+    {
+        return (bool) $this->evaluate($this->showInception);
+    }
+
+    public function getHost(): string
+    {
+        $value = $this->evaluate($this->host);
+
+        if (filled($value)) {
+            return (string) $value;
+        }
+
+        $url = (string) config('app.url');
+
+        return (string) (parse_url($url, PHP_URL_HOST) ?: str_replace(['https://', 'http://'], '', $url));
     }
 }

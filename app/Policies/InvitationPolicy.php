@@ -9,12 +9,12 @@ class InvitationPolicy
 {
     public function create(User $user, Invitation $invitation): bool
     {
-        return $invitation->team->isOwnedBy($user);
+        return $invitation->team->canBeManagedBy($user);
     }
 
     public function delete(User $user, Invitation $invitation): bool
     {
-        return $invitation->team->isOwnedBy($user);
+        return $invitation->team->canBeManagedBy($user);
     }
 
     public function accept(User $user, Invitation $invitation): bool

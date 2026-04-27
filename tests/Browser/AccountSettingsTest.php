@@ -62,22 +62,7 @@ it('rejects the password change when the current password is wrong', function ()
     expect(Hash::check('old-password', $user->fresh()->password))->toBeTrue();
 });
 
-it('shows the subscription plans with checkout buttons for a free user', function () {
-    $user = User::factory()->withTeam()->create();
-    $tenant = $user->teams()->first();
-    actingAs($user);
-
-    visit('/app/'.$tenant->uuid.'/account/subscription')
-        ->assertPresent('[data-testid="plan-free"]')
-        ->assertPresent('[data-testid="plan-starter"]')
-        ->assertPresent('[data-testid="plan-pro"]')
-        ->assertPresent('[data-testid="checkout-starter-monthly"]')
-        ->assertPresent('[data-testid="checkout-pro-monthly"]')
-        ->assertSee('Your current plan')
-        ->assertNoJavaScriptErrors();
-});
-
-it('schedules account deletion when the user owns no teams', function () {
+it('schedules account deletion when the user administers no teams', function () {
     $user = User::factory()->create([
         'email' => 'free-agent@example.com',
     ]);
@@ -96,16 +81,16 @@ it('schedules account deletion when the user owns no teams', function () {
     expect($user->fresh()->scheduled_for_deletion_at)->not->toBeNull();
 });
 
-it('blocks account deletion when the user still owns a team', function () {
+it('blocks account deletion when the user still administers a team', function () {
     $user = User::factory()->withTeam()->create([
-        'email' => 'still-owner@example.com',
+        'email' => 'still-admin@example.com',
     ]);
     $tenant = $user->teams()->first();
     actingAs($user);
 
     visit('/app/'.$tenant->uuid.'/account/advanced')
         ->click('[data-testid="delete-account-button"]')
-        ->assertSee('Transfer or delete the teams you own first')
+        ->assertSee('Leave or delete the teams you administer first')
         ->assertNoJavaScriptErrors();
 
     expect($user->fresh()->scheduled_for_deletion_at)->toBeNull();

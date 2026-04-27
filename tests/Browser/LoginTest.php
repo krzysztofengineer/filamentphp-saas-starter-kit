@@ -47,7 +47,7 @@ it('logs the user out from the user menu', function () {
     visit('/app/'.$tenant->uuid)
         ->click('button[aria-label="User menu"]')
         ->click('Sign out')
-        ->assertSee('Build your SaaS faster');
+        ->assertSee('already looking at.');
 
     assertGuest();
 });

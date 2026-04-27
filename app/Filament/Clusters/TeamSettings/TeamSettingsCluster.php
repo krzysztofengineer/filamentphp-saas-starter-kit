@@ -37,6 +37,6 @@ class TeamSettingsCluster extends Cluster
             return false;
         }
 
-        return $tenant->isOwnedBy($user);
+        return $tenant->canBeManagedBy($user);
     }
 }

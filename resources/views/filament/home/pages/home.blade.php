@@ -1,5 +1,9 @@
 <x-filament-panels::page>
-    <div class="-mx-6 -my-8 bg-white text-gray-950 sm:-mx-8 dark:bg-gray-950 dark:text-white">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <div class="landing-root">
         {{ $this->content }}
     </div>
 </x-filament-panels::page>

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Schemas\Components\Marketing;
 
+use App\Filament\Schemas\Components\Marketing\Concerns\HasEyebrow;
 use App\Filament\Schemas\Components\Marketing\Concerns\HasTagline;
 use Closure;
 use Filament\Schemas\Components\Component;
@@ -11,15 +12,24 @@ use Filament\Schemas\Components\Concerns\HasHeading;
 class FeaturesSection extends Component
 {
     use HasDescription;
+    use HasEyebrow;
     use HasHeading;
     use HasTagline;
 
     protected string $view = 'filament.schemas.marketing.features-section';
 
     /**
-     * @var array<int, array{icon: string, title: string, description: string}>|Closure
+     * Bento grid cards. Each card has:
+     *   - title: card title
+     *   - body: card paragraph (HTML allowed via {!! !!})
+     *   - visual: one of 'org-chart', 'billing', 'filament', 'pwa', 'realtime',
+     *             'terminal', 'ai', 'strip' — picks the visual partial
+     *   - span: 'b-1' through 'b-7' or 'b-strip' — controls grid placement
+     *   - data: optional array passed to the visual partial for content overrides
+     *
+     * @var array<int, array{title?: string, body?: string, visual?: string, span?: string, data?: array<string, mixed>}>|Closure
      */
-    protected array|Closure $features = [];
+    protected array|Closure $cards = [];
 
     public static function make(): static
     {
@@ -30,20 +40,20 @@ class FeaturesSection extends Component
     }
 
     /**
-     * @param  array<int, array{icon: string, title: string, description: string}>|Closure  $features
+     * @param  array<int, array<string, mixed>>|Closure  $cards
      */
-    public function features(array|Closure $features): static
+    public function cards(array|Closure $cards): static
     {
-        $this->features = $features;
+        $this->cards = $cards;
 
         return $this;
     }
 
     /**
-     * @return array<int, array{icon: string, title: string, description: string}>
+     * @return array<int, array<string, mixed>>
      */
-    public function getFeatures(): array
+    public function getCards(): array
     {
-        return $this->evaluate($this->features) ?? [];
+        return $this->evaluate($this->cards) ?? [];
     }
 }

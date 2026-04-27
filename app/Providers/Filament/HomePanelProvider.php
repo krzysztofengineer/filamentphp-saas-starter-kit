@@ -3,9 +3,11 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Home\Pages\Home;
+use Filament\Enums\ThemeMode;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -36,17 +38,23 @@ class HomePanelProvider extends PanelProvider
             ->id('home')
             ->path('')
             ->viteTheme('resources/css/filament/home/theme.css')
-            ->darkMode(false)
+            ->defaultThemeMode(ThemeMode::Dark)
             ->brandLogo(fn () => view('logo'))
             ->favicon(asset('favicon.ico'))
             ->maxContentWidth(Width::Full)
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Red,
             ])
             ->topNavigation()
             ->discoverPages(in: app_path('Filament/Home/Pages'), for: 'App\Filament\Home\Pages')
             ->pages([
                 Home::class,
+            ])
+            ->navigationItems([
+                NavigationItem::make('Features')->url('/#features')->sort(1),
+                NavigationItem::make('Pricing')->url('/#pricing')->sort(2),
+                NavigationItem::make('How it works')->url('/#how-it-works')->sort(3),
+                NavigationItem::make('FAQ')->url('/#faq')->sort(4),
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -58,7 +66,6 @@ class HomePanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->renderHook(PanelsRenderHook::TOPBAR_LOGO_AFTER, $forHome('filament.home.topbar-nav'))
             ->renderHook(PanelsRenderHook::TOPBAR_END, $forHome('filament.home.topbar-login'))
             ->renderHook(PanelsRenderHook::HEAD_END, $forHome('partials.pwa-head'))
             ->renderHook(PanelsRenderHook::HEAD_END, $forHome('partials.seo-meta'));

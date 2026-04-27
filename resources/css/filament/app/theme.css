@@ -3,6 +3,8 @@
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 @source '../../../../resources/views/vendor/filament-panels/**/*';
+@source '../../../../resources/views/components/**/*';
+@source '../../../../resources/views/logo.blade.php';
 
 .fi-ta-ctn .fi-ta-header.fi-ta-header-adaptive-actions-position {
     @apply flex-row items-center flex-wrap;

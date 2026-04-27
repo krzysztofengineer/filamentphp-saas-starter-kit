@@ -23,15 +23,16 @@ it('updates the team name from the profile form', function () {
 });
 
 it('removes a member from the team', function () {
-    $owner = User::factory()->withTeam()->create();
-    $tenant = $owner->teams()->first();
+    $admin = User::factory()->withTeam()->create();
+    $tenant = $admin->teams()->first();
     $member = User::factory()->create(['name' => 'Removable Member']);
     $tenant->users()->attach($member, ['role' => TeamRole::Member->value]);
 
-    actingAs($owner);
+    actingAs($admin);
 
     visit('/app/'.$tenant->uuid.'/settings/members')
         ->assertSee('Removable Member')
+        ->click('button[aria-label="Actions"]')
         ->click('[data-testid="remove-member-button"]')
         ->click('[data-testid="remove-member-confirm"]')
         ->assertSee('Member removed')
@@ -40,40 +41,26 @@ it('removes a member from the team', function () {
     assertDatabaseMissing('team_user', ['team_id' => $tenant->id, 'user_id' => $member->id]);
 });
 
-it('transfers team ownership to another member', function () {
-    $owner = User::factory()->withTeam()->create();
-    $tenant = $owner->teams()->first();
-    $newOwner = User::factory()->create(['name' => 'Future Owner']);
-    $tenant->users()->attach($newOwner, ['role' => TeamRole::Member->value]);
+it('shows inline role selects for editable rows on the members page', function () {
+    $admin = User::factory()->withTeam()->create();
+    $tenant = $admin->teams()->first();
+    $member = User::factory()->create(['name' => 'Promotable Member']);
+    $tenant->users()->attach($member, ['role' => TeamRole::Member->value]);
 
-    actingAs($owner);
+    actingAs($admin);
 
-    visit('/app/'.$tenant->uuid.'/settings/advanced')
-        ->click('[data-testid="transfer-ownership-button"]')
-        ->select('select[wire\\:model*="new_owner_id"]', (string) $newOwner->id)
-        ->click('[data-testid="transfer-ownership-confirm"]')
-        ->assertSee('Ownership transferred')
-        ->assertNoJavaScriptErrors();
-
-    assertDatabaseHas('team_user', [
-        'team_id' => $tenant->id,
-        'user_id' => $newOwner->id,
-        'role' => TeamRole::Owner->value,
-    ]);
-    assertDatabaseHas('team_user', [
-        'team_id' => $tenant->id,
-        'user_id' => $owner->id,
-        'role' => TeamRole::Member->value,
-    ]);
+    visit('/app/'.$tenant->uuid.'/settings/members')
+        ->assertSee('Promotable Member')
+        ->assertPresent('[data-testid="member-role-select"]');
 });
 
-it('deletes the team when the owner types the name correctly', function () {
-    $owner = User::factory()->create();
-    $tenant = Team::factory()->create(['name' => 'Doomed Team', 'user_id' => $owner->id]);
-    $tenant->users()->attach($owner, ['role' => TeamRole::Owner->value]);
-    $owner->update(['current_team_id' => $tenant->id]);
+it('deletes the team when the administrator types the name correctly', function () {
+    $admin = User::factory()->create();
+    $tenant = Team::factory()->create(['name' => 'Doomed Team', 'user_id' => $admin->id]);
+    $tenant->users()->attach($admin, ['role' => TeamRole::Administrator->value]);
+    $admin->update(['current_team_id' => $tenant->id]);
 
-    actingAs($owner);
+    actingAs($admin);
 
     visit('/app/'.$tenant->uuid.'/settings/advanced')
         ->click('[data-testid="delete-team-button"]')
@@ -85,12 +72,12 @@ it('deletes the team when the owner types the name correctly', function () {
 });
 
 it('blocks team deletion when the name confirmation does not match', function () {
-    $owner = User::factory()->create();
-    $tenant = Team::factory()->create(['name' => 'Doomed Team', 'user_id' => $owner->id]);
-    $tenant->users()->attach($owner, ['role' => TeamRole::Owner->value]);
-    $owner->update(['current_team_id' => $tenant->id]);
+    $admin = User::factory()->create();
+    $tenant = Team::factory()->create(['name' => 'Doomed Team', 'user_id' => $admin->id]);
+    $tenant->users()->attach($admin, ['role' => TeamRole::Administrator->value]);
+    $admin->update(['current_team_id' => $tenant->id]);
 
-    actingAs($owner);
+    actingAs($admin);
 
     visit('/app/'.$tenant->uuid.'/settings/advanced')
         ->click('[data-testid="delete-team-button"]')
@@ -100,4 +87,33 @@ it('blocks team deletion when the name confirmation does not match', function ()
         ->assertNoJavaScriptErrors();
 
     assertDatabaseHas('teams', ['id' => $tenant->id, 'name' => 'Doomed Team']);
+});
+
+it('blocks regular members from the team settings pages', function () {
+    $admin = User::factory()->withTeam()->create();
+    $tenant = $admin->teams()->first();
+    $member = User::factory()->create();
+    $tenant->users()->attach($member, ['role' => TeamRole::Member->value]);
+    $member->update(['current_team_id' => $tenant->id]);
+
+    actingAs($member);
+
+    $response = $this->get('/app/'.$tenant->uuid.'/settings/profile');
+    expect($response->status())->toBe(403);
+});
+
+it('lets managers manage the team profile but hides the advanced page', function () {
+    $admin = User::factory()->withTeam()->create();
+    $tenant = $admin->teams()->first();
+    $manager = User::factory()->create();
+    $tenant->users()->attach($manager, ['role' => TeamRole::Manager->value]);
+    $manager->update(['current_team_id' => $tenant->id]);
+
+    actingAs($manager);
+
+    $profile = $this->get('/app/'.$tenant->uuid.'/settings/profile');
+    expect($profile->status())->toBe(200);
+
+    $advanced = $this->get('/app/'.$tenant->uuid.'/settings/advanced');
+    expect($advanced->status())->toBe(403);
 });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\TeamRole;
 use Database\Factories\InvitationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,12 +17,14 @@ class Invitation extends Model
         'team_id',
         'invited_by_user_id',
         'email',
+        'role',
         'token',
         'accepted_at',
     ];
 
     protected $casts = [
         'accepted_at' => 'datetime',
+        'role' => TeamRole::class,
     ];
 
     protected static function booted(): void

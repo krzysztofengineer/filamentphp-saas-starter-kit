@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Http\Responses\LogoutResponse;
+use App\Models\Team;
 use App\Notifications\ResetPassword;
 use Filament\Auth\Http\Responses\Contracts\LogoutResponse as LogoutResponseContract;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Cashier\Cashier;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,6 +19,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        Cashier::useCustomerModel(Team::class);
     }
 }

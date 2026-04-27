@@ -14,16 +14,21 @@ class TeamPolicy
 
     public function update(User $user, Team $team): bool
     {
-        return $team->isOwnedBy($user);
+        return $team->canBeManagedBy($user);
     }
 
     public function delete(User $user, Team $team): bool
     {
-        return $team->isOwnedBy($user);
+        return $team->canBeDeletedBy($user);
     }
 
     public function manageMembers(User $user, Team $team): bool
     {
-        return $team->isOwnedBy($user);
+        return $team->canBeManagedBy($user);
+    }
+
+    public function manageBilling(User $user, Team $team): bool
+    {
+        return $team->canBeManagedBy($user);
     }
 }

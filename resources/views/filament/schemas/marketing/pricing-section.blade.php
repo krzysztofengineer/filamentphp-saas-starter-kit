@@ -1,76 +1,125 @@
 @php
+    $eyebrow = $getEyebrow();
     $tagline = $getTagline();
     $heading = $getHeading();
     $description = $getDescription();
     $plans = $getPlans();
+    $footnote = $getFootnote();
+    $defaultInterval = $getDefaultInterval();
+    $showToggle = $shouldShowIntervalToggle();
+    $freeCtaLabel = $getFreeCtaLabel();
+    $freeCtaUrl = $getFreeCtaUrl();
+    $registerUrl = route('filament.app.auth.register');
 @endphp
 
-<section id="pricing" class="border-t border-gray-200 bg-gray-50 px-6 py-24 sm:px-10 lg:px-16 dark:border-gray-800 dark:bg-gray-900/40" data-testid="landing-pricing">
-    <div class="mx-auto max-w-7xl">
-        @if (filled($tagline) || filled($heading) || filled($description))
-            <div class="mb-14 max-w-2xl">
-                @if (filled($tagline))
-                    <div class="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500 dark:text-gray-400">{{ $tagline }}</div>
-                @endif
-                @if (filled($heading))
-                    <h2 class="text-[clamp(2rem,3.5vw,3rem)] font-bold leading-tight tracking-tight text-gray-950 dark:text-white">
-                        {{ $heading }}
-                    </h2>
-                @endif
-                @if (filled($description))
-                    <p class="mt-4 text-lg leading-relaxed text-gray-600 dark:text-gray-400">{{ $description }}</p>
-                @endif
-            </div>
-        @endif
+<section class="section" id="pricing" data-testid="landing-pricing">
+    <div class="container" x-data="{ interval: @js($defaultInterval) }">
+        <div class="section-head center">
+            @if (filled($eyebrow))
+                <div class="eyebrow">{{ $eyebrow }}</div>
+            @endif
+            @if (filled($tagline))
+                <div class="pricing-tagline">{{ $tagline }}</div>
+            @endif
+            @if (filled($heading))
+                <h2 class="section-h" style="text-align:center;">{{ $heading }}</h2>
+            @endif
+            @if (filled($description))
+                <p class="section-sub" style="text-align:center;">{{ $description }}</p>
+            @endif
 
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            @if ($showToggle)
+                <div class="pricing-toggle" data-testid="pricing-interval-toggle">
+                    <button
+                        type="button"
+                        class="pricing-toggle-btn"
+                        x-on:click="interval = 'monthly'"
+                        x-bind:class="interval === 'monthly' ? 'is-active' : ''"
+                        data-testid="pricing-toggle-monthly"
+                    >Monthly</button>
+                    <button
+                        type="button"
+                        class="pricing-toggle-btn"
+                        x-on:click="interval = 'yearly'"
+                        x-bind:class="interval === 'yearly' ? 'is-active' : ''"
+                        data-testid="pricing-toggle-yearly"
+                    >Yearly</button>
+                </div>
+            @endif
+        </div>
+
+        <div class="pricing-grid">
             @foreach ($plans as $plan)
-                <div @class([
-                    'relative flex flex-col rounded-3xl p-6 sm:p-8',
-                    'bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-800' => ! ($plan['featured'] ?? false),
-                    'bg-white ring-2 ring-blue-500 shadow-xl shadow-blue-500/10 dark:bg-gray-900 dark:shadow-blue-500/20' => ($plan['featured'] ?? false),
-                ])>
-                    @if (filled($plan['badge'] ?? null))
-                        <span class="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-blue-600 px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-wider text-white">
-                            {{ $plan['badge'] }}
-                        </span>
+                @php
+                    $highlighted = ! empty($plan['highlighted']);
+                    $features = $plan['features'] ?? [];
+                    $monthly = $plan['prices']['monthly'] ?? [];
+                    $yearly = $plan['prices']['yearly'] ?? [];
+                    $isFree = ! empty($plan['is_free']);
+                    $checkoutUrl = $isFree
+                        ? ($freeCtaUrl ?: $registerUrl)
+                        : null;
+                    $ctaLabel = $isFree ? ($freeCtaLabel ?: 'Get started for free') : 'Sign up to subscribe';
+                @endphp
+                <div class="tier @if ($highlighted) highlighted @endif" data-testid="landing-plan-{{ $plan['key'] ?? '' }}">
+                    @if (! empty($plan['badge']))
+                        <span class="tier-badge">{{ $plan['badge'] }}</span>
                     @endif
 
-                    <h3 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">{{ $plan['name'] }}</h3>
-                    <p class="mt-2 min-h-[3rem] text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ $plan['description'] ?? '' }}</p>
+                    <div>
+                        <div class="tier-name">{{ $plan['name'] ?? '' }}</div>
 
-                    <div class="mt-6">
-                        <div class="flex items-baseline gap-2">
-                            <span class="text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl dark:text-white">{{ $plan['price'] }}</span>
+                        <div x-show="interval === 'monthly'" class="tier-price">
+                            <span class="amt">{{ $monthly['label'] ?? '' }}</span>
+                            @if (! empty($monthly['period']))
+                                <span class="per">{{ $monthly['period'] }}</span>
+                            @endif
                         </div>
-                        <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $plan['period'] ?? '' }}</div>
+                        <div x-show="interval === 'yearly'" x-cloak class="tier-price">
+                            <span class="amt">{{ $yearly['label'] ?? '' }}</span>
+                            @if (! empty($yearly['period']))
+                                <span class="per">{{ $yearly['period'] }}</span>
+                            @endif
+                            @if (! empty($yearly['savings']))
+                                <span class="tier-savings">{{ $yearly['savings'] }}</span>
+                            @endif
+                        </div>
                     </div>
 
-                    <div class="mt-6">
+                    @if (! empty($plan['description']))
+                        <p class="tier-desc">{!! $plan['description'] !!}</p>
+                    @endif
+
+                    <hr>
+
+                    @if (! empty($features))
+                        <ul class="tier-features">
+                            @foreach ($features as $feature)
+                                <li>
+                                    <x-filament::icon icon="heroicon-m-check" class="tier-feature-icon" />
+                                    <span>{!! $feature !!}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    <div class="tier-cta">
                         <x-filament::button
                             tag="a"
-                            :href="$plan['href']"
+                            :href="$isFree ? ($freeCtaUrl ?: $registerUrl) : $registerUrl"
                             size="lg"
-                            :color="($plan['featured'] ?? false) ? 'primary' : 'gray'"
-                            :outlined="! ($plan['featured'] ?? false)"
-                            class="w-full justify-center"
+                            :color="$highlighted ? 'primary' : 'gray'"
+                            :outlined="! $highlighted"
                         >
-                            {{ $plan['cta'] }}
+                            {{ $ctaLabel }}
                         </x-filament::button>
                     </div>
-
-                    <div class="my-6 h-px bg-gray-200 dark:bg-gray-800"></div>
-
-                    <ul class="flex flex-col gap-3">
-                        @foreach ($plan['features'] ?? [] as $feature)
-                            <li class="flex gap-2.5 text-sm text-gray-700 dark:text-gray-300">
-                                @svg('heroicon-o-check', 'mt-0.5 size-4 shrink-0 text-blue-600 dark:text-blue-400')
-                                <span>{{ $feature }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
                 </div>
             @endforeach
         </div>
+
+        @if (filled($footnote))
+            <div class="pricing-foot-line">{{ $footnote }}</div>
+        @endif
     </div>
 </section>

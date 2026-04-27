@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\BillingInterval;
-use App\BillingPlan;
 use App\Notifications\ResetPassword;
+use App\Observers\UserObserver;
 use App\TeamRole;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
@@ -15,20 +14,21 @@ use Filament\Panel;
 use Filament\Support\Colors\Color;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
-use Laravel\Cashier\Billable;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 
 #[Fillable(['name', 'email', 'password', 'current_team_id', 'scheduled_for_deletion_at'])]
 #[Hidden(['password', 'remember_token'])]
+#[ObservedBy(UserObserver::class)]
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasDefaultTenant, HasTenants
 {
     /** @use HasFactory<UserFactory> */
-    use Billable, HasFactory, HasPushSubscriptions, Notifiable;
+    use HasFactory, HasPushSubscriptions, Notifiable;
 
     /**
      * @return array<string, string>
@@ -52,52 +52,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasDefaul
         $this->notify(new ResetPassword($token));
     }
 
-    public function currentPlan(): ?BillingPlan
-    {
-        if (! $this->subscribed('default')) {
-            return null;
-        }
-
-        foreach (BillingPlan::cases() as $plan) {
-            foreach (BillingInterval::cases() as $interval) {
-                $priceId = $plan->priceId($interval);
-
-                if ($priceId && $this->subscribedToPrice($priceId, 'default')) {
-                    return $plan;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public function maxTeamMemberships(): ?int
-    {
-        $plan = $this->currentPlan();
-
-        return $plan === null ? BillingPlan::freeMaxTeamMemberships() : $plan->maxTeamMemberships();
-    }
-
-    public function canAddMoreTeams(): bool
-    {
-        $limit = $this->maxTeamMemberships();
-
-        return $limit === null || $this->teams()->count() < $limit;
-    }
-
-    public function canInviteMembers(): bool
-    {
-        return $this->currentPlan() !== null;
-    }
-
     public function teams()
     {
         return $this->belongsToMany(Team::class)->withPivot('role');
     }
 
-    public function ownedTeams()
+    public function administeredTeams()
     {
-        return $this->teams()->wherePivot('role', TeamRole::Owner->value);
+        return $this->teams()->wherePivot('role', TeamRole::Administrator->value);
     }
 
     public function currentTeam()

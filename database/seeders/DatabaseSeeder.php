@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             'user_id' => $user->id,
         ]);
 
-        $user->teams()->attach($team, ['role' => TeamRole::Owner->value]);
+        $user->teams()->attach($team, ['role' => TeamRole::Administrator->value]);
         $user->update(['current_team_id' => $team->id]);
     }
 }

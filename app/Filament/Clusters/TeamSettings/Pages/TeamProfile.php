@@ -56,7 +56,7 @@ class TeamProfile extends Page implements HasActions, HasForms
 
     public function getTitle(): string
     {
-        return 'Team profile';
+        return 'Team details';
     }
 
     public function getHeading(): string|Htmlable|null
@@ -66,7 +66,7 @@ class TeamProfile extends Page implements HasActions, HasForms
 
     public static function getNavigationLabel(): string
     {
-        return 'Profile';
+        return 'Team details';
     }
 
     public function form(Schema $schema): Schema

@@ -4,10 +4,11 @@ namespace App\Providers\Filament;
 
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Clusters\AccountSettings\Pages\AccountAdvanced;
-use App\Filament\Clusters\AccountSettings\Pages\AccountBilling;
 use App\Filament\Clusters\AccountSettings\Pages\AccountSettings;
+use App\Filament\Clusters\TeamSettings\Pages\TeamAdvanced;
+use App\Filament\Clusters\TeamSettings\Pages\TeamBilling;
+use App\Filament\Clusters\TeamSettings\Pages\TeamMembers;
 use App\Filament\Clusters\TeamSettings\Pages\TeamProfile;
-use App\Filament\Clusters\TeamSettings\TeamSettingsCluster;
 use App\Filament\Pages\Auth\CustomLogin;
 use App\Filament\Pages\Auth\CustomRegister;
 use App\Filament\Pages\CreateTeam;
@@ -15,6 +16,7 @@ use App\Filament\Pages\Dashboard;
 use App\Http\Middleware\SaveCurrentTeam;
 use App\Models\Team;
 use Filament\Actions\Action;
+use Filament\Enums\ThemeMode;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -56,6 +58,7 @@ class AppPanelProvider extends PanelProvider
             ->favicon(asset('favicon.ico'))
             ->path('app')
             ->viteTheme('resources/css/filament/app/theme.css')
+            ->defaultThemeMode(ThemeMode::Dark)
             ->login(CustomLogin::class)
             ->registration(CustomRegister::class)
             ->passwordReset()
@@ -63,22 +66,32 @@ class AppPanelProvider extends PanelProvider
             ->tenant(Team::class)
             ->tenantRegistration(CreateTeam::class)
             ->tenantMenuItems([
-                Action::make('teamSettings')
-                    ->label('Team settings')
-                    ->icon('heroicon-o-cog-6-tooth')
+                Action::make('teamProfile')
+                    ->label('Team details')
+                    ->icon('heroicon-o-identification')
                     ->url(fn (): string => TeamProfile::getUrl())
-                    ->visible(fn (): bool => TeamSettingsCluster::canAccess()),
+                    ->visible(fn (): bool => TeamProfile::canAccess()),
+                Action::make('teamMembers')
+                    ->label('Members')
+                    ->icon('heroicon-o-users')
+                    ->url(fn (): string => TeamMembers::getUrl())
+                    ->visible(fn (): bool => TeamMembers::canAccess()),
+                Action::make('teamBilling')
+                    ->label('Subscription')
+                    ->icon('heroicon-o-credit-card')
+                    ->url(fn (): string => TeamBilling::getUrl())
+                    ->visible(fn (): bool => TeamBilling::canAccess()),
+                Action::make('teamAdvanced')
+                    ->label('Advanced')
+                    ->icon('heroicon-o-shield-exclamation')
+                    ->url(fn (): string => TeamAdvanced::getUrl())
+                    ->visible(fn (): bool => TeamAdvanced::canAccess()),
             ])
             ->userMenuItems([
                 Action::make('accountSettings')
                     ->label('Account settings')
                     ->icon('heroicon-o-user')
                     ->url(fn (): ?string => filament()->getTenant() ? AccountSettings::getUrl() : null)
-                    ->visible(fn (): bool => filament()->getTenant() !== null && AccountSettingsCluster::canAccess()),
-                Action::make('accountBilling')
-                    ->label('Subscription')
-                    ->icon('heroicon-o-credit-card')
-                    ->url(fn (): ?string => filament()->getTenant() ? AccountBilling::getUrl() : null)
                     ->visible(fn (): bool => filament()->getTenant() !== null && AccountSettingsCluster::canAccess()),
                 Action::make('accountAdvanced')
                     ->label('Advanced')
@@ -88,7 +101,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->maxContentWidth(Width::Full)
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Red,
             ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\Filament\Clusters')
@@ -107,11 +120,6 @@ class AppPanelProvider extends PanelProvider
                                 ->icon('heroicon-o-user')
                                 ->url(fn (): ?string => filament()->getTenant() ? AccountSettings::getUrl() : null)
                                 ->isActiveWhen(fn (): bool => request()->routeIs('filament.app.account.pages.settings'))
-                                ->visible(fn (): bool => filament()->getTenant() !== null && AccountSettingsCluster::canAccess()),
-                            NavigationItem::make('Subscription')
-                                ->icon('heroicon-o-credit-card')
-                                ->url(fn (): ?string => filament()->getTenant() ? AccountBilling::getUrl() : null)
-                                ->isActiveWhen(fn (): bool => request()->routeIs('filament.app.account.pages.subscription'))
                                 ->visible(fn (): bool => filament()->getTenant() !== null && AccountSettingsCluster::canAccess()),
                             NavigationItem::make('Advanced')
                                 ->icon('heroicon-o-shield-exclamation')

@@ -3,7 +3,6 @@
 namespace App\Filament\Widgets;
 
 use App\Actions\AcceptInvitation;
-use App\Filament\Clusters\AccountSettings\Pages\AccountBilling;
 use App\Filament\Support\CategoryHeading;
 use App\Models\Invitation;
 use App\Models\User;
@@ -81,22 +80,6 @@ class PendingInvitationsTable extends TableWidget
 
                 if (strtolower($user->email) !== strtolower($record->email) || $record->isAccepted()) {
                     Notification::make()->danger()->title('That invitation is no longer valid.')->send();
-
-                    return;
-                }
-
-                if (! $user->canAddMoreTeams()) {
-                    Notification::make()
-                        ->danger()
-                        ->title('Free plan only allows one team.')
-                        ->body('Upgrade to Starter or Pro to accept this invitation.')
-                        ->send();
-
-                    $tenant = $user->teams()->first();
-
-                    if ($tenant !== null) {
-                        $this->redirect(AccountBilling::getUrl(tenant: $tenant));
-                    }
 
                     return;
                 }

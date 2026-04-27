@@ -7,15 +7,15 @@ use App\Models\User;
 use App\TeamRole;
 
 it('attaches the user to the team as a member and marks the invitation accepted', function () {
-    $owner = User::factory()->create();
-    $team = Team::factory()->create(['user_id' => $owner->id]);
-    $team->users()->attach($owner, ['role' => TeamRole::Owner->value]);
+    $admin = User::factory()->create();
+    $team = Team::factory()->create(['user_id' => $admin->id]);
+    $team->users()->attach($admin, ['role' => TeamRole::Administrator->value]);
 
     $invitee = User::factory()->create(['email' => 'invitee@example.com']);
 
     $invitation = Invitation::create([
         'team_id' => $team->id,
-        'invited_by_user_id' => $owner->id,
+        'invited_by_user_id' => $admin->id,
         'email' => 'invitee@example.com',
     ]);
 

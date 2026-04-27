@@ -5,15 +5,21 @@ namespace App\Http\Controllers\Billing;
 use App\BillingInterval;
 use App\BillingPlan;
 use App\Http\Controllers\Controller;
+use App\Models\Team;
 use Filament\Notifications\Notification;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class CheckoutController extends Controller
 {
-    public function __invoke(Request $request, BillingPlan $plan, BillingInterval $interval): RedirectResponse|Responsable
+    public function __invoke(Request $request, Team $team, BillingPlan $plan, BillingInterval $interval): RedirectResponse|Responsable
     {
+        if (! $team->canBeManagedBy($request->user())) {
+            throw new AuthorizationException;
+        }
+
         $priceId = $plan->priceId($interval);
 
         if (blank($priceId)) {
@@ -27,12 +33,12 @@ class CheckoutController extends Controller
             return redirect()->back();
         }
 
-        return $request->user()
+        return $team
             ->newSubscription('default', $priceId)
             ->allowPromotionCodes()
             ->checkout([
-                'success_url' => route('billing.success').'?session_id={CHECKOUT_SESSION_ID}',
-                'cancel_url' => route('billing.cancel'),
+                'success_url' => route('billing.success', ['team' => $team]).'?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('billing.cancel', ['team' => $team]),
             ]);
     }
 }

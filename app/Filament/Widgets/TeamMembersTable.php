@@ -7,6 +7,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\TeamRole;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\TextSize;
@@ -14,6 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
@@ -42,15 +44,55 @@ class TeamMembersTable extends TableWidget
                             ->color('gray')
                             ->size(TextSize::Small),
                     ]),
-                    TextColumn::make('pivot.role')
+                    TextColumn::make('owner_badge')
+                        ->state('Owner')
                         ->badge()
-                        ->color(fn (string $state): string => TeamRole::from($state)->color())
-                        ->formatStateUsing(fn (string $state): string => TeamRole::from($state)->label())
+                        ->color('primary')
+                        ->visible(fn (?User $record): bool => $record !== null && $this->isTeamOwner($record))
+                        ->grow(false),
+                    SelectColumn::make('role')
+                        ->state(fn (User $record): string => $record->pivot->role)
+                        ->options(self::roleOptions())
+                        ->selectablePlaceholder(false)
+                        ->native(false)
+                        ->visible(fn (?User $record): bool => $record !== null && ! $this->isTeamOwner($record))
+                        ->disabled(fn (User $record): bool => ! $this->canChangeRoleFor($record))
+                        ->updateStateUsing(function (User $record, string $state): ?string {
+                            /** @var Team|null $team */
+                            $team = Filament::getTenant();
+
+                            if ($team === null) {
+                                return $record->pivot->role;
+                            }
+
+                            $newRole = TeamRole::from($state);
+
+                            if ($this->wouldRemoveLastAdministrator($team, $record, $newRole)) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title('A team must have at least one administrator.')
+                                    ->send();
+
+                                return $record->pivot->role;
+                            }
+
+                            $team->users()->updateExistingPivot($record->id, ['role' => $newRole->value]);
+
+                            Notification::make()
+                                ->success()
+                                ->title('Role updated.')
+                                ->send();
+
+                            return $newRole->value;
+                        })
+                        ->extraAttributes(['data-testid' => 'member-role-select'])
                         ->grow(false),
                 ]),
             ])
             ->recordActions([
-                $this->removeMemberAction(),
+                ActionGroup::make([
+                    $this->removeMemberAction(),
+                ]),
             ])
             ->paginated(false)
             ->emptyStateIcon('heroicon-o-users')
@@ -67,10 +109,16 @@ class TeamMembersTable extends TableWidget
             return collect();
         }
 
+        $rolePriority = [
+            TeamRole::Administrator->value => 0,
+            TeamRole::Manager->value => 1,
+            TeamRole::Member->value => 2,
+        ];
+
         return $team->users()
             ->orderBy('users.name')
             ->get()
-            ->sortBy(fn (User $user): int => TeamRole::from($user->pivot->role) === TeamRole::Owner ? 0 : 1)
+            ->sortBy(fn (User $user): int => $rolePriority[$user->pivot->role] ?? 99)
             ->values();
     }
 
@@ -86,12 +134,21 @@ class TeamMembersTable extends TableWidget
             ->modalDescription('They will lose access to this team.')
             ->modalSubmitActionLabel('Remove')
             ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'remove-member-confirm']))
-            ->visible(fn (User $record): bool => TeamRole::from($record->pivot->role) !== TeamRole::Owner)
+            ->visible(fn (User $record): bool => $this->canRemove($record))
             ->action(function (User $record): void {
                 /** @var Team|null $team */
                 $team = Filament::getTenant();
 
                 if ($team === null) {
+                    return;
+                }
+
+                if ($this->wouldRemoveLastAdministrator($team, $record, null)) {
+                    Notification::make()
+                        ->danger()
+                        ->title('A team must have at least one administrator.')
+                        ->send();
+
                     return;
                 }
 
@@ -108,5 +165,70 @@ class TeamMembersTable extends TableWidget
 
                 $this->resetTable();
             });
+    }
+
+    private function canChangeRoleFor(User $record): bool
+    {
+        /** @var Team|null $team */
+        $team = Filament::getTenant();
+        /** @var User|null $actor */
+        $actor = auth()->user();
+
+        if ($team === null || $actor === null) {
+            return false;
+        }
+
+        return $team->isAdministeredBy($actor)
+            && $record->id !== $actor->id
+            && ! $this->isTeamOwner($record);
+    }
+
+    private function canRemove(User $record): bool
+    {
+        /** @var Team|null $team */
+        $team = Filament::getTenant();
+        /** @var User|null $actor */
+        $actor = auth()->user();
+
+        if ($team === null || $actor === null) {
+            return false;
+        }
+
+        return $team->canBeManagedBy($actor)
+            && $record->id !== $actor->id
+            && ! $this->isTeamOwner($record);
+    }
+
+    private function isTeamOwner(User $record): bool
+    {
+        /** @var Team|null $team */
+        $team = Filament::getTenant();
+
+        return $team?->user_id === $record->id;
+    }
+
+    private function wouldRemoveLastAdministrator(Team $team, User $target, ?TeamRole $newRole): bool
+    {
+        $currentRole = $team->roleFor($target);
+
+        if ($currentRole !== TeamRole::Administrator) {
+            return false;
+        }
+
+        if ($newRole === TeamRole::Administrator) {
+            return false;
+        }
+
+        return $team->administrators()->count() <= 1;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function roleOptions(): array
+    {
+        return collect(TeamRole::cases())
+            ->mapWithKeys(fn (TeamRole $role): array => [$role->value => $role->label()])
+            ->all();
     }
 }

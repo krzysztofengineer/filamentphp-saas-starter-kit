@@ -1,10 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "filaascom/filaas",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "The Laravel SaaS starter kit you're already looking at — auth, teams, Stripe billing, admin panel, PWA, real-time, tests, all wired up.",
+    "keywords": ["laravel", "filament", "saas", "starter-kit", "stripe", "cashier", "teams", "multi-tenant"],
+    "homepage": "https://filaas.com",
     "license": "MIT",
+    "support": {
+        "issues": "https://github.com/filaascom/filaas/issues",
+        "source": "https://github.com/filaascom/filaas"
+    },
     "require": {
         "php": "^8.3",
         "afatmustafa/blade-hugeicons": "^2.0",

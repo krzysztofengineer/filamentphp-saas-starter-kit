@@ -21,7 +21,7 @@ Route::middleware('auth')->prefix('push')->name('push.')->group(function () {
     Route::delete('/subscribe', [PushSubscriptionController::class, 'destroy'])->name('unsubscribe');
 });
 
-Route::middleware('auth')->prefix('billing')->name('billing.')->group(function () {
+Route::middleware('auth')->prefix('billing/{team}')->name('billing.')->group(function () {
     Route::get('/checkout/{plan}/{interval}', CheckoutController::class)->name('checkout');
     Route::get('/portal', PortalController::class)->name('portal');
     Route::get('/success', BillingSuccessController::class)->name('success');
