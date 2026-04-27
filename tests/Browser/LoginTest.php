@@ -2,6 +2,8 @@
 
 use App\Models\User;
 
+use function Pest\Laravel\assertAuthenticated;
+
 it('allows users to log in', function () {
     $user = User::factory()->create();
 
@@ -12,4 +14,6 @@ it('allows users to log in', function () {
         ->click('@login-submit')
         ->assertPathIs('/app/'.$user->teams()->first()->uuid)
         ->assertNoSmoke();
+
+    assertAuthenticated();
 });

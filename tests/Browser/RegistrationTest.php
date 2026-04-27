@@ -2,6 +2,7 @@
 
 use App\Models\Team;
 
+use function Pest\Laravel\assertAuthenticated;
 use function Pest\Laravel\assertDatabaseHas;
 
 it('allows users to register', function () {
@@ -17,6 +18,8 @@ it('allows users to register', function () {
         ->assertNotPresent('@register-submit')
         ->assertPathIs('/app/'.Team::first()->uuid)
         ->assertNoSmoke();
+
+    assertAuthenticated();
 
     assertDatabaseHas('users', ['email' => 'test@example.com', 'name' => 'Test']);
     assertDatabaseHas('teams', ['name' => "Test's Team", 'user_id' => 1]);
