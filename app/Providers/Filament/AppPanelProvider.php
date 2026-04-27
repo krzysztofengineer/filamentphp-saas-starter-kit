@@ -7,8 +7,8 @@ use App\Filament\Clusters\AccountSettings\Pages\AccountAdvanced;
 use App\Filament\Clusters\AccountSettings\Pages\AccountSettings;
 use App\Filament\Clusters\TeamSettings\Pages\TeamAdvanced;
 use App\Filament\Clusters\TeamSettings\Pages\TeamBilling;
+use App\Filament\Clusters\TeamSettings\Pages\TeamDetails;
 use App\Filament\Clusters\TeamSettings\Pages\TeamMembers;
-use App\Filament\Clusters\TeamSettings\Pages\TeamProfile;
 use App\Filament\Pages\Auth\CustomLogin;
 use App\Filament\Pages\Auth\CustomRegister;
 use App\Filament\Pages\CreateTeam;
@@ -66,11 +66,11 @@ class AppPanelProvider extends PanelProvider
             ->tenant(Team::class)
             ->tenantRegistration(CreateTeam::class)
             ->tenantMenuItems([
-                Action::make('teamProfile')
+                Action::make('teamDetails')
                     ->label('Team details')
                     ->icon('heroicon-o-identification')
-                    ->url(fn (): string => TeamProfile::getUrl())
-                    ->visible(fn (): bool => TeamProfile::canAccess()),
+                    ->url(fn (): string => TeamDetails::getUrl())
+                    ->visible(fn (): bool => TeamDetails::canAccess()),
                 Action::make('teamMembers')
                     ->label('Members')
                     ->icon('heroicon-o-users')

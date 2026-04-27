@@ -40,7 +40,7 @@
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
             @foreach ([
                 ['icon' => 'heroicon-o-users', 'title' => 'Members', 'desc' => 'Manage who can access this team.', 'href' => \App\Filament\Clusters\TeamSettings\Pages\TeamMembers::getUrl()],
-                ['icon' => 'heroicon-o-cog-6-tooth', 'title' => 'Team settings', 'desc' => 'Update the team name and details.', 'href' => \App\Filament\Clusters\TeamSettings\Pages\TeamProfile::getUrl()],
+                ['icon' => 'heroicon-o-cog-6-tooth', 'title' => 'Team settings', 'desc' => 'Update the team name and details.', 'href' => \App\Filament\Clusters\TeamSettings\Pages\TeamDetails::getUrl()],
                 ['icon' => 'heroicon-o-credit-card', 'title' => 'Subscription', 'desc' => 'Manage the team subscription and invoices.', 'href' => \App\Filament\Clusters\TeamSettings\Pages\TeamBilling::getUrl()],
                 ['icon' => 'heroicon-o-user-circle', 'title' => 'Account', 'desc' => 'Profile, password and security.', 'href' => \App\Filament\Clusters\AccountSettings\Pages\AccountSettings::getUrl()],
             ] as $card)

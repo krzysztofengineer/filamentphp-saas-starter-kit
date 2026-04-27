@@ -5,6 +5,7 @@ use App\Models\User;
 use App\TeamRole;
 
 use function Pest\Laravel\actingAs;
+use function PHPUnit\Framework\assertEquals;
 
 it('does not allow regular members to access team details', function () {
     $team = Team::factory()->create(['name' => 'Test']);
@@ -17,4 +18,22 @@ it('does not allow regular members to access team details', function () {
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
         ->assertNotPresent('Team details');
+});
+
+it('updates the team name', function () {
+    $team = Team::factory()->create(['name' => 'Test']);
+    $user = User::factory()->create(['current_team_id' => $team->id]);
+
+    $team->members()->attach($user, ['role' => TeamRole::Manager]);
+
+    actingAs($user);
+
+    visit('/app')
+        ->click('.fi-topbar button.fi-tenant-menu-trigger')
+        ->click('Team details')
+        ->fill('@team-details-name', 'New name')
+        ->click('@team-details-save')
+        ->assertSee('Team saved');
+
+    assertEquals('New name', $team->fresh()->name);
 });

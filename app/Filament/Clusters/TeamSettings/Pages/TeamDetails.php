@@ -21,7 +21,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 
-class TeamProfile extends Page implements HasActions, HasForms
+class TeamDetails extends Page implements HasActions, HasForms
 {
     use InteractsWithActions;
     use InteractsWithForms;
@@ -90,7 +90,7 @@ class TeamProfile extends Page implements HasActions, HasForms
                             ->label('Name')
                             ->required()
                             ->maxLength(255)
-                            ->extraInputAttributes(['data-testid' => 'team-profile-name'])
+                            ->extraInputAttributes(['data-testid' => 'team-details-name'])
                             ->prefixIcon(Heroicon::OutlinedBuildingOffice2),
                     ]),
             ]);
@@ -101,7 +101,7 @@ class TeamProfile extends Page implements HasActions, HasForms
         return Action::make('save')
             ->label('Save changes')
             ->icon(Heroicon::OutlinedCheck)
-            ->extraAttributes(['data-testid' => 'team-profile-save'])
+            ->extraAttributes(['data-testid' => 'team-details-save'])
             ->action(function (): void {
                 $data = $this->form->getState();
 
