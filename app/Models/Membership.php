@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Models;
+
+use App\TeamRole;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
+class Membership extends Pivot
+{
+    protected $fillable = [
+        'team_id',
+        'user_id',
+        'role',
+    ];
+
+    protected $casts = [
+        'role' => TeamRole::class,
+    ];
+}

@@ -8,6 +8,8 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Support\Colors\Color;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 use Laravel\Cashier\Billable;
 
@@ -35,6 +37,19 @@ class Team extends Model implements HasAvatar
         });
     }
 
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function members(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(User::class, 'team_user', 'team_id', 'user_id')
+            ->withPivot('role')
+            ->using(Membership::class);
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -53,11 +68,6 @@ class Team extends Model implements HasAvatar
     public function managers()
     {
         return $this->users()->wherePivot('role', TeamRole::Manager->value);
-    }
-
-    public function members()
-    {
-        return $this->users()->wherePivot('role', TeamRole::Member->value);
     }
 
     public function invitations()
