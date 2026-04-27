@@ -15,7 +15,8 @@ it('allows users to register', function () {
         ->click('@register-privacy')
         ->click('@register-submit')
         ->assertNotPresent('@register-submit')
-        ->assertPathIs('/app/'.Team::first()->uuid);
+        ->assertPathIs('/app/'.Team::first()->uuid)
+        ->assertNoSmoke();
 
     assertDatabaseHas('users', ['email' => 'test@example.com', 'name' => 'Test']);
     assertDatabaseHas('teams', ['name' => "Test's Team", 'user_id' => 1]);
