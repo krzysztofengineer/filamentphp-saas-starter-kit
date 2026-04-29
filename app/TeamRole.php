@@ -2,7 +2,10 @@
 
 namespace App;
 
-enum TeamRole: string
+use Filament\Support\Contracts\HasLabel;
+use Illuminate\Contracts\Support\Htmlable;
+
+enum TeamRole: string implements HasLabel
 {
     case Administrator = 'administrator';
     case Member = 'member';
@@ -20,6 +23,14 @@ enum TeamRole: string
         return match ($this) {
             self::Administrator => 'primary',
             self::Member => 'gray',
+        };
+    }
+
+    public function getLabel(): string|Htmlable|null
+    {
+        return match ($this) {
+            self::Administrator => 'Administrator',
+            self::Member => 'Member',
         };
     }
 

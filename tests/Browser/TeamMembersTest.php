@@ -5,6 +5,8 @@ use App\Models\User;
 use App\TeamRole;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
 it('does not allow regular members to access team members', function () {
@@ -50,7 +52,15 @@ it('can invite new members', function () {
         ->click('@team-members')
         ->click('@invite-button')
         ->fill('@invite-email', 'test@example.com')
-        ->debug();
+        ->click('@invite-submit-button')
+        ->assertNotPresent('@invite-submit-button')
+        ->assertSee('test@example.com');
+
+    assertDatabaseCount('invitations', 1);
+    assertDatabaseHas('invitations', [
+        'team_id' => $team->id,
+        'email' => 'test@example.com',
+    ]);
 });
 
 // it('lists members with their names and the Owner badge for the actor', function () {

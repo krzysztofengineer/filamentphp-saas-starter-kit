@@ -104,26 +104,20 @@ class TeamInvitationsTable extends TableWidget
                     ->maxLength(255)
                     ->placeholder('teammate@example.com')
                     ->prefixIcon(Heroicon::OutlinedEnvelope)
-                    ->extraAttributes(['data-testid' => 'invite-email'])
                     ->extraInputAttributes(['data-testid' => 'invite-email']),
                 Select::make('role')
                     ->label('Role')
                     ->enum(TeamRole::class)
+                    ->options(TeamRole::class)
                     ->required()
                     ->native(false)
                     ->prefixIcon(Heroicon::OutlinedShieldCheck)
                     ->extraAttributes(['data-testid' => 'invite-role']),
             ])
             ->action(function (array $data): void {
-                /** @var Team|null $team */
                 $team = Filament::getTenant();
-
-                if ($team === null) {
-                    return;
-                }
-
                 $email = strtolower(trim($data['email']));
-                $role = TeamRole::from($data['role']);
+                $role = $data['role'];
 
                 if ($team->users()->where('email', $email)->exists()) {
                     Notification::make()
