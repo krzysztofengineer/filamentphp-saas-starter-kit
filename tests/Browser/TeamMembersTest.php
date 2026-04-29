@@ -78,10 +78,23 @@ it('cannot invite the same email twice', function () {
         ->assertSee('An invitation for that email already exists');
 
     assertDatabaseCount('invitations', 1);
-
 });
 
-it('cannot invite existing members', function () {});
+it('cannot invite existing members', function () {
+    $team = Team::factory()->create(['name' => 'Test']);
+    $user = User::factory()->create(['current_team_id' => $team->id]);
+    $team->members()->attach($user, ['role' => TeamRole::Administrator]);
+
+    actingAs($user);
+
+    visit('/app')
+        ->click('.fi-topbar button.fi-tenant-menu-trigger')
+        ->click('@team-members')
+        ->click('@invite-button')
+        ->fill('@invite-email', $user->email)
+        ->click('@invite-submit-button')
+        ->assertSee('That user is already a member');
+});
 
 // it('lists members with their names and the Owner badge for the actor', function () {
 //     $admin = User::factory()->withTeam()->create(['name' => 'Admin Person']);
