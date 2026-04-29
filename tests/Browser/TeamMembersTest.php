@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Invitation;
 use App\Models\Team;
 use App\Models\User;
 use App\TeamRole;
@@ -12,7 +13,6 @@ use function Pest\Laravel\assertDatabaseMissing;
 it('does not allow regular members to access team members', function () {
     $team = Team::factory()->create(['name' => 'Test']);
     $user = User::factory()->create(['current_team_id' => $team->id]);
-
     $team->members()->attach($user, ['role' => TeamRole::Member]);
 
     actingAs($user);
@@ -26,7 +26,6 @@ it('lists all team members', function () {
     $team = Team::factory()->create(['name' => 'Test']);
     $user = User::factory()->create(['current_team_id' => $team->id]);
     $otherUser = User::factory()->create();
-
     $team->members()->attach($user, ['role' => TeamRole::Administrator]);
     $team->members()->attach($otherUser, ['role' => TeamRole::Member]);
 
@@ -42,7 +41,6 @@ it('lists all team members', function () {
 it('can invite new members', function () {
     $team = Team::factory()->create(['name' => 'Test']);
     $user = User::factory()->create(['current_team_id' => $team->id]);
-
     $team->members()->attach($user, ['role' => TeamRole::Administrator]);
 
     actingAs($user);
@@ -62,6 +60,28 @@ it('can invite new members', function () {
         'email' => 'test@example.com',
     ]);
 });
+
+it('cannot invite the same email twice', function () {
+    $team = Team::factory()->create(['name' => 'Test']);
+    $user = User::factory()->create(['current_team_id' => $team->id]);
+    $team->members()->attach($user, ['role' => TeamRole::Administrator]);
+    Invitation::factory()->for($team)->create(['email' => 'test@example.com']);
+
+    actingAs($user);
+
+    visit('/app')
+        ->click('.fi-topbar button.fi-tenant-menu-trigger')
+        ->click('@team-members')
+        ->click('@invite-button')
+        ->fill('@invite-email', 'test@example.com')
+        ->click('@invite-submit-button')
+        ->assertSee('An invitation for that email already exists');
+
+    assertDatabaseCount('invitations', 1);
+
+});
+
+it('cannot invite existing members', function () {});
 
 // it('lists members with their names and the Owner badge for the actor', function () {
 //     $admin = User::factory()->withTeam()->create(['name' => 'Admin Person']);
