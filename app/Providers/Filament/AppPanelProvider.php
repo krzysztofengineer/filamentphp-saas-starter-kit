@@ -69,11 +69,13 @@ class AppPanelProvider extends PanelProvider
                 Action::make('teamDetails')
                     ->label('Team details')
                     ->icon('heroicon-o-identification')
+                    ->extraAttributes(['data-testid' => 'team-details'])
                     ->url(fn (): string => TeamDetails::getUrl())
                     ->visible(fn (): bool => TeamDetails::canAccess()),
                 Action::make('teamMembers')
                     ->label('Members')
                     ->icon('heroicon-o-users')
+                    ->extraAttributes(['data-testid' => 'team-members'])
                     ->url(fn (): string => TeamMembers::getUrl())
                     ->visible(fn (): bool => TeamMembers::canAccess()),
                 Action::make('teamBilling')

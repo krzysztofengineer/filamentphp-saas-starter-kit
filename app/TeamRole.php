@@ -5,14 +5,12 @@ namespace App;
 enum TeamRole: string
 {
     case Administrator = 'administrator';
-    case Manager = 'manager';
     case Member = 'member';
 
     public function label(): string
     {
         return match ($this) {
             self::Administrator => 'Administrator',
-            self::Manager => 'Manager',
             self::Member => 'Member',
         };
     }
@@ -21,14 +19,13 @@ enum TeamRole: string
     {
         return match ($this) {
             self::Administrator => 'primary',
-            self::Manager => 'warning',
             self::Member => 'gray',
         };
     }
 
     public function canManageTeam(): bool
     {
-        return $this === self::Administrator || $this === self::Manager;
+        return $this === self::Administrator;
     }
 
     public function canDeleteTeam(): bool

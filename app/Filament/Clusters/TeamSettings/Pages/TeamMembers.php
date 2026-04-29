@@ -44,6 +44,15 @@ class TeamMembers extends Page
         return 'Members';
     }
 
+    public static function getNavigationItems(): array
+    {
+        return [
+            parent::getNavigationItems()[0]->extraAttributes([
+                'data-testid' => 'team-members',
+            ]),
+        ];
+    }
+
     public function content(Schema $schema): Schema
     {
         return $schema->components([

@@ -44,7 +44,7 @@ class TeamInvitationsTable extends TableWidget
                             ->size(TextSize::Small),
                     ]),
                     SelectColumn::make('role')
-                        ->options(self::roleOptions())
+                        ->enum(TeamRole::class)
                         ->selectablePlaceholder(false)
                         ->native(false)
                         ->extraAttributes(['data-testid' => 'invitation-role-select'])
@@ -104,10 +104,11 @@ class TeamInvitationsTable extends TableWidget
                     ->maxLength(255)
                     ->placeholder('teammate@example.com')
                     ->prefixIcon(Heroicon::OutlinedEnvelope)
+                    ->extraAttributes(['data-testid' => 'invite-email'])
                     ->extraInputAttributes(['data-testid' => 'invite-email']),
                 Select::make('role')
                     ->label('Role')
-                    ->options(self::roleOptions())
+                    ->enum(TeamRole::class)
                     ->required()
                     ->native(false)
                     ->prefixIcon(Heroicon::OutlinedShieldCheck)
@@ -186,15 +187,5 @@ class TeamInvitationsTable extends TableWidget
 
                 $this->resetTable();
             });
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private static function roleOptions(): array
-    {
-        return collect(TeamRole::cases())
-            ->mapWithKeys(fn (TeamRole $role): array => [$role->value => $role->label()])
-            ->all();
     }
 }

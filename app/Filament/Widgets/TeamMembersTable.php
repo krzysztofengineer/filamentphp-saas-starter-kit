@@ -111,7 +111,6 @@ class TeamMembersTable extends TableWidget
 
         $rolePriority = [
             TeamRole::Administrator->value => 0,
-            TeamRole::Manager->value => 1,
             TeamRole::Member->value => 2,
         ];
 
