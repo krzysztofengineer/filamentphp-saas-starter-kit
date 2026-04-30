@@ -12,6 +12,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
@@ -31,13 +32,12 @@ class TeamInvitationsTable extends TableWidget
     {
         return $table
             ->heading(CategoryHeading::make('heroicon-o-envelope', 'primary', 'Invitations'))
-            ->description('Pending invitations — recipients will see them after they sign in.')
             ->records(fn (): Collection => $this->getInvitations())
             ->columns([
                 Split::make([
                     Stack::make([
                         TextColumn::make('email')
-                            ->weight('bold'),
+                            ->weight(FontWeight::Medium),
                         TextColumn::make('created_at')
                             ->state(fn (Invitation $record): string => 'Sent '.$record->created_at->diffForHumans())
                             ->color('gray')
@@ -45,9 +45,19 @@ class TeamInvitationsTable extends TableWidget
                     ]),
                     SelectColumn::make('role')
                         ->enum(TeamRole::class)
+                        ->options(TeamRole::class)
                         ->selectablePlaceholder(false)
                         ->native(false)
                         ->extraAttributes(['data-testid' => 'invitation-role-select'])
+                        ->afterStateUpdated(function ($state, $record) {
+                            $role = TeamRole::tryFrom($state);
+                            $record->update(['role' => $role]);
+
+                            Notification::make()
+                                ->success()
+                                ->body('Role updated')
+                                ->send();
+                        })
                         ->grow(false),
                 ]),
             ])

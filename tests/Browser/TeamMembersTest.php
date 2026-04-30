@@ -9,6 +9,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
+use function PHPUnit\Framework\assertEquals;
 
 it('does not allow regular members to access team members', function () {
     $team = Team::factory()->create(['name' => 'Test']);
@@ -94,6 +95,24 @@ it('cannot invite existing members', function () {
         ->fill('@invite-email', $user->email)
         ->click('@invite-submit-button')
         ->assertSee('That user is already a member');
+});
+
+it('can update invitation role', function () {
+    $team = Team::factory()->create(['name' => 'Test']);
+    $user = User::factory()->create(['current_team_id' => $team->id]);
+    $team->members()->attach($user, ['role' => TeamRole::Administrator]);
+    $invitation = Invitation::factory()->for($team)->member()->create(['email' => 'test@example.com']);
+
+    actingAs($user);
+
+    visit('/app')
+        ->click('.fi-topbar button.fi-tenant-menu-trigger')
+        ->click('@team-members')
+        ->click('[data-testid="invitation-role-select"]')
+        ->click('.fi-dropdown-panel:visible [data-value="administrator"]')
+        ->assertSee('Role updated');
+
+    assertEquals(TeamRole::Administrator, $invitation->fresh()->role);
 });
 
 // it('lists members with their names and the Owner badge for the actor', function () {

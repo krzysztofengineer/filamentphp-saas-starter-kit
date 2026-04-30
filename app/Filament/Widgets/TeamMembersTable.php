@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
@@ -39,7 +40,7 @@ class TeamMembersTable extends TableWidget
                         ->size(40),
                     Stack::make([
                         TextColumn::make('name')
-                            ->weight('bold'),
+                            ->weight(FontWeight::Medium),
                         TextColumn::make('email')
                             ->color('gray')
                             ->size(TextSize::Small),
