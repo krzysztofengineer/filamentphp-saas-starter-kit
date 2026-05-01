@@ -1,9 +1,13 @@
 <?php
 
+use App\Filament\Widgets\TeamMembersTable;
 use App\Models\Invitation;
 use App\Models\Team;
 use App\Models\User;
 use App\TeamRole;
+use Filament\Actions\Testing\TestAction;
+use Filament\Facades\Filament;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -152,4 +156,28 @@ it('removes team members', function () {
         ->assertSee('Member removed');
 
     assertDatabaseMissing('team_user', ['team_id' => $team->id, 'user_id' => $member->id]);
+});
+
+it('cannot remove team owner', function () {
+    $owner = User::factory()->create();
+    $team = Team::factory()->create(['name' => 'Test', 'user_id' => $owner->id]);
+    $user = User::factory()->create(['current_team_id' => $team->id]);
+    $team->members()->attach($owner, ['role' => TeamRole::Administrator]);
+    $team->members()->attach($user, ['role' => TeamRole::Administrator]);
+
+    actingAs($user);
+
+    visit('/app')
+        ->click('.fi-topbar button.fi-tenant-menu-trigger')
+        ->click('@team-members')
+        ->assertSee('Owner')
+        ->assertNotPresent('button[aria-label="Actions"]');
+
+    Filament::setTenant($team);
+
+    Livewire::test(TeamMembersTable::class)
+        ->call('mountAction', 'removeMember', [], ['table' => true, 'recordKey' => $owner->id])
+        ->call('callMountedAction');
+
+    assertDatabaseHas('team_user', ['team_id' => $team->id, 'user_id' => $owner->id]);
 });
