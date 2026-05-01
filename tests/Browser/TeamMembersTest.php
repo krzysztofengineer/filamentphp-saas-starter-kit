@@ -133,3 +133,23 @@ it('removes the invitation', function () {
 
     assertDatabaseMissing('invitations', ['id' => $invitation->id]);
 });
+
+it('removes team members', function () {
+    $team = Team::factory()->create(['name' => 'Test']);
+    $user = User::factory()->create(['current_team_id' => $team->id]);
+    $member = User::factory()->create();
+    $team->members()->attach($user, ['role' => TeamRole::Administrator]);
+    $team->members()->attach($member, ['role' => TeamRole::Member]);
+
+    actingAs($user);
+
+    visit('/app')
+        ->click('.fi-topbar button.fi-tenant-menu-trigger')
+        ->click('@team-members')
+        ->click('button[aria-label="Actions"]')
+        ->click('[data-testid="remove-member-button"]')
+        ->click('[data-testid="remove-member-confirm"]')
+        ->assertSee('Member removed');
+
+    assertDatabaseMissing('team_user', ['team_id' => $team->id, 'user_id' => $member->id]);
+});
