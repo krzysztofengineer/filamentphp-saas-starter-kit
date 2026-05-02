@@ -37,4 +37,9 @@ class CustomDashboard extends Dashboard
             PendingDeletionBanner::class,
         ];
     }
+
+    public function getWidgets(): array
+    {
+        return [];
+    }
 }
