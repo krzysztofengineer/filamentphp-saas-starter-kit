@@ -3,7 +3,7 @@
 use App\Models\Team;
 use App\Models\TeamInvitation;
 use App\Models\User;
-use App\Notifications\TeamInviteNotification;
+use App\Notifications\TeamInvitationNotification;
 use App\TeamRole;
 use Illuminate\Support\Facades\Notification;
 
@@ -114,7 +114,7 @@ it('removes the invitation', function () {
 
 it('sends the invitation notification', function () {
     $team = Team::factory()->create(['name' => 'Test']);
-    $user = User::factory()->create(['current_team_id' => $team->id]);
+    $user = User::factory()->create(['current_team_id' => $team->id, 'name' => 'Alice']);
     $team->members()->attach($user, ['role' => TeamRole::Administrator]);
 
     actingAs($user);
@@ -128,7 +128,20 @@ it('sends the invitation notification', function () {
         ->assertNotPresent('@invite-submit-button');
 
     Notification::assertSentOnDemand(
-        TeamInviteNotification::class,
-        fn ($notification, array $channels, object $notifiable): bool => $notifiable->routeNotificationFor('mail') === 'test@example.com',
+        TeamInvitationNotification::class,
+        function (TeamInvitationNotification $notification, array $channels, object $notifiable) use ($team, $user): bool {
+            if ($notifiable->routeNotificationFor('mail') !== 'test@example.com') {
+                return false;
+            }
+
+            $mail = $notification->toMail($notifiable);
+            $rendered = (string) $mail->render();
+
+            return str_contains((string) $mail->subject, $team->name)
+                && str_contains($rendered, $user->name)
+                && str_contains($rendered, $team->name)
+                && str_contains($rendered, route('filament.app.auth.login'))
+                && str_contains($rendered, route('filament.app.auth.register'));
+        },
     );
 });

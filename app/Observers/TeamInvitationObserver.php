@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\TeamInvitation;
-use App\Notifications\TeamInviteNotification;
+use App\Notifications\TeamInvitationNotification;
 use Illuminate\Support\Facades\Notification;
 
 class TeamInvitationObserver
@@ -11,6 +11,6 @@ class TeamInvitationObserver
     public function created(TeamInvitation $invitation): void
     {
         Notification::route('mail', $invitation->email)
-            ->notify(new TeamInviteNotification);
+            ->notify(new TeamInvitationNotification($invitation));
     }
 }
