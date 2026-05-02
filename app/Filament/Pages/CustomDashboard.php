@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\DashboardNavigation;
 use App\Filament\Widgets\PendingDeletionBanner;
 use BackedEnum;
 use Filament\Pages\Dashboard;
@@ -36,13 +35,6 @@ class CustomDashboard extends Dashboard
     {
         return [
             PendingDeletionBanner::class,
-        ];
-    }
-
-    public function getWidgets(): array
-    {
-        return [
-            DashboardNavigation::class,
         ];
     }
 }

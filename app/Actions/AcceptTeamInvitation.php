@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class AcceptTeamInvitation
 {
-    public function __invoke(TeamInvitation $invitation, User $user): void
+    public function handle(TeamInvitation $invitation, User $user): void
     {
         DB::transaction(function () use ($invitation, $user) {
             $role = $invitation->role ?? TeamRole::Member;
@@ -19,6 +19,8 @@ class AcceptTeamInvitation
                 ->syncWithoutDetaching([
                     $user->id => ['role' => $role->value],
                 ]);
+
+            $user->update(['current_team_id' => $invitation->team_id]);
 
             $invitation->delete();
         });

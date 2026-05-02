@@ -50,7 +50,7 @@ it('uses the invitation role when accepted', function () {
 
     $invitee = User::factory()->create(['email' => 'invitee@example.com']);
 
-    (new AcceptTeamInvitation)($invitation, $invitee);
+    (new AcceptTeamInvitation)->handle($invitation, $invitee);
 
     assertDatabaseHas('team_user', [
         'team_id' => $team->id,

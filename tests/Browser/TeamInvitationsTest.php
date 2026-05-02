@@ -29,7 +29,8 @@ it('invites new members', function () {
 
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->click('@team-members')
+        ->click('@team-settings')
+        ->click('a[href*="/settings/members"]')
         ->click('@invite-button')
         ->fill('@invite-email', 'test@example.com')
         ->click('@invite-submit-button')
@@ -53,7 +54,8 @@ it('cannot invite the same email twice', function () {
 
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->click('@team-members')
+        ->click('@team-settings')
+        ->click('a[href*="/settings/members"]')
         ->click('@invite-button')
         ->fill('@invite-email', 'test@example.com')
         ->click('@invite-submit-button')
@@ -71,7 +73,8 @@ it('cannot invite existing members', function () {
 
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->click('@team-members')
+        ->click('@team-settings')
+        ->click('a[href*="/settings/members"]')
         ->click('@invite-button')
         ->fill('@invite-email', $user->email)
         ->click('@invite-submit-button')
@@ -88,7 +91,8 @@ it('updates invitation role', function () {
 
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->click('@team-members')
+        ->click('@team-settings')
+        ->click('a[href*="/settings/members"]')
         ->click('[data-testid="invitation-role-select"]')
         ->click('.fi-dropdown-panel:visible [data-value="administrator"]')
         ->assertSee('Role updated');
@@ -106,7 +110,8 @@ it('removes the invitation', function () {
 
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->click('@team-members')
+        ->click('@team-settings')
+        ->click('a[href*="/settings/members"]')
         ->click('button[aria-label="Actions"]')
         ->click('[data-testid="revoke-invitation-button"]')
         ->click('[data-testid="revoke-invitation-confirm"]')
@@ -124,7 +129,8 @@ it('sends the invitation notification', function () {
 
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->click('@team-members')
+        ->click('@team-settings')
+        ->click('a[href*="/settings/members"]')
         ->click('@invite-button')
         ->fill('@invite-email', 'test@example.com')
         ->click('@invite-submit-button')

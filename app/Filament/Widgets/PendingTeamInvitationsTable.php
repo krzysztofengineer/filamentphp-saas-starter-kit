@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Actions\AcceptTeamInvitation;
+use App\Actions\DeclineTeamInvitation;
 use App\Filament\Support\CategoryHeading;
 use App\Models\TeamInvitation;
 use App\Models\User;
@@ -66,8 +67,7 @@ class PendingTeamInvitationsTable extends TableWidget
                     return;
                 }
 
-                (new AcceptTeamInvitation)($record, $user);
-                $user->update(['current_team_id' => $record->team_id]);
+                (new AcceptTeamInvitation)->handle($record, $user);
 
                 Notification::make()->success()->title('Joined the team.')->send();
 
@@ -93,7 +93,7 @@ class PendingTeamInvitationsTable extends TableWidget
                     return;
                 }
 
-                $record->delete();
+                (new DeclineTeamInvitation)->handle($record);
 
                 Notification::make()->success()->title('Invitation declined.')->send();
 

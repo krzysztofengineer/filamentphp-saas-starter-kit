@@ -2,6 +2,8 @@
 
 namespace App\Filament\Clusters\AccountSettings\Pages;
 
+use App\Actions\ChangeAccountPassword;
+use App\Actions\UpdateAccountProfile;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Support\CategoryHeading;
 use App\Models\User;
@@ -154,9 +156,7 @@ class AccountSettings extends Page implements HasActions, HasForms
                 /** @var User $user */
                 $user = auth()->user();
 
-                $user->update([
-                    'name' => $data['name'],
-                ]);
+                (new UpdateAccountProfile)->handle($user, ['name' => $data['name']]);
 
                 Notification::make()
                     ->success()
@@ -199,7 +199,7 @@ class AccountSettings extends Page implements HasActions, HasForms
                     ]);
                 }
 
-                $user->update(['password' => $new]);
+                (new ChangeAccountPassword)->handle($user, $new);
 
                 $this->form->fill([
                     'name' => $user->name,

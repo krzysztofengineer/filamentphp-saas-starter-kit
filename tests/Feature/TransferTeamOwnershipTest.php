@@ -15,7 +15,7 @@ it('promotes the new admin, demotes the previous, and moves team ownership', fun
     $team->members()->attach($oldOwner, ['role' => TeamRole::Administrator]);
     $team->members()->attach($newOwner, ['role' => TeamRole::Member]);
 
-    (new TransferTeamOwnership)($team, $oldOwner, $newOwner);
+    (new TransferTeamOwnership)->handle($team, $oldOwner, $newOwner);
 
     assertDatabaseHas('teams', ['id' => $team->id, 'user_id' => $newOwner->id]);
     assertDatabaseHas('team_user', ['team_id' => $team->id, 'user_id' => $oldOwner->id, 'role' => TeamRole::Member->value]);

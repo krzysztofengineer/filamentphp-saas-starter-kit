@@ -24,7 +24,7 @@ it('moves owner to the new admin after a transfer', function () {
     $team->members()->attach($oldOwner, ['role' => TeamRole::Administrator]);
     $team->members()->attach($newOwner, ['role' => TeamRole::Member]);
 
-    (new TransferTeamOwnership)($team, $oldOwner, $newOwner);
+    (new TransferTeamOwnership)->handle($team, $oldOwner, $newOwner);
 
     assertDatabaseHas('teams', ['id' => $team->id, 'user_id' => $newOwner->id]);
 });

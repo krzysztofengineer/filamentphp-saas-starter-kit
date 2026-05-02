@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Actions\CancelAccountDeletion;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -41,7 +42,7 @@ class PendingDeletionBanner extends Widget implements HasActions
                 /** @var User $user */
                 $user = auth()->user();
 
-                $user->update(['scheduled_for_deletion_at' => null]);
+                (new CancelAccountDeletion)->handle($user);
 
                 Notification::make()
                     ->success()

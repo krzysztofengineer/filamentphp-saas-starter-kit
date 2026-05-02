@@ -8,7 +8,7 @@ use App\TeamRole;
 
 class ChangeTeamRole
 {
-    public function __invoke(Team $team, User $user, TeamRole $role): void
+    public function handle(Team $team, User $user, TeamRole $role): void
     {
         $team->users()->updateExistingPivot($user->id, ['role' => $role->value]);
     }

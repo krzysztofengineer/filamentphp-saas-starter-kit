@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\AccountSettings\Pages;
 
+use App\Actions\ScheduleAccountDeletion;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Support\CategoryHeading;
 use App\Models\User;
@@ -110,7 +111,7 @@ class AccountAdvanced extends Page implements HasActions, HasForms
                     return;
                 }
 
-                $user->update(['scheduled_for_deletion_at' => now()]);
+                (new ScheduleAccountDeletion)->handle($user);
 
                 auth()->logout();
                 request()->session()?->invalidate();

@@ -22,7 +22,7 @@ it('attaches the user to the team and removes the invitation', function () {
         'email' => 'invitee@example.com',
     ]);
 
-    (new AcceptTeamInvitation)($invitation, $invitee);
+    (new AcceptTeamInvitation)->handle($invitation, $invitee);
 
     assertTrue($team->fresh()->members->contains($invitee));
     assertDatabaseMissing('team_invitations', ['id' => $invitation->id]);

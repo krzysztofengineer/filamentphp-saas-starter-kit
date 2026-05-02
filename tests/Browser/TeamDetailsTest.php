@@ -30,7 +30,7 @@ it('updates the team name', function () {
 
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->click('@team-details')
+        ->click('@team-settings')
         ->fill('@team-details-name', 'New name')
         ->click('@team-details-save')
         ->assertSee('Team saved');

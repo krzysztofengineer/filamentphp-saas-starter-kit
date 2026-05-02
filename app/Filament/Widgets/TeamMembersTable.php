@@ -2,6 +2,8 @@
 
 namespace App\Filament\Widgets;
 
+use App\Actions\ChangeTeamRole;
+use App\Actions\RemoveTeamMember;
 use App\Filament\Support\CategoryHeading;
 use App\Models\Team;
 use App\Models\User;
@@ -77,7 +79,7 @@ class TeamMembersTable extends TableWidget
                                 return $record->pivot->role;
                             }
 
-                            $team->users()->updateExistingPivot($record->id, ['role' => $newRole->value]);
+                            (new ChangeTeamRole)->handle($team, $record, $newRole);
 
                             Notification::make()
                                 ->success()
@@ -152,11 +154,7 @@ class TeamMembersTable extends TableWidget
                     return;
                 }
 
-                $team->users()->detach($record->id);
-
-                if ($record->current_team_id === $team->id) {
-                    $record->update(['current_team_id' => null]);
-                }
+                (new RemoveTeamMember)->handle($team, $record);
 
                 Notification::make()
                     ->success()

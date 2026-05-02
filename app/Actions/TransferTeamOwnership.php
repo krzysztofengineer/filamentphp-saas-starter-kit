@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class TransferTeamOwnership
 {
-    public function __invoke(Team $team, User $currentOwner, User $newOwner): void
+    public function handle(Team $team, User $currentOwner, User $newOwner): void
     {
         DB::transaction(function () use ($team, $currentOwner, $newOwner) {
             $team->users()->updateExistingPivot($newOwner->id, ['role' => TeamRole::Administrator->value]);

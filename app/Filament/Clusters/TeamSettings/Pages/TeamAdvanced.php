@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\TeamSettings\Pages;
 
+use App\Actions\DeleteTeam;
 use App\Actions\TransferTeamOwnership;
 use App\Filament\Clusters\TeamSettings\TeamSettingsCluster;
 use App\Filament\Support\CategoryHeading;
@@ -142,7 +143,7 @@ class TeamAdvanced extends Page implements HasActions, HasForms
                     return;
                 }
 
-                (new TransferTeamOwnership)($team, $actor, $newAdmin);
+                (new TransferTeamOwnership)->handle($team, $actor, $newAdmin);
 
                 Notification::make()
                     ->success()
@@ -194,12 +195,7 @@ class TeamAdvanced extends Page implements HasActions, HasForms
                     return;
                 }
 
-                $nextTeam = $user->teams()
-                    ->where('teams.id', '!=', $team->id)
-                    ->orderBy('teams.id')
-                    ->first();
-
-                $team->delete();
+                $nextTeam = (new DeleteTeam)->handle($team, $user);
 
                 Notification::make()
                     ->success()
@@ -207,7 +203,6 @@ class TeamAdvanced extends Page implements HasActions, HasForms
                     ->send();
 
                 if ($nextTeam !== null) {
-                    $user->update(['current_team_id' => $nextTeam->id]);
                     $this->redirect(Filament::getUrl($nextTeam));
 
                     return;

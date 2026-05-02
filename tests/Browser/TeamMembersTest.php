@@ -20,7 +20,8 @@ it('does not allow regular members to access team members', function () {
 
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->assertNotPresent('@team-members');
+        ->click('@team-settings')
+        ->assertNotPresent('a[href*="/settings/members"]');
 });
 
 it('lists all team members', function () {
@@ -34,7 +35,8 @@ it('lists all team members', function () {
 
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->click('@team-members')
+        ->click('@team-settings')
+        ->click('a[href*="/settings/members"]')
         ->assertSee($user->name)
         ->assertSee($otherUser->name);
 });
@@ -50,7 +52,8 @@ it('removes team members', function () {
 
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->click('@team-members')
+        ->click('@team-settings')
+        ->click('a[href*="/settings/members"]')
         ->click('button[aria-label="Actions"]')
         ->click('[data-testid="remove-member-button"]')
         ->click('[data-testid="remove-member-confirm"]')
@@ -70,7 +73,8 @@ it('cannot remove team owner', function () {
 
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->click('@team-members')
+        ->click('@team-settings')
+        ->click('a[href*="/settings/members"]')
         ->assertSee('Owner')
         ->assertNotPresent('button[aria-label="Actions"]');
 

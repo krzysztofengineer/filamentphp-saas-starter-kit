@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Actions\CreateTeamForUser;
 use App\Models\Team;
-use App\TeamRole;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Tenancy\RegisterTenant;
 use Filament\Schemas\Schema;
@@ -45,15 +45,6 @@ class CreateTeam extends RegisterTenant
 
     protected function handleRegistration(array $data): Team
     {
-        $team = Team::create([
-            ...$data,
-            'user_id' => Auth::id(),
-        ]);
-
-        $team->users()->attach(Auth::user(), ['role' => TeamRole::Administrator->value]);
-
-        Auth::user()->update(['current_team_id' => $team->id]);
-
-        return $team;
+        return (new CreateTeamForUser)->handle(Auth::user(), $data['name']);
     }
 }

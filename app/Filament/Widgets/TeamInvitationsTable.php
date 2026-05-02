@@ -2,6 +2,9 @@
 
 namespace App\Filament\Widgets;
 
+use App\Actions\InviteToTeam;
+use App\Actions\RevokeTeamInvitation;
+use App\Actions\UpdateTeamInvitationRole;
 use App\Filament\Support\CategoryHeading;
 use App\Models\Team;
 use App\Models\TeamInvitation;
@@ -51,7 +54,7 @@ class TeamInvitationsTable extends TableWidget
                         ->extraAttributes(['data-testid' => 'invitation-role-select'])
                         ->afterStateUpdated(function ($state, $record) {
                             $role = TeamRole::tryFrom($state);
-                            $record->update(['role' => $role]);
+                            (new UpdateTeamInvitationRole)->handle($record, $role);
 
                             Notification::make()
                                 ->success()
@@ -147,12 +150,7 @@ class TeamInvitationsTable extends TableWidget
                     return;
                 }
 
-                TeamInvitation::create([
-                    'team_id' => $team->id,
-                    'user_id' => auth()->id(),
-                    'email' => $email,
-                    'role' => $role->value,
-                ]);
+                (new InviteToTeam)->handle($team, auth()->user(), $email, $role);
 
                 Notification::make()
                     ->success()
@@ -182,7 +180,7 @@ class TeamInvitationsTable extends TableWidget
                     return;
                 }
 
-                $record->delete();
+                (new RevokeTeamInvitation)->handle($record);
 
                 Notification::make()
                     ->success()

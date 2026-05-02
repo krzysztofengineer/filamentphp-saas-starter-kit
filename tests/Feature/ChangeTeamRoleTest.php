@@ -15,7 +15,7 @@ it('changes a member role on the team', function () {
     $team->members()->attach($admin, ['role' => TeamRole::Administrator]);
     $team->members()->attach($member, ['role' => TeamRole::Member]);
 
-    (new ChangeTeamRole)($team, $member, TeamRole::Administrator);
+    (new ChangeTeamRole)->handle($team, $member, TeamRole::Administrator);
 
     assertDatabaseHas('team_user', ['team_id' => $team->id, 'user_id' => $member->id, 'role' => TeamRole::Administrator->value]);
 });

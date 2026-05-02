@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\TeamSettings\Pages;
 
+use App\Actions\UpdateTeamProfile;
 use App\Filament\Clusters\TeamSettings\TeamSettingsCluster;
 use App\Filament\Support\CategoryHeading;
 use App\Models\Team;
@@ -108,9 +109,7 @@ class TeamDetails extends Page implements HasActions, HasForms
                 /** @var Team $team */
                 $team = Filament::getTenant();
 
-                $team->update([
-                    'name' => $data['name'],
-                ]);
+                (new UpdateTeamProfile)->handle($team, ['name' => $data['name']]);
 
                 Notification::make()
                     ->success()

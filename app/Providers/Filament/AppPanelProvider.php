@@ -68,28 +68,12 @@ class AppPanelProvider extends PanelProvider
             ->tenant(Team::class)
             ->tenantRegistration(CreateTeam::class)
             ->tenantMenuItems([
-                Action::make('teamDetails')
-                    ->label('Team details')
-                    ->icon('heroicon-o-identification')
-                    ->extraAttributes(['data-testid' => 'team-details'])
+                Action::make('teamSettings')
+                    ->label('Team settings')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->extraAttributes(['data-testid' => 'team-settings'])
                     ->url(fn (): string => TeamDetails::getUrl())
                     ->visible(fn (): bool => TeamDetails::canAccess()),
-                Action::make('teamMembers')
-                    ->label('Members')
-                    ->icon('heroicon-o-users')
-                    ->extraAttributes(['data-testid' => 'team-members'])
-                    ->url(fn (): string => TeamMembers::getUrl())
-                    ->visible(fn (): bool => TeamMembers::canAccess()),
-                Action::make('teamBilling')
-                    ->label('Subscription')
-                    ->icon('heroicon-o-credit-card')
-                    ->url(fn (): string => TeamBilling::getUrl())
-                    ->visible(fn (): bool => TeamBilling::canAccess()),
-                Action::make('teamAdvanced')
-                    ->label('Advanced')
-                    ->icon('heroicon-o-shield-exclamation')
-                    ->url(fn (): string => TeamAdvanced::getUrl())
-                    ->visible(fn (): bool => TeamAdvanced::canAccess()),
             ])
             ->userMenuItems([
                 Action::make('accountSettings')
