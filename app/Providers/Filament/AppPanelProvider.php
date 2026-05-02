@@ -13,7 +13,7 @@ use App\Filament\Clusters\TeamSettings\Pages\TeamMembers;
 use App\Filament\Pages\Auth\CustomLogin;
 use App\Filament\Pages\Auth\CustomRegister;
 use App\Filament\Pages\CreateTeam;
-use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\CustomDashboard;
 use App\Http\Middleware\SaveCurrentTeam;
 use App\Models\Team;
 use Filament\Actions\Action;
@@ -111,13 +111,13 @@ class AppPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\Filament\Clusters')
             ->pages([
-                Dashboard::class,
+                CustomDashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => $builder
                 ->groups([
                     NavigationGroup::make()->items([
-                        ...Dashboard::getNavigationItems(),
+                        ...CustomDashboard::getNavigationItems(),
                     ]),
                     NavigationGroup::make('Account')
                         ->items([

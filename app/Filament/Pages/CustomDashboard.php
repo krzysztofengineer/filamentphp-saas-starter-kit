@@ -2,21 +2,20 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\DashboardNavigation;
 use App\Filament\Widgets\PendingDeletionBanner;
 use BackedEnum;
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 
-class Dashboard extends Page
+class CustomDashboard extends Dashboard
 {
     protected static ?string $slug = '/';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
 
     protected static ?int $navigationSort = -1;
-
-    protected string $view = 'filament.pages.dashboard';
 
     public function getTitle(): string
     {
@@ -37,6 +36,13 @@ class Dashboard extends Page
     {
         return [
             PendingDeletionBanner::class,
+        ];
+    }
+
+    public function getWidgets(): array
+    {
+        return [
+            DashboardNavigation::class,
         ];
     }
 }

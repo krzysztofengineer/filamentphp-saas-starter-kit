@@ -36,12 +36,6 @@
                     class="relative flex flex-col rounded-2xl bg-white p-5 sm:p-6 dark:bg-gray-900"
                     data-testid="plan-{{ $plan['key'] }}"
                 >
-                    @if (! empty($plan['badge']))
-                        <span class="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-(--primary-600) px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
-                            {{ $plan['badge'] }}
-                        </span>
-                    @endif
-
                     <h3 class="text-lg font-bold text-gray-950 dark:text-white">{{ $plan['name'] }}</h3>
 
                     @if (! empty($plan['description']))
