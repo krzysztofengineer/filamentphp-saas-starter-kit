@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Clusters\AccountSettings\Pages\AccountAdvanced;
 use App\Filament\Clusters\AccountSettings\Pages\AccountSettings;
+use App\Filament\Clusters\AccountSettings\Pages\TeamInvitations;
 use App\Filament\Clusters\TeamSettings\Pages\TeamAdvanced;
 use App\Filament\Clusters\TeamSettings\Pages\TeamBilling;
 use App\Filament\Clusters\TeamSettings\Pages\TeamDetails;
@@ -96,10 +97,11 @@ class AppPanelProvider extends PanelProvider
                     ->icon('heroicon-o-user')
                     ->url(fn (): ?string => filament()->getTenant() ? AccountSettings::getUrl() : null)
                     ->visible(fn (): bool => filament()->getTenant() !== null && AccountSettingsCluster::canAccess()),
-                Action::make('accountAdvanced')
-                    ->label('Advanced')
-                    ->icon('heroicon-o-shield-exclamation')
-                    ->url(fn (): ?string => filament()->getTenant() ? AccountAdvanced::getUrl() : null)
+                Action::make('teamInvitations')
+                    ->label('Team invitations')
+                    ->icon('heroicon-o-envelope-open')
+                    ->extraAttributes(['data-testid' => 'user-menu-team-invitations'])
+                    ->url(fn (): ?string => filament()->getTenant() ? TeamInvitations::getUrl() : null)
                     ->visible(fn (): bool => filament()->getTenant() !== null && AccountSettingsCluster::canAccess()),
             ])
             ->maxContentWidth(Width::Full)

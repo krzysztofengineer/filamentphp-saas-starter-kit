@@ -52,6 +52,8 @@ class CreateTeam extends RegisterTenant
 
         $team->users()->attach(Auth::user(), ['role' => TeamRole::Administrator->value]);
 
+        Auth::user()->update(['current_team_id' => $team->id]);
+
         return $team;
     }
 }

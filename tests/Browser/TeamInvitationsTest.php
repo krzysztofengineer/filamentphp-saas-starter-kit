@@ -143,10 +143,35 @@ it('sends the invitation notification', function () {
             return str_contains((string) $mail->subject, $team->name)
                 && str_contains($rendered, $user->name)
                 && str_contains($rendered, $team->name)
-                && str_contains($rendered, route('filament.app.auth.login'))
-                && str_contains($rendered, route('filament.app.auth.register'));
+                && str_contains($rendered, route('team-invitations.show'));
         },
     );
+});
+
+it('accepts the invitation for the existing user', function () {
+    $admin = User::factory()->create();
+    $team = Team::factory()->create(['name' => 'Acme', 'user_id' => $admin->id]);
+    $team->members()->attach($admin, ['role' => TeamRole::Administrator]);
+
+    $invitee = User::factory()->create(['email' => 'invitee@example.com']);
+    $inviteeTeam = $invitee->ownedTeams()->first();
+
+    $invitation = TeamInvitation::factory()->for($team)->member()->create([
+        'email' => 'invitee@example.com',
+        'user_id' => $admin->id,
+    ]);
+
+    visit('/team-invitations')
+        ->fill('@login-email', 'invitee@example.com')
+        ->fill('@login-password', 'password')
+        ->click('@login-submit')
+        ->assertPathIs("/app/{$inviteeTeam->uuid}/account/team-invitations")
+        ->assertSee($team->name)
+        ->click('[data-testid="invitation-accept"]')
+        ->assertSee('Joined the team');
+
+    assertDatabaseMissing('team_invitations', ['id' => $invitation->id]);
+    assertTrue($team->fresh()->members->contains($invitee));
 });
 
 it('accepts the invitation for the new user', function () {
@@ -159,8 +184,8 @@ it('accepts the invitation for the new user', function () {
         'user_id' => $admin->id,
     ]);
 
-    visit('/')
-        ->click('@topbar-register')
+    visit('/team-invitations')
+        ->click('a[href*="register"]')
         ->fill('@register-name', 'Newbie')
         ->fill('@register-email', 'newbie@example.com')
         ->fill('@register-password', 'password')
@@ -178,7 +203,12 @@ it('accepts the invitation for the new user', function () {
         ['id' => $user->id, 'hash' => sha1($user->email)],
     );
 
+    $tenant = $user->ownedTeams()->first();
+
     visit($verifyUrl)
+        ->click('button.fi-user-menu-trigger')
+        ->click('@user-menu-team-invitations')
+        ->assertPathIs("/app/{$tenant->uuid}/account/team-invitations")
         ->assertSee($team->name)
         ->click('[data-testid="invitation-accept"]')
         ->assertSee('Joined the team');
@@ -186,4 +216,34 @@ it('accepts the invitation for the new user', function () {
     assertDatabaseMissing('team_invitations', ['id' => $invitation->id]);
     assertNotNull($user->fresh()->email_verified_at);
     assertTrue($team->fresh()->members->contains($user));
+});
+
+it('does not show other members invitations', function () {
+    $invitee = User::factory()->create();
+    $tenant = $invitee->ownedTeams()->first();
+
+    $otherTeam = Team::factory()->create();
+    TeamInvitation::factory()->for($otherTeam)->create(['email' => 'somebody-else@example.com']);
+
+    actingAs($invitee);
+
+    visit("/app/{$tenant->uuid}/account/team-invitations")
+        ->assertSee('No invitations');
+});
+
+it('shows invitations from all teams', function () {
+    $invitee = User::factory()->create();
+    $tenant = $invitee->ownedTeams()->first();
+
+    $teamA = Team::factory()->create(['name' => 'Alpha']);
+    $teamB = Team::factory()->create(['name' => 'Beta']);
+
+    TeamInvitation::factory()->for($teamA)->create(['email' => $invitee->email]);
+    TeamInvitation::factory()->for($teamB)->create(['email' => $invitee->email]);
+
+    actingAs($invitee);
+
+    visit("/app/{$tenant->uuid}/account/team-invitations")
+        ->assertSee('Alpha')
+        ->assertSee('Beta');
 });

@@ -57,7 +57,5 @@
         @if (auth()->user()?->isScheduledForDeletion())
             @livewire(\App\Filament\Widgets\PendingDeletionBanner::class)
         @endif
-
-        @livewire(\App\Filament\Widgets\PendingTeamInvitationsTable::class)
     </div>
 </x-filament-panels::page>
