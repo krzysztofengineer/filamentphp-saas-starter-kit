@@ -1,7 +1,7 @@
 <?php
 
-use App\Actions\AcceptInvitation;
-use App\Models\Invitation;
+use App\Actions\AcceptTeamInvitation;
+use App\Models\TeamInvitation;
 use App\Models\User;
 use App\TeamRole;
 
@@ -9,7 +9,7 @@ it('persists the role chosen at invite time', function () {
     $admin = User::factory()->withTeam()->create();
     $team = $admin->teams()->first();
 
-    $invitation = Invitation::create([
+    $invitation = TeamInvitation::create([
         'team_id' => $team->id,
         'invited_by_user_id' => $admin->id,
         'email' => 'mgr@example.com',
@@ -23,7 +23,7 @@ it('updates the invitation role inline', function () {
     $admin = User::factory()->withTeam()->create();
     $team = $admin->teams()->first();
 
-    $invitation = Invitation::create([
+    $invitation = TeamInvitation::create([
         'team_id' => $team->id,
         'invited_by_user_id' => $admin->id,
         'email' => 'pending@example.com',
@@ -39,7 +39,7 @@ it('uses the invitation role when accepted', function () {
     $admin = User::factory()->withTeam()->create();
     $team = $admin->teams()->first();
 
-    $invitation = Invitation::create([
+    $invitation = TeamInvitation::create([
         'team_id' => $team->id,
         'invited_by_user_id' => $admin->id,
         'email' => 'invitee@example.com',
@@ -48,7 +48,7 @@ it('uses the invitation role when accepted', function () {
 
     $invitee = User::factory()->create(['email' => 'invitee@example.com']);
 
-    (new AcceptInvitation)($invitation, $invitee);
+    (new AcceptTeamInvitation)($invitation, $invitee);
 
     expect($team->fresh()->roleFor($invitee))->toBe(TeamRole::Manager);
 });

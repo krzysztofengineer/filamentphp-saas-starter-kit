@@ -47,7 +47,7 @@ class Team extends Model implements HasAvatar
         return $this
             ->belongsToMany(User::class, 'team_user', 'team_id', 'user_id')
             ->withPivot('role')
-            ->using(Membership::class);
+            ->using(TeamMembership::class);
     }
 
     public function creator()
@@ -72,7 +72,7 @@ class Team extends Model implements HasAvatar
 
     public function invitations()
     {
-        return $this->hasMany(Invitation::class);
+        return $this->hasMany(TeamInvitation::class);
     }
 
     public function roleFor(User $user): ?TeamRole

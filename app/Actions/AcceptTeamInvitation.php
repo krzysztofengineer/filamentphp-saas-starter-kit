@@ -2,14 +2,14 @@
 
 namespace App\Actions;
 
-use App\Models\Invitation;
+use App\Models\TeamInvitation;
 use App\Models\User;
 use App\TeamRole;
 use Illuminate\Support\Facades\DB;
 
-class AcceptInvitation
+class AcceptTeamInvitation
 {
-    public function __invoke(Invitation $invitation, User $user): void
+    public function __invoke(TeamInvitation $invitation, User $user): void
     {
         DB::transaction(function () use ($invitation, $user) {
             $role = $invitation->role ?? TeamRole::Member;

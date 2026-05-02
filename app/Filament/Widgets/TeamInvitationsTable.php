@@ -3,8 +3,8 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Support\CategoryHeading;
-use App\Models\Invitation;
 use App\Models\Team;
+use App\Models\TeamInvitation;
 use App\TeamRole;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -39,7 +39,7 @@ class TeamInvitationsTable extends TableWidget
                         TextColumn::make('email')
                             ->weight(FontWeight::Medium),
                         TextColumn::make('created_at')
-                            ->state(fn (Invitation $record): string => 'Sent '.$record->created_at->diffForHumans())
+                            ->state(fn (TeamInvitation $record): string => 'Sent '.$record->created_at->diffForHumans())
                             ->color('gray')
                             ->size(TextSize::Small),
                     ]),
@@ -147,7 +147,7 @@ class TeamInvitationsTable extends TableWidget
                     return;
                 }
 
-                Invitation::create([
+                TeamInvitation::create([
                     'team_id' => $team->id,
                     'invited_by_user_id' => auth()->id(),
                     'email' => $email,
@@ -174,7 +174,7 @@ class TeamInvitationsTable extends TableWidget
             ->modalHeading('Revoke invitation?')
             ->modalSubmitActionLabel('Revoke')
             ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'revoke-invitation-confirm']))
-            ->action(function (Invitation $record): void {
+            ->action(function (TeamInvitation $record): void {
                 /** @var Team|null $team */
                 $team = Filament::getTenant();
 

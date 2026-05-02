@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use App\Observers\TeamInvitationObserver;
 use App\TeamRole;
-use Database\Factories\InvitationFactory;
+use Database\Factories\TeamInvitationFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Invitation extends Model
+#[ObservedBy(TeamInvitationObserver::class)]
+class TeamInvitation extends Model
 {
-    /** @use HasFactory<InvitationFactory> */
+    /** @use HasFactory<TeamInvitationFactory> */
     use HasFactory;
 
     protected $fillable = [

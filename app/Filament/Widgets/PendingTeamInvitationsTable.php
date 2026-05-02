@@ -2,9 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Actions\AcceptInvitation;
+use App\Actions\AcceptTeamInvitation;
 use App\Filament\Support\CategoryHeading;
-use App\Models\Invitation;
+use App\Models\TeamInvitation;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -18,7 +18,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Support\Collection;
 
-class PendingInvitationsTable extends TableWidget
+class PendingTeamInvitationsTable extends TableWidget
 {
     protected int|string|array $columnSpan = 'full';
 
@@ -33,7 +33,7 @@ class PendingInvitationsTable extends TableWidget
                         TextColumn::make('team.name')
                             ->weight('bold'),
                         TextColumn::make('invited_by')
-                            ->state(fn (Invitation $record): string => 'Invited by '.($record->invitedBy?->name ?? $record->invitedBy?->email ?? '—'))
+                            ->state(fn (TeamInvitation $record): string => 'Invited by '.($record->invitedBy?->name ?? $record->invitedBy?->email ?? '—'))
                             ->color('gray')
                             ->size(TextSize::Small),
                     ]),
@@ -58,7 +58,7 @@ class PendingInvitationsTable extends TableWidget
             return collect();
         }
 
-        return Invitation::query()
+        return TeamInvitation::query()
             ->with(['team', 'invitedBy'])
             ->whereNull('accepted_at')
             ->where('email', strtolower($user->email))
@@ -74,7 +74,7 @@ class PendingInvitationsTable extends TableWidget
             ->color('primary')
             ->button()
             ->extraAttributes(['data-testid' => 'invitation-accept'])
-            ->action(function (Invitation $record): void {
+            ->action(function (TeamInvitation $record): void {
                 /** @var User $user */
                 $user = auth()->user();
 
@@ -84,7 +84,7 @@ class PendingInvitationsTable extends TableWidget
                     return;
                 }
 
-                (new AcceptInvitation)($record, $user);
+                (new AcceptTeamInvitation)($record, $user);
                 $user->update(['current_team_id' => $record->team_id]);
 
                 Notification::make()->success()->title('Joined the team.')->send();
@@ -101,7 +101,7 @@ class PendingInvitationsTable extends TableWidget
             ->color('gray')
             ->requiresConfirmation()
             ->modalHeading('Decline invitation?')
-            ->action(function (Invitation $record): void {
+            ->action(function (TeamInvitation $record): void {
                 /** @var User $user */
                 $user = auth()->user();
 

@@ -5,7 +5,7 @@ namespace App\Models;
 use App\TeamRole;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class Membership extends Pivot
+class TeamMembership extends Pivot
 {
     protected $fillable = [
         'team_id',

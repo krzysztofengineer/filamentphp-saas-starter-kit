@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\PendingDeletionBanner;
-use App\Filament\Widgets\PendingInvitationsTable;
+use App\Filament\Widgets\PendingTeamInvitationsTable;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -44,7 +44,7 @@ class Dashboard extends Page
     public function getWidgets(): array
     {
         return [
-            PendingInvitationsTable::class,
+            PendingTeamInvitationsTable::class,
         ];
     }
 }
