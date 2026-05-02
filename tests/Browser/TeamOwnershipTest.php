@@ -20,6 +20,7 @@ it('disables the transfer ownership button when there are no other members', fun
     $tenant = $admin->teams()->first();
     actingAs($admin);
 
+    // todo: brak odpowiedniej asercji
     visit('/app/'.$tenant->uuid.'/settings/advanced')
         ->assertSee('Transfer ownership');
 });
@@ -31,6 +32,8 @@ it('renders the transfer ownership modal with member options', function () {
     $tenant->users()->attach($member, ['role' => TeamRole::Member->value]);
 
     actingAs($admin);
+
+    // todo: brak kliknięcia przycisku i sprawdzenia czy został przekazany team
 
     visit('/app/'.$tenant->uuid.'/settings/advanced')
         ->click('[data-testid="transfer-ownership-button"]')

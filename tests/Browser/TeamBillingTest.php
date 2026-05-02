@@ -7,7 +7,7 @@ use App\TeamRole;
 
 use function Pest\Laravel\actingAs;
 
-it('shows the subscription plans with checkout buttons for an admin', function () {
+it('shows the subscription plans', function () {
     $user = User::factory()->withTeam()->create();
     $tenant = $user->teams()->first();
     actingAs($user);
@@ -26,6 +26,8 @@ it('toggles between monthly and yearly prices', function () {
     $user = User::factory()->withTeam()->create();
     $tenant = $user->teams()->first();
     actingAs($user);
+
+    // todo: first configure those prices config in this test
 
     visit('/app/'.$tenant->uuid.'/settings/subscription')
         ->assertSee('$29')
@@ -49,6 +51,8 @@ it('marks the active plan with a manage subscription button when subscribed', fu
     $admin->update(['current_team_id' => $team->id]);
 
     actingAs($admin);
+
+    // todo: zbyt ogólne, asercje niczego nie sprawdzają
 
     visit('/app/'.$team->uuid.'/settings/subscription')
         ->assertSee('Manage subscription');

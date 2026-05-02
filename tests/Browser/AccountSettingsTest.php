@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 
-it('updates the user name from the account profile form', function () {
+it('updates the user name', function () {
     $user = User::factory()->withTeam()->create([
         'name' => 'Original Name',
         'email' => 'me@example.com',
@@ -25,7 +25,7 @@ it('updates the user name from the account profile form', function () {
     assertDatabaseHas('users', ['id' => $user->id, 'name' => 'Updated Name']);
 });
 
-it('changes the password when the current password is correct', function () {
+it('changes the password', function () {
     $user = User::factory()->withTeam()->create([
         'email' => 'me@example.com',
         'password' => Hash::make('old-password'),
