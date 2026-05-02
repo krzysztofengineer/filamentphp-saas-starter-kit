@@ -6,7 +6,10 @@ use App\Models\TeamInvitation;
 use App\Models\User;
 use App\TeamRole;
 
-it('attaches the user to the team as a member and marks the invitation accepted', function () {
+use function Pest\Laravel\assertDatabaseMissing;
+use function PHPUnit\Framework\assertTrue;
+
+it('attaches the user to the team and removes the invitation', function () {
     $admin = User::factory()->create();
     $team = Team::factory()->create(['user_id' => $admin->id]);
     $team->users()->attach($admin, ['role' => TeamRole::Administrator->value]);
@@ -15,13 +18,12 @@ it('attaches the user to the team as a member and marks the invitation accepted'
 
     $invitation = TeamInvitation::create([
         'team_id' => $team->id,
-        'invited_by_user_id' => $admin->id,
+        'user_id' => $admin->id,
         'email' => 'invitee@example.com',
     ]);
 
     (new AcceptTeamInvitation)($invitation, $invitee);
 
-    expect($team->fresh()->users()->whereKey($invitee->id)->exists())->toBeTrue();
-    expect($invitation->fresh()->isAccepted())->toBeTrue();
-    expect($team->fresh()->roleFor($invitee))->toBe(TeamRole::Member);
+    assertTrue($team->fresh()->members->contains($invitee));
+    assertDatabaseMissing('team_invitations', ['id' => $invitation->id]);
 });

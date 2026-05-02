@@ -11,7 +11,7 @@ it('persists the role chosen at invite time', function () {
 
     $invitation = TeamInvitation::create([
         'team_id' => $team->id,
-        'invited_by_user_id' => $admin->id,
+        'user_id' => $admin->id,
         'email' => 'mgr@example.com',
         'role' => TeamRole::Manager->value,
     ]);
@@ -25,7 +25,7 @@ it('updates the invitation role inline', function () {
 
     $invitation = TeamInvitation::create([
         'team_id' => $team->id,
-        'invited_by_user_id' => $admin->id,
+        'user_id' => $admin->id,
         'email' => 'pending@example.com',
         'role' => TeamRole::Member->value,
     ]);
@@ -41,7 +41,7 @@ it('uses the invitation role when accepted', function () {
 
     $invitation = TeamInvitation::create([
         'team_id' => $team->id,
-        'invited_by_user_id' => $admin->id,
+        'user_id' => $admin->id,
         'email' => 'invitee@example.com',
         'role' => TeamRole::Manager->value,
     ]);

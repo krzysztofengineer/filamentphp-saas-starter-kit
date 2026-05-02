@@ -6,12 +6,15 @@ use App\Models\User;
 use App\Notifications\TeamInvitationNotification;
 use App\TeamRole;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertTrue;
 
 beforeEach(function () {
     Notification::fake();
@@ -144,4 +147,43 @@ it('sends the invitation notification', function () {
                 && str_contains($rendered, route('filament.app.auth.register'));
         },
     );
+});
+
+it('accepts the invitation for the new user', function () {
+    $admin = User::factory()->create();
+    $team = Team::factory()->create(['name' => 'Acme', 'user_id' => $admin->id]);
+    $team->members()->attach($admin, ['role' => TeamRole::Administrator]);
+
+    $invitation = TeamInvitation::factory()->for($team)->member()->create([
+        'email' => 'newbie@example.com',
+        'user_id' => $admin->id,
+    ]);
+
+    visit('/')
+        ->click('@topbar-register')
+        ->fill('@register-name', 'Newbie')
+        ->fill('@register-email', 'newbie@example.com')
+        ->fill('@register-password', 'password')
+        ->fill('@register-password-confirm', 'password')
+        ->click('@register-terms')
+        ->click('@register-privacy')
+        ->click('@register-submit')
+        ->assertNotPresent('@register-submit')
+        ->assertPathIs('/app/email-verification/prompt');
+
+    $user = User::query()->where('email', 'newbie@example.com')->firstOrFail();
+    $verifyUrl = URL::temporarySignedRoute(
+        'filament.app.auth.email-verification.verify',
+        now()->addHour(),
+        ['id' => $user->id, 'hash' => sha1($user->email)],
+    );
+
+    visit($verifyUrl)
+        ->assertSee($team->name)
+        ->click('[data-testid="invitation-accept"]')
+        ->assertSee('Joined the team');
+
+    assertDatabaseMissing('team_invitations', ['id' => $invitation->id]);
+    assertNotNull($user->fresh()->email_verified_at);
+    assertTrue($team->fresh()->members->contains($user));
 });

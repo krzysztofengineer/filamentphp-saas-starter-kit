@@ -20,7 +20,7 @@ class AcceptTeamInvitation
                     $user->id => ['role' => $role->value],
                 ]);
 
-            $invitation->update(['accepted_at' => now()]);
+            $invitation->delete();
         });
     }
 }

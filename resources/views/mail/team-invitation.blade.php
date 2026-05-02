@@ -1,7 +1,7 @@
 <x-mail::message>
 # You've been invited to join {{ $invitation->team->name }}
 
-{{ $invitation->invitedBy->name }} has invited you to join the **{{ $invitation->team->name }}** team.
+{{ $invitation->user->name }} has invited you to join the **{{ $invitation->team->name }}** team.
 
 If you already have an account, sign in to accept the invitation.
 

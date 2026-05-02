@@ -149,7 +149,7 @@ class TeamInvitationsTable extends TableWidget
 
                 TeamInvitation::create([
                     'team_id' => $team->id,
-                    'invited_by_user_id' => auth()->id(),
+                    'user_id' => auth()->id(),
                     'email' => $email,
                     'role' => $role->value,
                 ]);

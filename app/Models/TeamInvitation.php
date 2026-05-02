@@ -18,7 +18,7 @@ class TeamInvitation extends Model
 
     protected $fillable = [
         'team_id',
-        'invited_by_user_id',
+        'user_id',
         'email',
         'role',
         'token',
@@ -60,8 +60,8 @@ class TeamInvitation extends Model
         return $this->belongsTo(Team::class);
     }
 
-    public function invitedBy()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'invited_by_user_id');
+        return $this->belongsTo(User::class);
     }
 }

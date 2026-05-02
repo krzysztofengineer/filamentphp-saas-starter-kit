@@ -16,7 +16,6 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
-use Illuminate\Support\Collection;
 
 class PendingTeamInvitationsTable extends TableWidget
 {
@@ -26,14 +25,14 @@ class PendingTeamInvitationsTable extends TableWidget
     {
         return $table
             ->heading(CategoryHeading::make('heroicon-o-envelope-open', 'primary', 'Invitations for you'))
-            ->records(fn (): Collection => $this->getInvitations())
+            ->query(fn () => TeamInvitation::query()->where('email', strtolower(auth()->user()->email)))
             ->columns([
                 Split::make([
                     Stack::make([
                         TextColumn::make('team.name')
                             ->weight('bold'),
                         TextColumn::make('invited_by')
-                            ->state(fn (TeamInvitation $record): string => 'Invited by '.($record->invitedBy?->name ?? $record->invitedBy?->email ?? '—'))
+                            ->state(fn (TeamInvitation $record): string => 'Invited by '.($record->user?->name ?? $record->user?->email ?? '—'))
                             ->color('gray')
                             ->size(TextSize::Small),
                     ]),
@@ -47,23 +46,6 @@ class PendingTeamInvitationsTable extends TableWidget
             ->emptyStateIcon('heroicon-o-envelope-open')
             ->emptyStateHeading('No invitations')
             ->emptyStateDescription('You have no pending team invitations.');
-    }
-
-    private function getInvitations(): Collection
-    {
-        /** @var User|null $user */
-        $user = auth()->user();
-
-        if (! $user) {
-            return collect();
-        }
-
-        return TeamInvitation::query()
-            ->with(['team', 'invitedBy'])
-            ->whereNull('accepted_at')
-            ->where('email', strtolower($user->email))
-            ->orderBy('created_at')
-            ->get();
     }
 
     private function acceptAction(): Action

@@ -17,7 +17,7 @@ class TeamInvitationFactory extends Factory
     {
         return [
             'team_id' => Team::factory(),
-            'invited_by_user_id' => User::factory(),
+            'user_id' => User::factory(),
             'email' => fake()->unique()->safeEmail(),
             'accepted_at' => null,
         ];
