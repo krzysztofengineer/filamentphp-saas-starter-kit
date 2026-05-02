@@ -9,13 +9,13 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
 it('updates the team name from the profile form', function () {
-    $user = User::factory()->withTeam()->create();
-    $tenant = $user->teams()->first();
+    $user = User::factory()->create();
+    $tenant = $user->currentTeam;
     actingAs($user);
 
     visit('/app/'.$tenant->uuid.'/settings/profile')
-        ->fill('[data-testid="team-profile-name"]', 'Renamed Team')
-        ->click('[data-testid="team-profile-save"]')
+        ->fill('[data-testid="team-details-name"]', 'Renamed Team')
+        ->click('[data-testid="team-details-save"]')
         ->assertSee('Team saved')
         ->assertNoJavaScriptErrors();
 
@@ -23,10 +23,10 @@ it('updates the team name from the profile form', function () {
 });
 
 it('removes a member from the team', function () {
-    $admin = User::factory()->withTeam()->create();
-    $tenant = $admin->teams()->first();
+    $admin = User::factory()->create();
+    $tenant = $admin->currentTeam;
     $member = User::factory()->create(['name' => 'Removable Member']);
-    $tenant->users()->attach($member, ['role' => TeamRole::Member->value]);
+    $tenant->members()->attach($member, ['role' => TeamRole::Member]);
 
     actingAs($admin);
 
@@ -42,10 +42,10 @@ it('removes a member from the team', function () {
 });
 
 it('shows inline role selects for editable rows on the members page', function () {
-    $admin = User::factory()->withTeam()->create();
-    $tenant = $admin->teams()->first();
+    $admin = User::factory()->create();
+    $tenant = $admin->currentTeam;
     $member = User::factory()->create(['name' => 'Promotable Member']);
-    $tenant->users()->attach($member, ['role' => TeamRole::Member->value]);
+    $tenant->members()->attach($member, ['role' => TeamRole::Member]);
 
     actingAs($admin);
 
@@ -57,7 +57,7 @@ it('shows inline role selects for editable rows on the members page', function (
 it('deletes the team when the administrator types the name correctly', function () {
     $admin = User::factory()->create();
     $tenant = Team::factory()->create(['name' => 'Doomed Team', 'user_id' => $admin->id]);
-    $tenant->users()->attach($admin, ['role' => TeamRole::Administrator->value]);
+    $tenant->members()->attach($admin, ['role' => TeamRole::Administrator]);
     $admin->update(['current_team_id' => $tenant->id]);
 
     actingAs($admin);
@@ -66,7 +66,7 @@ it('deletes the team when the administrator types the name correctly', function 
         ->click('[data-testid="delete-team-button"]')
         ->fill('[data-testid="delete-team-name-input"]', 'Doomed Team')
         ->click('[data-testid="delete-team-confirm"]')
-        ->assertPathIs('/app/new');
+        ->assertSee('Team deleted');
 
     assertDatabaseMissing('teams', ['id' => $tenant->id]);
 });
@@ -74,7 +74,7 @@ it('deletes the team when the administrator types the name correctly', function 
 it('blocks team deletion when the name confirmation does not match', function () {
     $admin = User::factory()->create();
     $tenant = Team::factory()->create(['name' => 'Doomed Team', 'user_id' => $admin->id]);
-    $tenant->users()->attach($admin, ['role' => TeamRole::Administrator->value]);
+    $tenant->members()->attach($admin, ['role' => TeamRole::Administrator]);
     $admin->update(['current_team_id' => $tenant->id]);
 
     actingAs($admin);
@@ -90,30 +90,13 @@ it('blocks team deletion when the name confirmation does not match', function ()
 });
 
 it('blocks regular members from the team settings pages', function () {
-    $admin = User::factory()->withTeam()->create();
-    $tenant = $admin->teams()->first();
+    $admin = User::factory()->create();
+    $tenant = $admin->currentTeam;
     $member = User::factory()->create();
-    $tenant->users()->attach($member, ['role' => TeamRole::Member->value]);
+    $tenant->members()->attach($member, ['role' => TeamRole::Member]);
     $member->update(['current_team_id' => $tenant->id]);
 
     actingAs($member);
 
-    $response = $this->get('/app/'.$tenant->uuid.'/settings/profile');
-    expect($response->status())->toBe(403);
-});
-
-it('lets managers manage the team profile but hides the advanced page', function () {
-    $admin = User::factory()->withTeam()->create();
-    $tenant = $admin->teams()->first();
-    $manager = User::factory()->create();
-    $tenant->users()->attach($manager, ['role' => TeamRole::Manager->value]);
-    $manager->update(['current_team_id' => $tenant->id]);
-
-    actingAs($manager);
-
-    $profile = $this->get('/app/'.$tenant->uuid.'/settings/profile');
-    expect($profile->status())->toBe(200);
-
-    $advanced = $this->get('/app/'.$tenant->uuid.'/settings/advanced');
-    expect($advanced->status())->toBe(403);
+    $this->get('/app/'.$tenant->uuid.'/settings/profile')->assertForbidden();
 });

@@ -5,18 +5,19 @@ use App\Models\Team;
 use App\Models\User;
 use App\TeamRole;
 
+use function Pest\Laravel\assertDatabaseHas;
+
 it('promotes the new admin, demotes the previous, and moves team ownership', function () {
     $oldOwner = User::factory()->create();
     $newOwner = User::factory()->create();
 
     $team = Team::factory()->create(['user_id' => $oldOwner->id]);
-    $team->users()->attach($oldOwner, ['role' => TeamRole::Administrator->value]);
-    $team->users()->attach($newOwner, ['role' => TeamRole::Member->value]);
+    $team->members()->attach($oldOwner, ['role' => TeamRole::Administrator]);
+    $team->members()->attach($newOwner, ['role' => TeamRole::Member]);
 
     (new TransferTeamOwnership)($team, $oldOwner, $newOwner);
 
-    $team->refresh();
-    expect($team->user_id)->toBe($newOwner->id);
-    expect($team->roleFor($oldOwner))->toBe(TeamRole::Member);
-    expect($team->roleFor($newOwner))->toBe(TeamRole::Administrator);
+    assertDatabaseHas('teams', ['id' => $team->id, 'user_id' => $newOwner->id]);
+    assertDatabaseHas('team_user', ['team_id' => $team->id, 'user_id' => $oldOwner->id, 'role' => TeamRole::Member->value]);
+    assertDatabaseHas('team_user', ['team_id' => $team->id, 'user_id' => $newOwner->id, 'role' => TeamRole::Administrator->value]);
 });

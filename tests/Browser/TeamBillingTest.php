@@ -7,9 +7,21 @@ use App\TeamRole;
 
 use function Pest\Laravel\actingAs;
 
+beforeEach(function () {
+    config()->set('billing.plans.pro.prices.monthly.label', '$29');
+    config()->set('billing.plans.pro.prices.monthly.stripe_id', 'price_test_pro_monthly');
+    config()->set('billing.plans.pro.prices.yearly.label', '$278');
+    config()->set('billing.plans.pro.prices.yearly.stripe_id', 'price_test_pro_yearly');
+
+    config()->set('billing.plans.studio.prices.monthly.label', '$79');
+    config()->set('billing.plans.studio.prices.monthly.stripe_id', 'price_test_studio_monthly');
+    config()->set('billing.plans.studio.prices.yearly.label', '$758');
+    config()->set('billing.plans.studio.prices.yearly.stripe_id', 'price_test_studio_yearly');
+});
+
 it('shows the subscription plans', function () {
-    $user = User::factory()->withTeam()->create();
-    $tenant = $user->teams()->first();
+    $user = User::factory()->create();
+    $tenant = $user->currentTeam;
     actingAs($user);
 
     visit('/app/'.$tenant->uuid.'/settings/subscription')
@@ -23,11 +35,9 @@ it('shows the subscription plans', function () {
 });
 
 it('toggles between monthly and yearly prices', function () {
-    $user = User::factory()->withTeam()->create();
-    $tenant = $user->teams()->first();
+    $user = User::factory()->create();
+    $tenant = $user->currentTeam;
     actingAs($user);
-
-    // todo: first configure those prices config in this test
 
     visit('/app/'.$tenant->uuid.'/settings/subscription')
         ->assertSee('$29')
@@ -43,17 +53,15 @@ it('toggles between monthly and yearly prices', function () {
 });
 
 it('marks the active plan with a manage subscription button when subscribed', function () {
-    config()->set('billing.plans.pro.prices.monthly.stripe_id', 'price_test_pro_monthly');
-
     $admin = User::factory()->create();
     $team = Team::factory()->proPlan(BillingInterval::Monthly)->create(['user_id' => $admin->id]);
-    $team->users()->attach($admin, ['role' => TeamRole::Administrator->value]);
+    $team->members()->attach($admin, ['role' => TeamRole::Administrator]);
     $admin->update(['current_team_id' => $team->id]);
 
     actingAs($admin);
 
-    // todo: zbyt ogólne, asercje niczego nie sprawdzają
-
     visit('/app/'.$team->uuid.'/settings/subscription')
-        ->assertSee('Manage subscription');
+        ->assertPresent('[data-testid="manage-subscription-monthly"]')
+        ->assertNotPresent('[data-testid="checkout-pro-monthly"]')
+        ->assertPresent('[data-testid="checkout-studio-monthly"]');
 });

@@ -4,10 +4,12 @@ use App\Models\User;
 use App\TeamRole;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
+use function PHPUnit\Framework\assertTrue;
 
 it('shows the transfer ownership section to administrators', function () {
-    $admin = User::factory()->withTeam()->create();
-    $tenant = $admin->teams()->first();
+    $admin = User::factory()->create();
+    $tenant = $admin->currentTeam;
     actingAs($admin);
 
     visit('/app/'.$tenant->uuid.'/settings/advanced')
@@ -16,28 +18,29 @@ it('shows the transfer ownership section to administrators', function () {
 });
 
 it('disables the transfer ownership button when there are no other members', function () {
-    $admin = User::factory()->withTeam()->create();
-    $tenant = $admin->teams()->first();
+    $admin = User::factory()->create();
+    $tenant = $admin->currentTeam;
     actingAs($admin);
 
-    // todo: brak odpowiedniej asercji
     visit('/app/'.$tenant->uuid.'/settings/advanced')
-        ->assertSee('Transfer ownership');
+        ->assertPresent('[data-testid="transfer-ownership-button"][disabled]');
 });
 
-it('renders the transfer ownership modal with member options', function () {
-    $admin = User::factory()->withTeam()->create();
-    $tenant = $admin->teams()->first();
+it('transfers ownership to another team member', function () {
+    $admin = User::factory()->create();
+    $tenant = $admin->currentTeam;
     $member = User::factory()->create(['name' => 'Future Admin']);
-    $tenant->users()->attach($member, ['role' => TeamRole::Member->value]);
+    $tenant->members()->attach($member, ['role' => TeamRole::Member]);
 
     actingAs($admin);
-
-    // todo: brak kliknięcia przycisku i sprawdzenia czy został przekazany team
 
     visit('/app/'.$tenant->uuid.'/settings/advanced')
         ->click('[data-testid="transfer-ownership-button"]')
-        ->assertSee('Transfer ownership')
-        ->assertSee('New administrator')
-        ->assertNoJavaScriptErrors();
+        ->click('[data-testid="transfer-ownership-select"]')
+        ->click('.fi-dropdown-panel:visible [role="option"]:has-text("Future Admin")')
+        ->click('[data-testid="transfer-ownership-confirm"]')
+        ->assertSee('Ownership transferred');
+
+    assertDatabaseHas('teams', ['id' => $tenant->id, 'user_id' => $member->id]);
+    assertTrue($tenant->fresh()->isAdministeredBy($member));
 });

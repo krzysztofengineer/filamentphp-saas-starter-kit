@@ -11,16 +11,18 @@ it('has no smoke', function () {
     visit('/app/login')->assertNoJavaScriptErrors();
     visit('/app/register')->assertNoJavaScriptErrors();
 
-    $user = User::factory()->withTeam()->create();
+    $user = User::factory()->create();
+    $tenant = $user->currentTeam;
     actingAs($user);
 
-    visit('/app/'.$user->teams()->first()->uuid)->assertNoJavaScriptErrors();
-    visit('/app/'.$user->teams()->first()->uuid.'/account/settings')->assertNoJavaScriptErrors();
-    visit('/app/'.$user->teams()->first()->uuid.'/account/advanced')->assertNoJavaScriptErrors();
-    visit('/app/'.$user->teams()->first()->uuid.'/settings/profile')->assertNoJavaScriptErrors();
-    visit('/app/'.$user->teams()->first()->uuid.'/settings/members')->assertNoJavaScriptErrors();
-    visit('/app/'.$user->teams()->first()->uuid.'/settings/subscription')->assertNoJavaScriptErrors();
-    visit('/app/'.$user->teams()->first()->uuid.'/settings/advanced')->assertNoJavaScriptErrors();
+    visit('/app/'.$tenant->uuid)->assertNoJavaScriptErrors();
+    visit('/app/'.$tenant->uuid.'/account/settings')->assertNoJavaScriptErrors();
+    visit('/app/'.$tenant->uuid.'/account/team-invitations')->assertNoJavaScriptErrors();
+    visit('/app/'.$tenant->uuid.'/account/advanced')->assertNoJavaScriptErrors();
+    visit('/app/'.$tenant->uuid.'/settings/profile')->assertNoJavaScriptErrors();
+    visit('/app/'.$tenant->uuid.'/settings/members')->assertNoJavaScriptErrors();
+    visit('/app/'.$tenant->uuid.'/settings/subscription')->assertNoJavaScriptErrors();
+    visit('/app/'.$tenant->uuid.'/settings/advanced')->assertNoJavaScriptErrors();
     visit('/app/new')->assertNoJavaScriptErrors();
     visit('/app/password-reset/request')->assertNoJavaScriptErrors();
 });

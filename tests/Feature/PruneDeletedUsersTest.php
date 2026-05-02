@@ -7,13 +7,13 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
 it('hard-deletes users scheduled for deletion past the threshold', function () {
-    $oldUser = User::factory()->withTeam()->create([
+    $oldUser = User::factory()->create([
         'scheduled_for_deletion_at' => now()->subDays(31),
     ]);
-    $recentUser = User::factory()->withTeam()->create([
+    $recentUser = User::factory()->create([
         'scheduled_for_deletion_at' => now()->subDays(2),
     ]);
-    $aliveUser = User::factory()->withTeam()->create();
+    $aliveUser = User::factory()->create();
 
     Artisan::call('users:prune');
 

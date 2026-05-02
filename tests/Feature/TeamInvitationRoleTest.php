@@ -5,23 +5,25 @@ use App\Models\TeamInvitation;
 use App\Models\User;
 use App\TeamRole;
 
+use function Pest\Laravel\assertDatabaseHas;
+
 it('persists the role chosen at invite time', function () {
-    $admin = User::factory()->withTeam()->create();
-    $team = $admin->teams()->first();
+    $admin = User::factory()->create();
+    $team = $admin->currentTeam;
 
     $invitation = TeamInvitation::create([
         'team_id' => $team->id,
         'user_id' => $admin->id,
-        'email' => 'mgr@example.com',
-        'role' => TeamRole::Manager->value,
+        'email' => 'admin-to-be@example.com',
+        'role' => TeamRole::Administrator->value,
     ]);
 
-    expect($invitation->fresh()->role)->toBe(TeamRole::Manager);
+    assertDatabaseHas('team_invitations', ['id' => $invitation->id, 'role' => TeamRole::Administrator->value]);
 });
 
 it('updates the invitation role inline', function () {
-    $admin = User::factory()->withTeam()->create();
-    $team = $admin->teams()->first();
+    $admin = User::factory()->create();
+    $team = $admin->currentTeam;
 
     $invitation = TeamInvitation::create([
         'team_id' => $team->id,
@@ -32,23 +34,27 @@ it('updates the invitation role inline', function () {
 
     $invitation->update(['role' => TeamRole::Administrator->value]);
 
-    expect($invitation->fresh()->role)->toBe(TeamRole::Administrator);
+    assertDatabaseHas('team_invitations', ['id' => $invitation->id, 'role' => TeamRole::Administrator->value]);
 });
 
 it('uses the invitation role when accepted', function () {
-    $admin = User::factory()->withTeam()->create();
-    $team = $admin->teams()->first();
+    $admin = User::factory()->create();
+    $team = $admin->currentTeam;
 
     $invitation = TeamInvitation::create([
         'team_id' => $team->id,
         'user_id' => $admin->id,
         'email' => 'invitee@example.com',
-        'role' => TeamRole::Manager->value,
+        'role' => TeamRole::Administrator->value,
     ]);
 
     $invitee = User::factory()->create(['email' => 'invitee@example.com']);
 
     (new AcceptTeamInvitation)($invitation, $invitee);
 
-    expect($team->fresh()->roleFor($invitee))->toBe(TeamRole::Manager);
+    assertDatabaseHas('team_user', [
+        'team_id' => $team->id,
+        'user_id' => $invitee->id,
+        'role' => TeamRole::Administrator->value,
+    ]);
 });

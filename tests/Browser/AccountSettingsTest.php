@@ -7,13 +7,15 @@ use Illuminate\Support\Facades\Hash;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
+use function PHPUnit\Framework\assertTrue;
 
 it('updates the user name', function () {
-    $user = User::factory()->withTeam()->create([
+    $user = User::factory()->create([
         'name' => 'Original Name',
         'email' => 'me@example.com',
     ]);
-    $tenant = $user->teams()->first();
+    $tenant = $user->currentTeam;
     actingAs($user);
 
     visit('/app/'.$tenant->uuid.'/account/settings')
@@ -26,11 +28,11 @@ it('updates the user name', function () {
 });
 
 it('changes the password', function () {
-    $user = User::factory()->withTeam()->create([
+    $user = User::factory()->create([
         'email' => 'me@example.com',
         'password' => Hash::make('old-password'),
     ]);
-    $tenant = $user->teams()->first();
+    $tenant = $user->currentTeam;
     actingAs($user);
 
     visit('/app/'.$tenant->uuid.'/account/settings')
@@ -41,15 +43,15 @@ it('changes the password', function () {
         ->assertSee('Password changed')
         ->assertNoJavaScriptErrors();
 
-    expect(Hash::check('new-password-123', $user->fresh()->password))->toBeTrue();
+    assertTrue(Hash::check('new-password-123', $user->fresh()->password));
 });
 
 it('rejects the password change when the current password is wrong', function () {
-    $user = User::factory()->withTeam()->create([
+    $user = User::factory()->create([
         'email' => 'me@example.com',
         'password' => Hash::make('old-password'),
     ]);
-    $tenant = $user->teams()->first();
+    $tenant = $user->currentTeam;
     actingAs($user);
 
     visit('/app/'.$tenant->uuid.'/account/settings')
@@ -59,15 +61,17 @@ it('rejects the password change when the current password is wrong', function ()
         ->click('[data-testid="account-password-save"]')
         ->assertSee('current password is incorrect');
 
-    expect(Hash::check('old-password', $user->fresh()->password))->toBeTrue();
+    assertTrue(Hash::check('old-password', $user->fresh()->password));
 });
 
 it('schedules account deletion when the user administers no teams', function () {
     $user = User::factory()->create([
         'email' => 'free-agent@example.com',
     ]);
+    $user->ownedTeams()->delete();
+
     $team = Team::factory()->create();
-    $team->users()->attach($user, ['role' => TeamRole::Member->value]);
+    $team->members()->attach($user, ['role' => TeamRole::Member]);
     $user->update(['current_team_id' => $team->id]);
 
     actingAs($user);
@@ -78,14 +82,14 @@ it('schedules account deletion when the user administers no teams', function () 
         ->click('[data-testid="delete-account-confirm"]')
         ->assertPathIs('/app/login');
 
-    expect($user->fresh()->scheduled_for_deletion_at)->not->toBeNull();
+    assertDatabaseMissing('users', ['id' => $user->id, 'scheduled_for_deletion_at' => null]);
 });
 
 it('blocks account deletion when the user still administers a team', function () {
-    $user = User::factory()->withTeam()->create([
+    $user = User::factory()->create([
         'email' => 'still-admin@example.com',
     ]);
-    $tenant = $user->teams()->first();
+    $tenant = $user->currentTeam;
     actingAs($user);
 
     visit('/app/'.$tenant->uuid.'/account/advanced')
@@ -93,5 +97,5 @@ it('blocks account deletion when the user still administers a team', function ()
         ->assertSee('Leave or delete the teams you administer first')
         ->assertNoJavaScriptErrors();
 
-    expect($user->fresh()->scheduled_for_deletion_at)->toBeNull();
+    assertDatabaseHas('users', ['id' => $user->id, 'scheduled_for_deletion_at' => null]);
 });

@@ -24,7 +24,7 @@ it('updates the team name', function () {
     $team = Team::factory()->create(['name' => 'Test']);
     $user = User::factory()->create(['current_team_id' => $team->id]);
 
-    $team->members()->attach($user, ['role' => TeamRole::Manager]);
+    $team->members()->attach($user, ['role' => TeamRole::Administrator]);
 
     actingAs($user);
 
