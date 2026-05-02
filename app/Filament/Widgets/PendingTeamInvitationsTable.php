@@ -81,8 +81,10 @@ class PendingTeamInvitationsTable extends TableWidget
             ->label('Decline')
             ->icon(Heroicon::OutlinedXMark)
             ->color('gray')
+            ->extraAttributes(['data-testid' => 'invitation-decline'])
             ->requiresConfirmation()
             ->modalHeading('Decline invitation?')
+            ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'invitation-decline-confirm']))
             ->action(function (TeamInvitation $record): void {
                 /** @var User $user */
                 $user = auth()->user();

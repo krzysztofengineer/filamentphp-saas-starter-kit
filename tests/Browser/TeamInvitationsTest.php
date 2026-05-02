@@ -247,3 +247,21 @@ it('shows invitations from all teams', function () {
         ->assertSee('Alpha')
         ->assertSee('Beta');
 });
+
+it('declines invitations', function () {
+    $invitee = User::factory()->create();
+    $tenant = $invitee->ownedTeams()->first();
+    $team = Team::factory()->create(['name' => 'Acme']);
+
+    $invitation = TeamInvitation::factory()->for($team)->member()->create(['email' => $invitee->email]);
+
+    actingAs($invitee);
+
+    visit("/app/{$tenant->uuid}/account/team-invitations")
+        ->assertSee($team->name)
+        ->click('[data-testid="invitation-decline"]')
+        ->click('[data-testid="invitation-decline-confirm"]')
+        ->assertSee('Invitation declined');
+
+    assertDatabaseMissing('team_invitations', ['id' => $invitation->id]);
+});
