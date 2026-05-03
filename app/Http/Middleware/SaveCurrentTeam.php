@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Actions\SaveUserCurrentTeam;
 use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Http\Request;
@@ -16,16 +17,13 @@ class SaveCurrentTeam
             return $next($request);
         }
 
-        if (Filament::getTenant() === null) {
+        $tenant = Filament::getTenant();
+
+        if ($tenant === null) {
             return $next($request);
         }
 
-        if (Auth::user()->current_team_id !== Filament::getTenant()->id) {
-            Auth::user()->update([
-                'current_team_id' => Filament::getTenant()->id,
-            ]);
-            Auth::user()->unsetRelation('currentTeam');
-        }
+        (new SaveUserCurrentTeam)->handle(Auth::user(), $tenant);
 
         return $next($request);
     }

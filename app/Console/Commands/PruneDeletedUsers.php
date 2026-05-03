@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Actions\PruneDeletedUser;
 use App\Models\User;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -21,9 +22,10 @@ class PruneDeletedUsers extends Command
             ->where('scheduled_for_deletion_at', '<=', $threshold)
             ->get();
 
+        $action = new PruneDeletedUser;
+
         foreach ($toPrune as $user) {
-            $user->teams()->detach();
-            $user->delete();
+            $action->handle($user);
         }
 
         $this->info("Pruned {$toPrune->count()} user(s) scheduled before {$threshold->toDateTimeString()}.");
