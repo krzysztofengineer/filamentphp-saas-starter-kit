@@ -1,8 +1,8 @@
 @php
     $rows = $data['rows'] ?? [
-        ['name' => 'elena', 'activity' => 'editing invoice #2041', 'cursor' => ''],
-        ['name' => 'jordan', 'activity' => 'viewing dashboard', 'cursor' => 'b'],
-        ['name' => 'rae', 'activity' => 'joined presence channel', 'cursor' => 'g'],
+        ['name' => 'elena', 'activity' => 'scheduled deletion · 14d left', 'cursor' => ''],
+        ['name' => 'jordan', 'activity' => 'cancelled · account restored', 'cursor' => 'g'],
+        ['name' => 'rae', 'activity' => 'purged · pii erased', 'cursor' => 'b'],
     ];
 @endphp
 

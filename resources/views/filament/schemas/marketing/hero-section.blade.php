@@ -91,64 +91,89 @@
                         <div class="traffic"><span></span><span></span><span></span></div>
                         <div class="url">
                             <svg class="lock" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-                            <span class="url-host">{{ $host }}</span><span style="opacity:.5">/</span>
+                            <span class="url-host">{{ $host }}</span><span class="url-path">/app/acme/settings/subscription</span>
                         </div>
                     </div>
                     <div class="browser-body">
-                        <div class="mini-page">
-                            <div class="mini-nav">
-                                <div class="mini-mark"><x-marketing.wordmark /></div>
-                                <div class="mini-links">
-                                    <span>features</span><span>pricing</span><span>faq</span>
-                                    @if (filled($primaryLabel))
-                                        <span class="mini-cta">{{ $primaryLabel }}</span>
-                                    @endif
+                        <div class="panel-mock" aria-hidden="true">
+                            <aside class="pm-side">
+                                <div class="pm-brand"><x-marketing.wordmark /></div>
+                                <div class="pm-tenant">
+                                    <span class="pm-tenant-avatar">A</span>
+                                    <span class="pm-tenant-name">acme</span>
+                                    <span class="pm-tenant-caret">▾</span>
                                 </div>
-                            </div>
-                            <div class="mini-hero">
-                                @if (filled($heading))
-                                    <h3 class="mini-h">
-                                        {{ $heading }}@if (filled($headingAccent))
-                                            <span class="ac">{{ $headingAccent }}</span>
-                                        @endif
-                                    </h3>
-                                @endif
-                                @if (filled($description))
-                                    <p class="mini-sub">{{ Str::limit($description, 120) }}</p>
-                                @endif
-                                <div class="mini-row">
-                                    @if (filled($primaryLabel))
-                                        <span class="mini-btn primary">{{ $primaryLabel }}</span>
-                                    @endif
-                                    @if (filled($secondaryLabel))
-                                        <span class="mini-btn">{{ $secondaryLabel }}</span>
-                                    @endif
-                                    @if (filled($command))
-                                        <span class="mini-cmd"><span class="p">$</span>{{ $command }}</span>
-                                    @endif
+                                <div class="pm-nav-group">
+                                    <div class="pm-nav-label">Account</div>
+                                    <span class="pm-nav-item">Profile</span>
+                                    <span class="pm-nav-item">Invitations</span>
+                                    <span class="pm-nav-item">Advanced</span>
                                 </div>
-                                @if (! empty($pills))
-                                    <div class="mini-pills">
-                                        @foreach (array_slice($pills, 0, 7) as $pill)
-                                            <span>{{ $pill }}</span>
-                                        @endforeach
+                                <div class="pm-nav-group">
+                                    <div class="pm-nav-label">Team</div>
+                                    <span class="pm-nav-item">Profile</span>
+                                    <span class="pm-nav-item">Members</span>
+                                    <span class="pm-nav-item active">Subscription</span>
+                                    <span class="pm-nav-item">Advanced</span>
+                                </div>
+                            </aside>
+                            <main class="pm-main">
+                                <header class="pm-mobile-top">
+                                    <span class="pm-burger" aria-hidden="true">
+                                        <span></span><span></span><span></span>
+                                    </span>
+                                    <span class="pm-brand-mobile"><x-marketing.wordmark /></span>
+                                    <span class="pm-tenant-mobile">
+                                        <span class="pm-tenant-avatar">A</span>
+                                        <span class="pm-tenant-name">acme</span>
+                                    </span>
+                                    <span class="pm-avatar"></span>
+                                </header>
+                                <header class="pm-top">
+                                    <span class="pm-crumb">Team Settings <span class="pm-crumb-sep">/</span> <strong>Subscription</strong></span>
+                                    <span class="pm-avatar pm-avatar-desktop"></span>
+                                </header>
+                                <div class="pm-body">
+                                    <div class="pm-toggle">
+                                        <span class="active">Monthly</span>
+                                        <span>Yearly</span>
                                     </div>
-                                @endif
-
-                                <div class="mini-frame" aria-hidden="true">
-                                    <div class="mini-frame-bar">
-                                        <i></i><i></i><i></i>
-                                        <span class="u">{{ $host }}/</span>
-                                    </div>
-                                    <div class="mini-frame-body">
-                                        <div class="ln short"></div>
-                                        <div class="ln med"></div>
-                                        <div class="ln long"></div>
-                                        <div class="ln long"></div>
-                                        <div class="ln short"></div>
+                                    <div class="pm-plans">
+                                        <div class="pm-plan">
+                                            <div class="pm-plan-name">Free</div>
+                                            <div class="pm-plan-price">$0<span>forever</span></div>
+                                            <div class="pm-plan-cta ghost">Current plan</div>
+                                            <ul class="pm-plan-feats">
+                                                <li><span class="pm-check"></span><span class="pm-feat-bar long"></span></li>
+                                                <li><span class="pm-check"></span><span class="pm-feat-bar med"></span></li>
+                                                <li><span class="pm-check"></span><span class="pm-feat-bar short"></span></li>
+                                            </ul>
+                                        </div>
+                                        <div class="pm-plan highlight">
+                                            <div class="pm-plan-badge">Most popular</div>
+                                            <div class="pm-plan-name">Pro</div>
+                                            <div class="pm-plan-price">$29<span>per month</span></div>
+                                            <div class="pm-plan-cta">Choose plan</div>
+                                            <ul class="pm-plan-feats">
+                                                <li><span class="pm-check"></span><span class="pm-feat-bar long"></span></li>
+                                                <li><span class="pm-check"></span><span class="pm-feat-bar long"></span></li>
+                                                <li><span class="pm-check"></span><span class="pm-feat-bar med"></span></li>
+                                                <li><span class="pm-check"></span><span class="pm-feat-bar short"></span></li>
+                                            </ul>
+                                        </div>
+                                        <div class="pm-plan">
+                                            <div class="pm-plan-name">Studio</div>
+                                            <div class="pm-plan-price">$79<span>per month</span></div>
+                                            <div class="pm-plan-cta ghost">Choose plan</div>
+                                            <ul class="pm-plan-feats">
+                                                <li><span class="pm-check"></span><span class="pm-feat-bar long"></span></li>
+                                                <li><span class="pm-check"></span><span class="pm-feat-bar med"></span></li>
+                                                <li><span class="pm-check"></span><span class="pm-feat-bar short"></span></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </main>
                         </div>
                     </div>
                 </div>

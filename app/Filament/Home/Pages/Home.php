@@ -56,7 +56,7 @@ class Home extends Page
                 ->eyebrow('v1.0 — Laravel 13 · Filament v5 · Livewire v4')
                 ->heading("The SaaS starter kit you're ")
                 ->headingAccent('already looking at.')
-                ->description('Auth, teams, Stripe billing, admin panel, PWA, real-time, tests — wired up and tested. You\'re looking at the homepage that ships with it.')
+                ->description('Multi-tenant teams, per-team Stripe subscriptions, Filament-powered admin — and this landing page, built from the same Filament components. Every flow browser-tested with Pest 4.')
                 ->primaryCta('Get started for free', $registerUrl)
                 ->secondaryCta('Star on GitHub', $githubUrl)
                 ->command($command, '↑ this is a real command. it works.')
@@ -66,7 +66,7 @@ class Home extends Page
                     'Filament v5',
                     'Livewire v4',
                     'Cashier 16',
-                    'Reverb',
+                    'Web Push',
                     'PWA',
                     'Pest 4',
                     'Tailwind v4',
@@ -79,20 +79,20 @@ class Home extends Page
                 ->description('Every Laravel SaaS needs the same boring foundation. We built it once, tested it, and put your name on it. You bring the product.')
                 ->cards([
                     [
-                        'title' => "Teams that don't suck to build",
-                        'body' => 'Owners, members, invitations by email, ownership transfer, per-team billing. Stop reinventing the org chart on every project.',
+                        'title' => 'Multi-tenant teams, done properly',
+                        'body' => 'Teams as tenants. Owners, administrators, managers, invitations by email, ownership transfer. Each team has its own data, its own members, its own billing — no leaks across boundaries.',
                         'visual' => 'org-chart',
                         'span' => 'b-1',
                     ],
                     [
-                        'title' => 'Stripe billing, two clicks from charging',
-                        'body' => 'Cashier 16, monthly + yearly toggle, hosted checkout, customer portal, webhooks signed and tested. Plug your price IDs into <code>.env</code>, ship.',
+                        'title' => 'Per-team subscriptions on Stripe',
+                        'body' => 'Cashier 16 attached to the team — not the user. Monthly + yearly toggle, hosted checkout, customer portal, signed webhooks. Plug your price IDs into <code>.env</code>, ship.',
                         'visual' => 'billing',
                         'span' => 'b-2',
                     ],
                     [
-                        'title' => 'Filament admin, already clustered',
-                        'body' => 'Account, Team, and Billing pages live as Filament v5 clusters. Drop your resources next to them — your panel is already done.',
+                        'title' => 'Filament admin — and Filament landing',
+                        'body' => 'Account, Team, and Billing pages live as Filament v5 clusters. The page you\'re on right now is built from the same <code>Component</code> classes — Hero, Features, Pricing, FAQ. One mental model for app and marketing.',
                         'visual' => 'filament',
                         'span' => 'b-3',
                     ],
@@ -106,14 +106,14 @@ class Home extends Page
                         ],
                     ],
                     [
-                        'title' => 'Real-time with Reverb',
-                        'body' => 'Native Laravel websockets. Broadcast jobs, presence channels, live tables — no third-party bill.',
+                        'title' => 'Account self-service that respects user data',
+                        'body' => 'Members manage their own profile, password, and avatar. Account deletion is soft + scheduled — a daily job purges accounts past the 30-day grace window. Cancel anytime before the timer runs out.',
                         'visual' => 'realtime',
                         'span' => 'b-5',
                     ],
                     [
-                        'title' => 'Tested. Like, actually tested.',
-                        'body' => 'Pest 4 feature tests, browser smoke tests, and arch tests cover auth, teams, invitations, billing flows. Green from the first commit.',
+                        'title' => 'Browser-tested with Pest 4. Every flow.',
+                        'body' => 'Eleven Pest 4 browser tests drive a real Chromium: registration, login, logout, account settings, team details, members, invitations, ownership transfer, billing, and a full smoke pass. Green from the first commit.',
                         'visual' => 'terminal',
                         'span' => 'b-6',
                     ],
@@ -129,9 +129,10 @@ class Home extends Page
                         'span' => 'b-strip',
                         'data' => [
                             'tags' => [
-                                'imports', 'exports', 'PDFs', 'sitemap',
-                                'Nightwatch observability', 'queues',
-                                'scheduling', 'SEO meta',
+                                'avatar + team-logo uploads', 'policies',
+                                'password reset emails', 'sitemap',
+                                'SEO + OpenGraph meta', 'Nightwatch observability',
+                                'dark mode', 'Tailwind v4 themed',
                             ],
                         ],
                     ],
