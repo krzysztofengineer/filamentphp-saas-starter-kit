@@ -43,4 +43,14 @@ it('transfers ownership to another team member', function () {
 
     assertDatabaseHas('teams', ['id' => $tenant->id, 'user_id' => $member->id]);
     assertTrue($tenant->fresh()->isAdministeredBy($member));
+    assertDatabaseHas('team_user', [
+        'team_id' => $tenant->id,
+        'user_id' => $member->id,
+        'role' => TeamRole::Administrator->value,
+    ]);
+    assertDatabaseHas('team_user', [
+        'team_id' => $tenant->id,
+        'user_id' => $admin->id,
+        'role' => TeamRole::Member->value,
+    ]);
 });

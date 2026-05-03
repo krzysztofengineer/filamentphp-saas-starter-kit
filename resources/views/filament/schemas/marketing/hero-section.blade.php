@@ -86,10 +86,6 @@
 
         @if ($showInception)
             <div class="browser-wrap">
-                <div class="inception-note">
-                    <span class="dot"></span>
-                    <span>↓ this page, inside this page</span>
-                </div>
                 <div class="browser">
                     <div class="browser-bar">
                         <div class="traffic"><span></span><span></span><span></span></div>

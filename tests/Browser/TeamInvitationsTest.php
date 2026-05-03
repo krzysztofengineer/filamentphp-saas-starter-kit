@@ -162,7 +162,7 @@ it('accepts the invitation for the existing user', function () {
     $invitee = User::factory()->create(['email' => 'invitee@example.com']);
     $inviteeTeam = $invitee->ownedTeams()->first();
 
-    $invitation = TeamInvitation::factory()->for($team)->member()->create([
+    $invitation = TeamInvitation::factory()->for($team)->administrator()->create([
         'email' => 'invitee@example.com',
         'user_id' => $admin->id,
     ]);
@@ -178,6 +178,11 @@ it('accepts the invitation for the existing user', function () {
 
     assertDatabaseMissing('team_invitations', ['id' => $invitation->id]);
     assertTrue($team->fresh()->members->contains($invitee));
+    assertDatabaseHas('team_user', [
+        'team_id' => $team->id,
+        'user_id' => $invitee->id,
+        'role' => TeamRole::Administrator->value,
+    ]);
 });
 
 it('accepts the invitation for the new user', function () {
