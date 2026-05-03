@@ -192,6 +192,7 @@ it('accepts the invitation for the new user', function () {
 
     visit('/team-invitations')
         ->click('a[href*="register"]')
+        ->assertPathIs('/app/register')
         ->fill('@register-name', 'Newbie')
         ->fill('@register-email', 'newbie@example.com')
         ->fill('@register-password', 'password')

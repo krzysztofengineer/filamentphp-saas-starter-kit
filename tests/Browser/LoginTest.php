@@ -9,6 +9,7 @@ it('allows users to log in', function () {
 
     visit('/')
         ->click('@topbar-login')
+        ->assertPathIs('/app/login')
         ->fill('@login-email', $user->email)
         ->fill('@login-password', 'password')
         ->click('@login-submit')

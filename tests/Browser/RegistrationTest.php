@@ -6,6 +6,7 @@ use function Pest\Laravel\assertDatabaseHas;
 it('allows users to register', function () {
     visit('/')
         ->click('@topbar-register')
+        ->assertPathIs('/app/register')
         ->fill('@register-name', 'Test')
         ->fill('@register-email', 'test@example.com')
         ->fill('@register-password', 'password')
