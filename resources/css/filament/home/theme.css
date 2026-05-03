@@ -11,8 +11,6 @@
     display: none !important;
 }
 
-/* Hoist landing tokens to body level so the Filament topbar (which sits
-   outside .landing-root) can pick up the marketing palette. */
 body.fi-panel-home {
     --lp-bg: oklch(0.18 0.012 250);
     --lp-border: oklch(1 0 0 / 0.08);
@@ -24,10 +22,6 @@ html:not(.dark) body.fi-panel-home {
     --lp-border: oklch(0.22 0.012 250 / 0.1);
 }
 
-/* Match topbar inner padding to the marketing container's content edge.
-   The container is `max-width: 1200px; padding: 0 28px`, so content lives
-   inside a 1144px (= 1200 - 2*28) box centered in the viewport. Use that
-   inner width here so logo + nav + login line up with the sections. */
 body.fi-panel-home .fi-topbar {
     align-items: center;
     padding-inline: max(28px, calc((100% - 1144px) / 2)) !important;
@@ -44,9 +38,6 @@ body.fi-panel-home .fi-topbar {
     }
 }
 
-/* The marketing landing renders edge-to-edge full-bleed sections, so we
-   zero out the page content padding while keeping Filament's native topbar.
-   `body.fi-panel-home` has high specificity that trumps Filament's defaults. */
 body.fi-panel-home .fi-main,
 body.fi-panel-home .fi-main-ctn {
     padding: 0 !important;
@@ -72,9 +63,6 @@ html:has(body.fi-panel-home) {
     scroll-padding-top: 80px;
 }
 
-/* Filament's text-(--text) inside .fi-btn.fi-color in @layer components doesn't
-   reliably win the cascade against the body's inherited color, so we force the
-   correct foreground using Filament's own --text / --dark-text tokens. */
 .landing-root .fi-btn.fi-color:not(.fi-outlined):not(label),
 .landing-root .fi-icon-btn.fi-color:not(.fi-outlined):not(label) {
     color: var(--text);
@@ -85,7 +73,6 @@ html.dark .landing-root .fi-icon-btn.fi-color:not(.fi-outlined):not(label) {
     color: var(--dark-text);
 }
 
-/* ─── Marketing landing — design tokens ──────────────────────────────── */
 .landing-root {
     --lp-bg: oklch(0.18 0.012 250);
     --bg-elev: oklch(0.215 0.012 250);
@@ -175,7 +162,6 @@ html:not(.dark) .landing-root {
     }
 }
 
-/* ─── Nav ─────────────────────────────────────────────────────────── */
 .landing-root .nav {
     position: sticky;
     top: 0;
@@ -285,7 +271,6 @@ html:not(.dark) .landing-root {
     height: 16px;
 }
 
-/* ─── Buttons ─────────────────────────────────────────────────────── */
 .landing-root .btn {
     display: inline-flex;
     align-items: center;
@@ -345,7 +330,6 @@ html:not(.dark) .landing-root {
     font-size: 15px;
 }
 
-/* ─── Command chip ───────────────────────────────────────────────── */
 .landing-root .cmd {
     display: inline-flex;
     align-items: center;
@@ -442,7 +426,6 @@ html:not(.dark) .landing-root {
     min-width: 50px;
 }
 
-/* ─── Hero ────────────────────────────────────────────────────────── */
 .landing-root .hero {
     padding: 76px 0 28px;
     position: relative;
@@ -541,7 +524,6 @@ html:not(.dark) .landing-root {
     background: var(--text-3);
 }
 
-/* ─── Browser frame (the inception gag) ──────────────────────────── */
 .landing-root .browser-wrap {
     margin-top: 64px;
     display: flex;
@@ -611,7 +593,6 @@ html:not(.dark) .landing-root .traffic span {
     background: var(--lp-bg);
 }
 
-/* mini page rendered inside the inception browser */
 .landing-root .mini-page {
     padding: 18px 22px 22px;
     position: relative;
@@ -827,7 +808,6 @@ html:not(.dark) .landing-root .mini-frame-bar i {
     flex: 0 0 auto;
 }
 
-/* ─── Section headers ────────────────────────────────────────────── */
 .landing-root .section {
     padding: 96px 0;
 }
@@ -880,7 +860,6 @@ html:not(.dark) .landing-root .mini-frame-bar i {
     margin-right: auto;
 }
 
-/* ─── Bento ──────────────────────────────────────────────────────── */
 .landing-root .bento {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -966,7 +945,6 @@ html:not(.dark) .landing-root .mini-frame-bar i {
     }
 }
 
-/* card visuals */
 .landing-root .org-chart {
     display: grid;
     gap: 14px;
@@ -1538,7 +1516,6 @@ html:not(.dark) .landing-root .terminal {
     background: var(--lp-bg);
 }
 
-/* ─── How it works ───────────────────────────────────────────────── */
 .landing-root .steps {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1627,7 +1604,6 @@ html:not(.dark) .landing-root .terminal {
     font-family: var(--mono);
 }
 
-/* ─── Pricing ────────────────────────────────────────────────────── */
 .landing-root .pricing-tagline {
     font-family: var(--mono);
     font-size: 13px;
@@ -1814,7 +1790,6 @@ html:not(.dark) .landing-root .terminal {
     font-family: var(--mono);
 }
 
-/* ─── FAQ ────────────────────────────────────────────────────────── */
 .landing-root .faq-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1877,7 +1852,6 @@ html:not(.dark) .landing-root .terminal {
     font-size: 12px;
 }
 
-/* ─── Closing CTA ────────────────────────────────────────────────── */
 .landing-root .closing {
     border-top: 1px solid var(--border);
     padding: 110px 0 120px;
@@ -1908,7 +1882,6 @@ html:not(.dark) .landing-root .terminal {
     margin-top: 26px;
 }
 
-/* ─── Footer ─────────────────────────────────────────────────────── */
 .landing-root .landing-footer {
     border-top: 1px solid var(--border);
     padding: 56px 0 36px;
@@ -1975,7 +1948,6 @@ html:not(.dark) .landing-root .terminal {
     gap: 14px;
 }
 
-/* ─── Legal pages (terms, privacy) ────────────────────────────────── */
 .landing-root .legal-hero {
     padding: 96px 0 32px;
     border-bottom: 1px solid var(--border);
