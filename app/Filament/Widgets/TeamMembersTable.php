@@ -58,8 +58,8 @@ class TeamMembersTable extends TableWidget
                         ->options(self::roleOptions())
                         ->selectablePlaceholder(false)
                         ->native(false)
-                        ->visible(fn (?User $record): bool => $record !== null && ! $this->isTeamOwner($record))
-                        ->disabled(fn (User $record): bool => ! $this->canChangeRoleFor($record))
+                        ->visible(fn (?User $record): bool => $record === null || ! $this->isTeamOwner($record))
+                        ->disabled(fn (?User $record): bool => $record !== null && ! $this->canChangeRoleFor($record))
                         ->updateStateUsing(function (User $record, string $state): ?string {
                             /** @var Team|null $team */
                             $team = Filament::getTenant();

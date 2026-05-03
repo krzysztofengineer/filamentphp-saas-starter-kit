@@ -61,6 +61,26 @@ it('removes team members', function () {
     assertDatabaseMissing('team_user', ['team_id' => $team->id, 'user_id' => $member->id]);
 });
 
+it('changes a member role', function () {
+    $admin = User::factory()->create();
+    $tenant = $admin->currentTeam;
+    $member = User::factory()->create(['name' => 'Promotable Member']);
+    $tenant->members()->attach($member, ['role' => TeamRole::Member]);
+
+    actingAs($admin);
+
+    visit('/app/'.$tenant->uuid.'/settings/members')
+        ->click('[data-testid="member-role-select"]')
+        ->click('.fi-dropdown-panel:visible [data-value="administrator"]')
+        ->assertSee('Role updated');
+
+    assertDatabaseHas('team_user', [
+        'team_id' => $tenant->id,
+        'user_id' => $member->id,
+        'role' => TeamRole::Administrator->value,
+    ]);
+});
+
 it('cannot remove team owner', function () {
     $owner = User::factory()->create();
     $team = Team::factory()->create(['name' => 'Test', 'user_id' => $owner->id]);
