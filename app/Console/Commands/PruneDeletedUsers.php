@@ -22,10 +22,8 @@ class PruneDeletedUsers extends Command
             ->where('deleted_at', '<=', $threshold)
             ->get();
 
-        $action = new PruneDeletedUser;
-
         foreach ($toPrune as $user) {
-            $action->handle($user);
+            (new PruneDeletedUser)->handle($user);
         }
 
         $this->info("Pruned {$toPrune->count()} user(s) scheduled before {$threshold->toDateTimeString()}.");
