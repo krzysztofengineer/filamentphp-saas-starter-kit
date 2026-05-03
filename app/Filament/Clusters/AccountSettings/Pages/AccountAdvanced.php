@@ -74,7 +74,7 @@ class AccountAdvanced extends Page implements HasActions, HasForms
             ->label('Delete my account')
             ->icon(Heroicon::OutlinedTrash)
             ->color('danger')
-            ->extraAttributes(['data-testid' => 'delete-account-button'])
+            ->extraAttributes(['data-testid' => 'delete-account'])
             ->modalWidth(Width::Medium)
             ->modalIcon(Heroicon::OutlinedExclamationTriangle)
             ->modalIconColor('danger')

@@ -13,7 +13,7 @@ it('shows the transfer ownership section to administrators', function () {
 
     visit('/app/'.$admin->currentTeam->uuid.'/settings/advanced')
         ->assertSee('Transfer ownership')
-        ->assertPresent('[data-testid="transfer-ownership-button"]');
+        ->assertPresent('[data-testid="transfer-ownership"]');
 });
 
 it('disables the transfer ownership button when there are no other members', function () {
@@ -21,7 +21,7 @@ it('disables the transfer ownership button when there are no other members', fun
     actingAs($admin);
 
     visit('/app/'.$admin->currentTeam->uuid.'/settings/advanced')
-        ->assertPresent('[data-testid="transfer-ownership-button"][disabled]');
+        ->assertPresent('[data-testid="transfer-ownership"][disabled]');
 });
 
 it('transfers ownership to another team member', function () {
@@ -33,7 +33,7 @@ it('transfers ownership to another team member', function () {
     actingAs($admin);
 
     visit('/app/'.$tenant->uuid.'/settings/advanced')
-        ->click('[data-testid="transfer-ownership-button"]')
+        ->click('[data-testid="transfer-ownership"]')
         ->click('[data-testid="transfer-ownership-select"]')
         ->click('.fi-dropdown-panel:visible [role="option"]:has-text("Future Admin")')
         ->click('[data-testid="transfer-ownership-confirm"]')

@@ -107,7 +107,7 @@ class TeamAdvanced extends Page implements HasActions, HasForms
             ->icon(Heroicon::OutlinedArrowsRightLeft)
             ->color('primary')
             ->outlined()
-            ->extraAttributes(['data-testid' => 'transfer-ownership-button'])
+            ->extraAttributes(['data-testid' => 'transfer-ownership'])
             ->modalWidth(Width::Medium)
             ->modalIcon(Heroicon::OutlinedArrowsRightLeft)
             ->modalHeading('Transfer ownership')
@@ -163,7 +163,7 @@ class TeamAdvanced extends Page implements HasActions, HasForms
             ->label('Delete team')
             ->icon(Heroicon::OutlinedTrash)
             ->color('danger')
-            ->extraAttributes(['data-testid' => 'delete-team-button'])
+            ->extraAttributes(['data-testid' => 'delete-team'])
             ->modalWidth(Width::Medium)
             ->modalIcon(Heroicon::OutlinedExclamationTriangle)
             ->modalIconColor('danger')
@@ -175,7 +175,7 @@ class TeamAdvanced extends Page implements HasActions, HasForms
                     ->placeholder($team->name)
                     ->required()
                     ->prefixIcon(Heroicon::OutlinedExclamationTriangle)
-                    ->extraInputAttributes(['data-testid' => 'delete-team-name-input'])
+                    ->extraInputAttributes(['data-testid' => 'delete-team-name'])
                     ->rule('in:'.$team->name),
             ])
             ->modalSubmitAction(fn (?Action $action) => $action

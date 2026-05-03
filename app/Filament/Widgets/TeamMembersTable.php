@@ -126,7 +126,7 @@ class TeamMembersTable extends TableWidget
             ->label('Remove')
             ->icon(Heroicon::OutlinedTrash)
             ->color('danger')
-            ->extraAttributes(['data-testid' => 'remove-member-button'])
+            ->extraAttributes(['data-testid' => 'remove-member'])
             ->requiresConfirmation()
             ->modalHeading('Remove member?')
             ->modalDescription('They will lose access to this team.')

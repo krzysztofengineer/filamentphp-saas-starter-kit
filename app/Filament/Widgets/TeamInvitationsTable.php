@@ -65,7 +65,7 @@ class TeamInvitationsTable extends TableWidget
                 ]),
             ])
             ->headerActions([
-                $this->inviteAction()->extraAttributes(['data-testid' => 'invite-button']),
+                $this->inviteAction()->extraAttributes(['data-testid' => 'invite']),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -79,7 +79,7 @@ class TeamInvitationsTable extends TableWidget
             ->emptyStateActions([
                 $this->inviteAction()
                     ->name('inviteFromEmptyState')
-                    ->extraAttributes(['data-testid' => 'invite-button-empty'])
+                    ->extraAttributes(['data-testid' => 'invite-empty'])
                     ->button()
                     ->outlined(),
             ]);
@@ -107,7 +107,7 @@ class TeamInvitationsTable extends TableWidget
             ->modalHeading('Invite a new team member')
             ->modalDescription('Enter their email and pick a role — they will see the invitation after signing in.')
             ->modalSubmitActionLabel('Send invitation')
-            ->modalSubmitAction(fn (Action $action) => $action->extraAttributes(['data-testid' => 'invite-submit-button']))
+            ->modalSubmitAction(fn (Action $action) => $action->extraAttributes(['data-testid' => 'invite-submit']))
             ->fillForm(['role' => TeamRole::Member->value])
             ->schema([
                 TextInput::make('email')
@@ -167,7 +167,7 @@ class TeamInvitationsTable extends TableWidget
             ->label('Revoke')
             ->icon(Heroicon::OutlinedXMark)
             ->color('danger')
-            ->extraAttributes(['data-testid' => 'revoke-invitation-button'])
+            ->extraAttributes(['data-testid' => 'revoke-invitation'])
             ->requiresConfirmation()
             ->modalHeading('Revoke invitation?')
             ->modalSubmitActionLabel('Revoke')

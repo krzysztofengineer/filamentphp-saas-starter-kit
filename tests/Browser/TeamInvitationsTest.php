@@ -31,10 +31,10 @@ it('invites new members', function () {
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
         ->click('@team-settings')
         ->click('.fi-sidebar-item-btn[href*="/settings/members"]')
-        ->click('@invite-button')
+        ->click('@invite')
         ->fill('@invite-email', 'test@example.com')
-        ->click('@invite-submit-button')
-        ->assertNotPresent('@invite-submit-button')
+        ->click('@invite-submit')
+        ->assertNotPresent('@invite-submit')
         ->assertSee('test@example.com');
 
     assertDatabaseCount('team_invitations', 1);
@@ -56,9 +56,9 @@ it('cannot invite the same email twice', function () {
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
         ->click('@team-settings')
         ->click('.fi-sidebar-item-btn[href*="/settings/members"]')
-        ->click('@invite-button')
+        ->click('@invite')
         ->fill('@invite-email', 'test@example.com')
-        ->click('@invite-submit-button')
+        ->click('@invite-submit')
         ->assertSee('An invitation for that email already exists');
 
     assertDatabaseCount('team_invitations', 1);
@@ -75,9 +75,9 @@ it('cannot invite existing members', function () {
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
         ->click('@team-settings')
         ->click('.fi-sidebar-item-btn[href*="/settings/members"]')
-        ->click('@invite-button')
+        ->click('@invite')
         ->fill('@invite-email', $user->email)
-        ->click('@invite-submit-button')
+        ->click('@invite-submit')
         ->assertSee('That user is already a member');
 });
 
@@ -113,7 +113,7 @@ it('removes the invitation', function () {
         ->click('@team-settings')
         ->click('.fi-sidebar-item-btn[href*="/settings/members"]')
         ->click('button[aria-label="Actions"]')
-        ->click('[data-testid="revoke-invitation-button"]')
+        ->click('[data-testid="revoke-invitation"]')
         ->click('[data-testid="revoke-invitation-confirm"]')
         ->assertSee('Invitation revoked');
 
@@ -131,10 +131,10 @@ it('sends the invitation notification', function () {
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
         ->click('@team-settings')
         ->click('.fi-sidebar-item-btn[href*="/settings/members"]')
-        ->click('@invite-button')
+        ->click('@invite')
         ->fill('@invite-email', 'test@example.com')
-        ->click('@invite-submit-button')
-        ->assertNotPresent('@invite-submit-button');
+        ->click('@invite-submit')
+        ->assertNotPresent('@invite-submit');
 
     Notification::assertSentOnDemand(
         TeamInvitationNotification::class,

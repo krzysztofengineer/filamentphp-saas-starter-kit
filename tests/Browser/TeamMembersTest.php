@@ -54,7 +54,7 @@ it('removes team members', function () {
         ->click('@team-settings')
         ->click('.fi-sidebar-item-btn[href*="/settings/members"]')
         ->click('button[aria-label="Actions"]')
-        ->click('[data-testid="remove-member-button"]')
+        ->click('[data-testid="remove-member"]')
         ->click('[data-testid="remove-member-confirm"]')
         ->assertSee('Member removed');
 

@@ -18,7 +18,7 @@ it('updates the user name', function () {
     actingAs($user);
 
     visit('/app/'.$user->currentTeam->uuid.'/account/settings')
-        ->fill('[data-testid="account-profile-name-input"]', 'Updated Name')
+        ->fill('[data-testid="account-profile-name"]', 'Updated Name')
         ->click('[data-testid="account-profile-save"]')
         ->wait(1)
         ->assertNoJavaScriptErrors();
@@ -74,7 +74,7 @@ it('schedules account deletion when the user administers no teams', function () 
     actingAs($user);
 
     visit('/app/'.$team->uuid.'/account/advanced')
-        ->click('[data-testid="delete-account-button"]')
+        ->click('[data-testid="delete-account"]')
         ->assertSee('permanently deleted')
         ->click('[data-testid="delete-account-confirm"]')
         ->assertPathIs('/app/login');
@@ -89,7 +89,7 @@ it('blocks account deletion when the user still administers a team', function ()
     actingAs($user);
 
     visit('/app/'.$user->currentTeam->uuid.'/account/advanced')
-        ->click('[data-testid="delete-account-button"]')
+        ->click('[data-testid="delete-account"]')
         ->assertSee('Leave or delete the teams you administer first')
         ->assertNoJavaScriptErrors();
 

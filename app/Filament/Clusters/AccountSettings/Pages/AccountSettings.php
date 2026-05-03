@@ -112,14 +112,14 @@ class AccountSettings extends Page implements HasActions, HasForms
                             ->required()
                             ->maxLength(255)
                             ->prefixIcon(Heroicon::OutlinedUser)
-                            ->extraInputAttributes(['data-testid' => 'account-profile-name-input']),
+                            ->extraInputAttributes(['data-testid' => 'account-profile-name']),
 
                         TextInput::make('email')
                             ->label('Email')
                             ->disabled()
                             ->dehydrated(false)
                             ->prefixIcon(Heroicon::OutlinedEnvelope)
-                            ->extraInputAttributes(['data-testid' => 'account-profile-email-input']),
+                            ->extraInputAttributes(['data-testid' => 'account-profile-email']),
                     ]),
 
                 Section::make()

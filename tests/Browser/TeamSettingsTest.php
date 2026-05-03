@@ -33,7 +33,7 @@ it('removes a member from the team', function () {
     visit('/app/'.$tenant->uuid.'/settings/members')
         ->assertSee('Removable Member')
         ->click('button[aria-label="Actions"]')
-        ->click('[data-testid="remove-member-button"]')
+        ->click('[data-testid="remove-member"]')
         ->click('[data-testid="remove-member-confirm"]')
         ->assertSee('Member removed')
         ->assertNoJavaScriptErrors();
@@ -62,8 +62,8 @@ it('deletes the team when the administrator types the name correctly', function 
     actingAs($admin);
 
     visit('/app/'.$tenant->uuid.'/settings/advanced')
-        ->click('[data-testid="delete-team-button"]')
-        ->fill('[data-testid="delete-team-name-input"]', 'Doomed Team')
+        ->click('[data-testid="delete-team"]')
+        ->fill('[data-testid="delete-team-name"]', 'Doomed Team')
         ->click('[data-testid="delete-team-confirm"]')
         ->assertSee('Team deleted');
 
@@ -78,8 +78,8 @@ it('blocks team deletion when the name confirmation does not match', function ()
     actingAs($admin);
 
     visit('/app/'.$tenant->uuid.'/settings/advanced')
-        ->click('[data-testid="delete-team-button"]')
-        ->fill('[data-testid="delete-team-name-input"]', 'Wrong Name')
+        ->click('[data-testid="delete-team"]')
+        ->fill('[data-testid="delete-team-name"]', 'Wrong Name')
         ->click('[data-testid="delete-team-confirm"]')
         ->assertSee('selected')
         ->assertNoJavaScriptErrors();
