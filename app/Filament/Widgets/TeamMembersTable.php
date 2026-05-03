@@ -36,7 +36,7 @@ class TeamMembersTable extends TableWidget
             ->columns([
                 Split::make([
                     ImageColumn::make('avatar')
-                        ->state(fn (User $record): ?string => $record->getFilamentAvatarUrl())
+                        ->state(fn (User $record): string => Filament::getUserAvatarUrl($record))
                         ->circular()
                         ->grow(false)
                         ->size(40),

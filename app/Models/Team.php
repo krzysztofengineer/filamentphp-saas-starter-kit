@@ -5,8 +5,6 @@ namespace App\Models;
 use App\Observers\TeamObserver;
 use App\TeamRole;
 use Database\Factories\TeamFactory;
-use Filament\Models\Contracts\HasAvatar;
-use Filament\Support\Colors\Color;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Cashier\Billable;
 
 #[ObservedBy(TeamObserver::class)]
-class Team extends Model implements HasAvatar
+class Team extends Model
 {
     /** @use HasFactory<TeamFactory> */
     use Billable, HasFactory;
@@ -88,18 +86,5 @@ class Team extends Model implements HasAvatar
     public function canBeDeletedBy(User $user): bool
     {
         return $this->roleFor($user)?->canDeleteTeam() === true;
-    }
-
-    public function getFilamentAvatarUrl(): ?string
-    {
-        $bg = Color::convertToHex(Color::Red[600]);
-        $fg = '#ffffff';
-        $initial = trim((string) $this->name) === '' ? 'T' : strtoupper(mb_substr($this->name, 0, 1));
-
-        $svg = <<<SVG
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="{$bg}"/><text x="32" y="32" font-family="-apple-system, system-ui, sans-serif" font-size="28" font-weight="700" fill="{$fg}" text-anchor="middle" dominant-baseline="central">{$initial}</text></svg>
-SVG;
-
-        return 'data:image/svg+xml;base64,'.base64_encode($svg);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\AvatarProviders\UiAvatarsProvider;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Clusters\AccountSettings\Pages\AccountSettings;
 use App\Filament\Clusters\AccountSettings\Pages\TeamInvitations;
@@ -87,6 +88,7 @@ class AppPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Red,
             ])
+            ->defaultAvatarProvider(UiAvatarsProvider::class)
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\Filament\Clusters')
             ->pages([
