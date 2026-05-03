@@ -60,6 +60,24 @@ return [
             'report' => false,
         ],
 
+        'user-avatars' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/user-avatars'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage/user-avatars',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
+        'team-logos' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/team-logos'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage/team-logos',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*

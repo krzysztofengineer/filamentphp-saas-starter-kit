@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Filament\AvatarProviders\UserAvatarProvider;
 use App\Notifications\ResetPassword;
 use App\Observers\UserObserver;
 use App\TeamRole;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -22,10 +24,10 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 
-#[Fillable(['name', 'email', 'password', 'current_team_id', 'scheduled_for_deletion_at'])]
+#[Fillable(['name', 'email', 'password', 'current_team_id', 'scheduled_for_deletion_at', 'avatar'])]
 #[Hidden(['password', 'remember_token'])]
 #[ObservedBy(UserObserver::class)]
-class User extends Authenticatable implements FilamentUser, HasDefaultTenant, HasTenants, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasDefaultTenant, HasTenants, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasPushSubscriptions, Notifiable;
@@ -95,5 +97,10 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
     public function getDefaultTenant(Panel $panel): ?Model
     {
         return $this->currentTeam;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return app(UserAvatarProvider::class)->get($this);
     }
 }

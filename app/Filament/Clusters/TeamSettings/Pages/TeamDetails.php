@@ -11,6 +11,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -52,6 +53,7 @@ class TeamDetails extends Page implements HasActions, HasForms
 
         $this->form->fill([
             'name' => $team->name,
+            'logo' => $team->logo,
         ]);
     }
 
@@ -87,6 +89,18 @@ class TeamDetails extends Page implements HasActions, HasForms
                     ])
                     ->footerActionsAlignment(Alignment::End)
                     ->schema([
+                        FileUpload::make('logo')
+                            ->label('Logo')
+                            ->avatar()
+                            ->image()
+                            ->disk('team-logos')
+                            ->directory('')
+                            ->visibility('public')
+                            ->maxSize(2048)
+                            ->imageEditor()
+                            ->circleCropper()
+                            ->extraAttributes(['data-testid' => 'team-details-logo']),
+
                         TextInput::make('name')
                             ->label('Name')
                             ->required()
@@ -109,7 +123,13 @@ class TeamDetails extends Page implements HasActions, HasForms
                 /** @var Team $team */
                 $team = Filament::getTenant();
 
-                (new UpdateTeamProfile)->handle($team, ['name' => $data['name']]);
+                $this->dispatch('refresh-topbar');
+                $this->dispatch('refresh-sidebar');
+
+                (new UpdateTeamProfile)->handle($team, [
+                    'name' => $data['name'],
+                    'logo' => $data['logo'] ?? null,
+                ]);
 
                 Notification::make()
                     ->success()

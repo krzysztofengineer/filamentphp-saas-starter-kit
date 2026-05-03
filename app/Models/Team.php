@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Filament\AvatarProviders\TeamLogoProvider;
 use App\Observers\TeamObserver;
 use App\TeamRole;
 use Database\Factories\TeamFactory;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Cashier\Billable;
 
 #[ObservedBy(TeamObserver::class)]
-class Team extends Model
+class Team extends Model implements HasAvatar
 {
     /** @use HasFactory<TeamFactory> */
     use Billable, HasFactory;
@@ -21,6 +23,7 @@ class Team extends Model
     protected $fillable = [
         'name',
         'user_id',
+        'logo',
     ];
 
     public function getRouteKeyName(): string
@@ -86,5 +89,10 @@ class Team extends Model
     public function canBeDeletedBy(User $user): bool
     {
         return $this->roleFor($user)?->canDeleteTeam() === true;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return app(TeamLogoProvider::class)->get($this);
     }
 }

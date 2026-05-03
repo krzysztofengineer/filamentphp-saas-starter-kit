@@ -11,6 +11,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -43,6 +44,7 @@ class AccountSettings extends Page implements HasActions, HasForms
     public array $data = [
         'name' => '',
         'email' => '',
+        'avatar' => null,
         'current_password' => '',
         'password' => '',
         'password_confirmation' => '',
@@ -61,6 +63,7 @@ class AccountSettings extends Page implements HasActions, HasForms
         $this->form->fill([
             'name' => $user->name,
             'email' => $user->email,
+            'avatar' => $user->avatar,
         ]);
     }
 
@@ -92,6 +95,18 @@ class AccountSettings extends Page implements HasActions, HasForms
                     ])
                     ->footerActionsAlignment(Alignment::End)
                     ->schema([
+                        FileUpload::make('avatar')
+                            ->label('Avatar')
+                            ->avatar()
+                            ->image()
+                            ->disk('user-avatars')
+                            ->directory('')
+                            ->visibility('public')
+                            ->maxSize(2048)
+                            ->imageEditor()
+                            ->circleCropper()
+                            ->extraAttributes(['data-testid' => 'account-profile-avatar']),
+
                         TextInput::make('name')
                             ->label('Name')
                             ->required()
@@ -156,12 +171,18 @@ class AccountSettings extends Page implements HasActions, HasForms
                 /** @var User $user */
                 $user = auth()->user();
 
-                (new UpdateAccountProfile)->handle($user, ['name' => $data['name']]);
+                (new UpdateAccountProfile)->handle($user, [
+                    'name' => $data['name'],
+                    'avatar' => $data['avatar'] ?? null,
+                ]);
 
                 Notification::make()
                     ->success()
                     ->title('Account saved.')
                     ->send();
+
+                $this->dispatch('refresh-topbar');
+                $this->dispatch('refresh-sidebar');
             });
     }
 

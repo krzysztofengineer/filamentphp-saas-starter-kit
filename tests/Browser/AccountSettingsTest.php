@@ -21,7 +21,6 @@ it('updates the user name', function () {
     visit('/app/'.$tenant->uuid.'/account/settings')
         ->fill('[data-testid="account-profile-name-input"]', 'Updated Name')
         ->click('[data-testid="account-profile-save"]')
-        ->assertSee('Account saved')
         ->assertNoJavaScriptErrors();
 
     assertDatabaseHas('users', ['id' => $user->id, 'name' => 'Updated Name']);

@@ -2,17 +2,23 @@
 
 namespace App\Filament\AvatarProviders;
 
+use App\Models\Team;
 use Filament\AvatarProviders\Contracts;
 use Filament\Facades\Filament;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
-class UiAvatarsProvider implements Contracts\AvatarProvider
+class TeamLogoProvider implements Contracts\AvatarProvider
 {
     public function get(Model|Authenticatable $record): string
     {
+        if ($record instanceof Team && filled($record->logo)) {
+            return Storage::disk('team-logos')->url($record->logo);
+        }
+
         $name = str(Filament::getNameForDefaultAvatar($record))
             ->trim()
             ->explode(' ')

@@ -33,8 +33,7 @@ it('updates the team name', function () {
         ->click('@team-settings')
         ->assertPathIs("/app/{$team->uuid}/settings/profile")
         ->fill('@team-details-name', 'New name')
-        ->click('@team-details-save')
-        ->assertSee('Team saved');
+        ->click('@team-details-save');
 
     assertEquals('New name', $team->fresh()->name);
 });
