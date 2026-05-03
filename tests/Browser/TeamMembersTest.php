@@ -70,7 +70,7 @@ it('changes a member role', function () {
     actingAs($admin);
 
     visit('/app/'.$tenant->uuid.'/settings/members')
-        ->click('[data-testid="member-role-select"]')
+        ->click('.fi-ta-record:has-text("Promotable Member") [data-testid="member-role-select"]')
         ->click('.fi-dropdown-panel:visible [data-value="administrator"]')
         ->assertSee('Role updated');
 
@@ -85,7 +85,6 @@ it('cannot remove team owner', function () {
     $owner = User::factory()->create();
     $team = Team::factory()->create(['name' => 'Test', 'user_id' => $owner->id]);
     $user = User::factory()->create(['current_team_id' => $team->id]);
-    $team->members()->attach($owner, ['role' => TeamRole::Administrator]);
     $team->members()->attach($user, ['role' => TeamRole::Administrator]);
 
     actingAs($user);

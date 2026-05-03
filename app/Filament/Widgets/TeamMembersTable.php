@@ -41,24 +41,25 @@ class TeamMembersTable extends TableWidget
                         ->grow(false)
                         ->size(40),
                     Stack::make([
-                        TextColumn::make('name')
-                            ->weight(FontWeight::Medium),
+                        Split::make([
+                            TextColumn::make('name')
+                                ->weight(FontWeight::Medium)
+                                ->grow(false),
+                            TextColumn::make('owner_badge')
+                                ->state('Owner')
+                                ->badge()
+                                ->color('primary')
+                                ->visible(fn (?User $record): bool => $record !== null && $this->isTeamOwner($record)),
+                        ]),
                         TextColumn::make('email')
                             ->color('gray')
                             ->size(TextSize::Small),
                     ]),
-                    TextColumn::make('owner_badge')
-                        ->state('Owner')
-                        ->badge()
-                        ->color('primary')
-                        ->visible(fn (?User $record): bool => $record !== null && $this->isTeamOwner($record))
-                        ->grow(false),
                     SelectColumn::make('role')
                         ->state(fn (User $record): string => $record->pivot->role)
                         ->options(self::roleOptions())
                         ->selectablePlaceholder(false)
                         ->native(false)
-                        ->visible(fn (?User $record): bool => $record === null || ! $this->isTeamOwner($record))
                         ->disabled(fn (?User $record): bool => $record !== null && ! $this->canChangeRoleFor($record))
                         ->updateStateUsing(function (User $record, string $state): ?string {
                             /** @var Team|null $team */
@@ -112,15 +113,10 @@ class TeamMembersTable extends TableWidget
             return collect();
         }
 
-        $rolePriority = [
-            TeamRole::Administrator->value => 0,
-            TeamRole::Member->value => 2,
-        ];
-
         return $team->users()
-            ->orderBy('users.name')
+            ->orderBy('team_user.created_at')
             ->get()
-            ->sortBy(fn (User $user): int => $rolePriority[$user->pivot->role] ?? 99)
+            ->sortBy(fn (User $user): int => $this->isTeamOwner($user) ? 0 : 1)
             ->values();
     }
 

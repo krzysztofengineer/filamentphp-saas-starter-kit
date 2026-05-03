@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
+use App\Observers\TeamObserver;
 use App\TeamRole;
 use Database\Factories\TeamFactory;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Support\Colors\Color;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Str;
 use Laravel\Cashier\Billable;
 
+#[ObservedBy(TeamObserver::class)]
 class Team extends Model implements HasAvatar
 {
     /** @use HasFactory<TeamFactory> */
@@ -26,15 +28,6 @@ class Team extends Model implements HasAvatar
     public function getRouteKeyName(): string
     {
         return 'uuid';
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (self $team): void {
-            if (empty($team->uuid)) {
-                $team->uuid = (string) Str::uuid();
-            }
-        });
     }
 
     public function owner(): BelongsTo

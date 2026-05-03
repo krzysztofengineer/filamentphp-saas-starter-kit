@@ -157,7 +157,6 @@ it('sends the invitation notification', function () {
 it('accepts the invitation for the existing user', function () {
     $admin = User::factory()->create();
     $team = Team::factory()->create(['name' => 'Acme', 'user_id' => $admin->id]);
-    $team->members()->attach($admin, ['role' => TeamRole::Administrator]);
 
     $invitee = User::factory()->create(['email' => 'invitee@example.com']);
     $inviteeTeam = $invitee->ownedTeams()->first();
@@ -188,7 +187,6 @@ it('accepts the invitation for the existing user', function () {
 it('accepts the invitation for the new user', function () {
     $admin = User::factory()->create();
     $team = Team::factory()->create(['name' => 'Acme', 'user_id' => $admin->id]);
-    $team->members()->attach($admin, ['role' => TeamRole::Administrator]);
 
     $invitation = TeamInvitation::factory()->for($team)->member()->create([
         'email' => 'newbie@example.com',

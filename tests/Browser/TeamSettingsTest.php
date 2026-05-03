@@ -57,7 +57,6 @@ it('shows inline role selects for editable rows on the members page', function (
 it('deletes the team when the administrator types the name correctly', function () {
     $admin = User::factory()->create();
     $tenant = Team::factory()->create(['name' => 'Doomed Team', 'user_id' => $admin->id]);
-    $tenant->members()->attach($admin, ['role' => TeamRole::Administrator]);
     $admin->update(['current_team_id' => $tenant->id]);
 
     actingAs($admin);
@@ -74,7 +73,6 @@ it('deletes the team when the administrator types the name correctly', function 
 it('blocks team deletion when the name confirmation does not match', function () {
     $admin = User::factory()->create();
     $tenant = Team::factory()->create(['name' => 'Doomed Team', 'user_id' => $admin->id]);
-    $tenant->members()->attach($admin, ['role' => TeamRole::Administrator]);
     $admin->update(['current_team_id' => $tenant->id]);
 
     actingAs($admin);

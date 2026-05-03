@@ -4,7 +4,6 @@ namespace App\Actions;
 
 use App\Models\Team;
 use App\Models\User;
-use App\TeamRole;
 use Illuminate\Support\Facades\DB;
 
 class CreateTeamForUser
@@ -16,8 +15,6 @@ class CreateTeamForUser
                 'name' => $name,
                 'user_id' => $owner->id,
             ]);
-
-            $team->users()->attach($owner, ['role' => TeamRole::Administrator->value]);
 
             $owner->update(['current_team_id' => $team->id]);
 

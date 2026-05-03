@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
+use App\Actions\CreateTeamForUser;
 use App\Models\User;
-use App\TeamRole;
 
 class UserObserver
 {
@@ -13,14 +13,6 @@ class UserObserver
             return;
         }
 
-        $team = $user->ownedTeams()->create([
-            'name' => "{$user->name}'s Team",
-        ]);
-
-        $team->members()->attach($user, [
-            'role' => TeamRole::Administrator,
-        ]);
-
-        $user->update(['current_team_id' => $team->id]);
+        (new CreateTeamForUser)->handle($user, "{$user->name}'s Team");
     }
 }

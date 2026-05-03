@@ -38,7 +38,7 @@ class TeamFactory extends Factory
                 $team->forceFill(['stripe_id' => 'cus_test_'.Str::random(14)])->save();
             }
 
-            $priceId = $plan->priceId($interval) ?? 'price_test_'.$plan->value.'_'.$interval->value;
+            $priceId = $plan->priceId($interval) ?: 'price_test_'.$plan->value.'_'.$interval->value;
 
             $subscription = $team->subscriptions()->create([
                 'type' => 'default',

@@ -3,7 +3,6 @@
 use App\BillingInterval;
 use App\Models\Team;
 use App\Models\User;
-use App\TeamRole;
 
 use function Pest\Laravel\actingAs;
 
@@ -55,7 +54,6 @@ it('toggles between monthly and yearly prices', function () {
 it('marks the active plan with a manage subscription button when subscribed', function () {
     $admin = User::factory()->create();
     $team = Team::factory()->proPlan(BillingInterval::Monthly)->create(['user_id' => $admin->id]);
-    $team->members()->attach($admin, ['role' => TeamRole::Administrator]);
     $admin->update(['current_team_id' => $team->id]);
 
     actingAs($admin);
