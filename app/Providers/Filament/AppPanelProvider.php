@@ -3,13 +3,9 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
-use App\Filament\Clusters\AccountSettings\Pages\AccountAdvanced;
 use App\Filament\Clusters\AccountSettings\Pages\AccountSettings;
 use App\Filament\Clusters\AccountSettings\Pages\TeamInvitations;
-use App\Filament\Clusters\TeamSettings\Pages\TeamAdvanced;
-use App\Filament\Clusters\TeamSettings\Pages\TeamBilling;
 use App\Filament\Clusters\TeamSettings\Pages\TeamDetails;
-use App\Filament\Clusters\TeamSettings\Pages\TeamMembers;
 use App\Filament\Pages\Auth\CustomLogin;
 use App\Filament\Pages\Auth\CustomRegister;
 use App\Filament\Pages\CreateTeam;
@@ -25,7 +21,6 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
-use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -103,19 +98,6 @@ class AppPanelProvider extends PanelProvider
                     NavigationGroup::make()->items([
                         ...CustomDashboard::getNavigationItems(),
                     ]),
-                    NavigationGroup::make('Account')
-                        ->items([
-                            NavigationItem::make('Account settings')
-                                ->icon('heroicon-o-user')
-                                ->url(fn (): ?string => filament()->getTenant() ? AccountSettings::getUrl() : null)
-                                ->isActiveWhen(fn (): bool => request()->routeIs('filament.app.account.pages.settings'))
-                                ->visible(fn (): bool => filament()->getTenant() !== null && AccountSettingsCluster::canAccess()),
-                            NavigationItem::make('Advanced')
-                                ->icon('heroicon-o-shield-exclamation')
-                                ->url(fn (): ?string => filament()->getTenant() ? AccountAdvanced::getUrl() : null)
-                                ->isActiveWhen(fn (): bool => request()->routeIs('filament.app.account.pages.advanced'))
-                                ->visible(fn (): bool => filament()->getTenant() !== null && AccountSettingsCluster::canAccess()),
-                        ]),
                 ]))
             ->middleware([
                 EncryptCookies::class,

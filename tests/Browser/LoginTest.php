@@ -12,6 +12,7 @@ it('allows users to log in', function () {
         ->fill('@login-email', $user->email)
         ->fill('@login-password', 'password')
         ->click('@login-submit')
+        ->assertNotPresent('@login-submit')
         ->assertPathIs('/app/'.$user->teams()->first()->uuid)
         ->assertNoSmoke();
 
