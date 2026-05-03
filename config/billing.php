@@ -88,7 +88,6 @@ return [
                 'Everything in Pro, plus:',
                 'No revenue cap',
                 '<strong>Unlimited projects</strong> — use it on every client build',
-                'White-label rights — remove our attribution',
                 '1-on-1 onboarding call',
             ],
             'prices' => [

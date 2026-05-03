@@ -192,7 +192,7 @@ class Home extends Page
                     ],
                     [
                         'question' => 'Can I remove the '.$appName.' branding?',
-                        'answer' => 'Studio adds full white-label rights — strip the wordmark, footer link, and <code>"powered by"</code> meta tag. Pro keeps the discreet attribution.',
+                        'answer' => 'Yes — it\'s your codebase. Rename, restyle, swap the logo, ship it as your own. There\'s no attribution requirement on any tier.',
                     ],
                     [
                         'question' => 'What if my project crosses the cap later?',

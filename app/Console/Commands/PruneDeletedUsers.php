@@ -8,13 +8,14 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('users:prune {--days=30 : Number of days after scheduling before pruning}')]
-#[Description('Permanently delete users scheduled for deletion over N days ago')]
+#[Signature('users:prune {--days= : Override the configured grace period}')]
+#[Description('Permanently delete users scheduled for deletion past the grace period')]
 class PruneDeletedUsers extends Command
 {
     public function handle(): int
     {
-        $threshold = now()->subDays((int) $this->option('days'));
+        $days = (int) ($this->option('days') ?? config('account.deletion_grace_days'));
+        $threshold = now()->subDays($days);
 
         $toPrune = User::query()
             ->whereNotNull('deleted_at')

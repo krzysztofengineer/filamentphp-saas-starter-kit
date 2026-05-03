@@ -8,12 +8,15 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\Widget;
 
-class PendingDeletionBanner extends Widget implements HasActions
+class PendingDeletionBanner extends Widget implements HasActions, HasSchemas
 {
     use InteractsWithActions;
+    use InteractsWithSchemas;
 
     protected string $view = 'filament.widgets.pending-deletion-banner';
 
@@ -29,7 +32,9 @@ class PendingDeletionBanner extends Widget implements HasActions
         /** @var User $user */
         $user = auth()->user();
 
-        return max(0, 30 - (int) $user->deleted_at->diffInDays(now()));
+        $graceDays = (int) config('account.deletion_grace_days');
+
+        return max(0, $graceDays - (int) $user->deleted_at->diffInDays(now()));
     }
 
     public function cancelDeletionAction(): Action
@@ -38,6 +43,7 @@ class PendingDeletionBanner extends Widget implements HasActions
             ->label('Cancel deletion')
             ->icon(Heroicon::OutlinedArrowUturnLeft)
             ->color('primary')
+            ->extraAttributes(['data-testid' => 'cancel-account-deletion'])
             ->action(function (): void {
                 /** @var User $user */
                 $user = auth()->user();

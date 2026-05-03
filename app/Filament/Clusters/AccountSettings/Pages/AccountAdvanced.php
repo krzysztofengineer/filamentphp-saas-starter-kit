@@ -60,7 +60,7 @@ class AccountAdvanced extends Page implements HasActions, HasForms
         return $schema->components([
             Section::make()
                 ->heading(CategoryHeading::make('heroicon-o-trash', 'danger', 'Delete account'))
-                ->description('Your account will be marked for deletion and permanently removed after 30 days, including all of your data. Before doing this, leave or delete any teams you administer. You can only delete your account once you no longer administer any teams.')
+                ->description('Your account will be marked for deletion and permanently removed after '.config('account.deletion_grace_days').' days, including all of your data. Before doing this, leave or delete any teams you administer. You can only delete your account once you no longer administer any teams.')
                 ->footerActions([
                     $this->deleteAccountAction(),
                 ])
@@ -87,7 +87,7 @@ class AccountAdvanced extends Page implements HasActions, HasForms
                     return 'Leave or delete the teams you administer first.';
                 }
 
-                return 'Your account will be permanently deleted after 30 days. You can undo this by signing back in within that window.';
+                return 'Your account will be permanently deleted after '.config('account.deletion_grace_days').' days. You can undo this by signing back in within that window.';
             })
             ->modalSubmitAction(function (?Action $action) {
                 /** @var User $user */
