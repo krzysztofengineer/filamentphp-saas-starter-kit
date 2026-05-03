@@ -213,7 +213,7 @@ class Home extends Page
 
             MarketingFooter::make()
                 ->brand($appName)
-                ->tagline('The Laravel SaaS starter kit you\'re already looking at. Built to be replaced — by your product.')
+                ->tagline('The Laravel SaaS starter kit you\'re already looking at. Built to be replaced by your product.')
                 ->linkColumns([
                     [
                         'heading' => 'Product',

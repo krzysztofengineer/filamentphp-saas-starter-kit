@@ -24,13 +24,13 @@ html:not(.dark) body.fi-panel-home {
     --lp-border: oklch(0.22 0.012 250 / 0.1);
 }
 
-/* Match topbar inner padding to the marketing container (1200px max,
-   28px gutter) so the logo + nav + login buttons line up with the
-   landing sections below. Translucent + blur so it floats over the
-   marketing background instead of sitting on Filament's default chrome. */
+/* Match topbar inner padding to the marketing container's content edge.
+   The container is `max-width: 1200px; padding: 0 28px`, so content lives
+   inside a 1144px (= 1200 - 2*28) box centered in the viewport. Use that
+   inner width here so logo + nav + login line up with the sections. */
 body.fi-panel-home .fi-topbar {
     align-items: center;
-    padding-inline: max(28px, calc((100% - 1200px) / 2)) !important;
+    padding-inline: max(28px, calc((100% - 1144px) / 2)) !important;
     background: color-mix(in oklab, var(--lp-bg) 70%, transparent) !important;
     backdrop-filter: saturate(140%) blur(14px);
     -webkit-backdrop-filter: saturate(140%) blur(14px);
@@ -62,6 +62,14 @@ body.fi-panel-home .fi-page-content {
     margin: 0 !important;
     gap: 0 !important;
     max-width: none !important;
+}
+
+body.fi-panel-home .fi-sc.fi-sc-has-gap {
+    gap: 0 !important;
+}
+
+html:has(body.fi-panel-home) {
+    scroll-padding-top: 80px;
 }
 
 /* Filament's text-(--text) inside .fi-btn.fi-color in @layer components doesn't
