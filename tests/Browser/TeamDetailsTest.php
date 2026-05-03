@@ -31,6 +31,7 @@ it('updates the team name', function () {
     visit('/app')
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
         ->click('@team-settings')
+        ->assertPathIs("/app/{$team->uuid}/settings/profile")
         ->fill('@team-details-name', 'New name')
         ->click('@team-details-save')
         ->assertSee('Team saved');
