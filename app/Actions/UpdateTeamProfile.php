@@ -12,12 +12,8 @@ class UpdateTeamProfile
      */
     public function handle(Team $team, array $attributes): void
     {
-        if (array_key_exists('logo', $attributes)) {
-            $new = $attributes['logo'];
-
-            if (filled($team->logo) && $team->logo !== $new) {
-                Storage::disk('team-logos')->delete($team->logo);
-            }
+        if (array_key_exists('logo', $attributes) && filled($team->logo) && $team->logo !== $attributes['logo']) {
+            Storage::disk('team-logos')->delete($team->logo);
         }
 
         $team->update($attributes);

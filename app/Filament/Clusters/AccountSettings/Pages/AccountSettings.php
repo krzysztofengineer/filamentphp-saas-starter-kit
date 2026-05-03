@@ -197,7 +197,6 @@ class AccountSettings extends Page implements HasActions, HasForms
 
                 $current = $state['current_password'] ?? '';
                 $new = $state['password'] ?? '';
-                $confirmation = $state['password_confirmation'] ?? '';
 
                 /** @var User $user */
                 $user = auth()->user();
@@ -214,7 +213,7 @@ class AccountSettings extends Page implements HasActions, HasForms
                     ]);
                 }
 
-                if ($new !== $confirmation) {
+                if ($new !== ($state['password_confirmation'] ?? '')) {
                     throw ValidationException::withMessages([
                         'data.password_confirmation' => 'The passwords do not match.',
                     ]);

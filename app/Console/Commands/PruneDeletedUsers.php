@@ -14,8 +14,7 @@ class PruneDeletedUsers extends Command
 {
     public function handle(): int
     {
-        $days = (int) $this->option('days');
-        $threshold = now()->subDays($days);
+        $threshold = now()->subDays((int) $this->option('days'));
 
         $toPrune = User::query()
             ->whereNotNull('deleted_at')
