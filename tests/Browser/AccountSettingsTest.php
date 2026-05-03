@@ -15,10 +15,9 @@ it('updates the user name', function () {
         'name' => 'Original Name',
         'email' => 'me@example.com',
     ]);
-    $tenant = $user->currentTeam;
     actingAs($user);
 
-    visit('/app/'.$tenant->uuid.'/account/settings')
+    visit('/app/'.$user->currentTeam->uuid.'/account/settings')
         ->fill('[data-testid="account-profile-name-input"]', 'Updated Name')
         ->click('[data-testid="account-profile-save"]')
         ->wait(1)
@@ -32,10 +31,9 @@ it('changes the password', function () {
         'email' => 'me@example.com',
         'password' => Hash::make('old-password'),
     ]);
-    $tenant = $user->currentTeam;
     actingAs($user);
 
-    visit('/app/'.$tenant->uuid.'/account/settings')
+    visit('/app/'.$user->currentTeam->uuid.'/account/settings')
         ->fill('[data-testid="account-password-current"]', 'old-password')
         ->fill('[data-testid="account-password-new"]', 'new-password-123')
         ->fill('[data-testid="account-password-confirm"]', 'new-password-123')
@@ -51,10 +49,9 @@ it('rejects the password change when the current password is wrong', function ()
         'email' => 'me@example.com',
         'password' => Hash::make('old-password'),
     ]);
-    $tenant = $user->currentTeam;
     actingAs($user);
 
-    visit('/app/'.$tenant->uuid.'/account/settings')
+    visit('/app/'.$user->currentTeam->uuid.'/account/settings')
         ->fill('[data-testid="account-password-current"]', 'totally-wrong')
         ->fill('[data-testid="account-password-new"]', 'new-password-123')
         ->fill('[data-testid="account-password-confirm"]', 'new-password-123')
@@ -89,10 +86,9 @@ it('blocks account deletion when the user still administers a team', function ()
     $user = User::factory()->create([
         'email' => 'still-admin@example.com',
     ]);
-    $tenant = $user->currentTeam;
     actingAs($user);
 
-    visit('/app/'.$tenant->uuid.'/account/advanced')
+    visit('/app/'.$user->currentTeam->uuid.'/account/advanced')
         ->click('[data-testid="delete-account-button"]')
         ->assertSee('Leave or delete the teams you administer first')
         ->assertNoJavaScriptErrors();

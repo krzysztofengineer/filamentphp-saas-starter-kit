@@ -20,10 +20,9 @@ beforeEach(function () {
 
 it('shows the subscription plans', function () {
     $user = User::factory()->create();
-    $tenant = $user->currentTeam;
     actingAs($user);
 
-    visit('/app/'.$tenant->uuid.'/settings/subscription')
+    visit('/app/'.$user->currentTeam->uuid.'/settings/subscription')
         ->assertPresent('[data-testid="plan-free"]')
         ->assertPresent('[data-testid="plan-pro"]')
         ->assertPresent('[data-testid="plan-studio"]')
@@ -35,10 +34,9 @@ it('shows the subscription plans', function () {
 
 it('toggles between monthly and yearly prices', function () {
     $user = User::factory()->create();
-    $tenant = $user->currentTeam;
     actingAs($user);
 
-    visit('/app/'.$tenant->uuid.'/settings/subscription')
+    visit('/app/'.$user->currentTeam->uuid.'/settings/subscription')
         ->assertSee('$29')
         ->assertSee('$79')
         ->click('[data-testid="billing-toggle-yearly"]')

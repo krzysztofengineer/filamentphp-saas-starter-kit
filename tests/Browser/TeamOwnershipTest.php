@@ -9,20 +9,18 @@ use function PHPUnit\Framework\assertTrue;
 
 it('shows the transfer ownership section to administrators', function () {
     $admin = User::factory()->create();
-    $tenant = $admin->currentTeam;
     actingAs($admin);
 
-    visit('/app/'.$tenant->uuid.'/settings/advanced')
+    visit('/app/'.$admin->currentTeam->uuid.'/settings/advanced')
         ->assertSee('Transfer ownership')
         ->assertPresent('[data-testid="transfer-ownership-button"]');
 });
 
 it('disables the transfer ownership button when there are no other members', function () {
     $admin = User::factory()->create();
-    $tenant = $admin->currentTeam;
     actingAs($admin);
 
-    visit('/app/'.$tenant->uuid.'/settings/advanced')
+    visit('/app/'.$admin->currentTeam->uuid.'/settings/advanced')
         ->assertPresent('[data-testid="transfer-ownership-button"][disabled]');
 });
 

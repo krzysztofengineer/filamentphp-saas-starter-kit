@@ -230,20 +230,18 @@ it('accepts the invitation for the new user', function () {
 
 it('does not show other members invitations', function () {
     $invitee = User::factory()->create();
-    $tenant = $invitee->ownedTeams()->first();
 
     $otherTeam = Team::factory()->create();
     TeamInvitation::factory()->for($otherTeam)->create(['email' => 'somebody-else@example.com']);
 
     actingAs($invitee);
 
-    visit("/app/{$tenant->uuid}/account/team-invitations")
+    visit("/app/{$invitee->ownedTeams()->first()->uuid}/account/team-invitations")
         ->assertSee('No invitations');
 });
 
 it('shows invitations from all teams', function () {
     $invitee = User::factory()->create();
-    $tenant = $invitee->ownedTeams()->first();
 
     $teamA = Team::factory()->create(['name' => 'Alpha']);
     $teamB = Team::factory()->create(['name' => 'Beta']);
@@ -253,21 +251,20 @@ it('shows invitations from all teams', function () {
 
     actingAs($invitee);
 
-    visit("/app/{$tenant->uuid}/account/team-invitations")
+    visit("/app/{$invitee->ownedTeams()->first()->uuid}/account/team-invitations")
         ->assertSee('Alpha')
         ->assertSee('Beta');
 });
 
 it('declines invitations', function () {
     $invitee = User::factory()->create();
-    $tenant = $invitee->ownedTeams()->first();
     $team = Team::factory()->create(['name' => 'Acme']);
 
     $invitation = TeamInvitation::factory()->for($team)->member()->create(['email' => $invitee->email]);
 
     actingAs($invitee);
 
-    visit("/app/{$tenant->uuid}/account/team-invitations")
+    visit("/app/{$invitee->ownedTeams()->first()->uuid}/account/team-invitations")
         ->assertSee($team->name)
         ->click('[data-testid="invitation-decline"]')
         ->click('[data-testid="invitation-decline-confirm"]')
