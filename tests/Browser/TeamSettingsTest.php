@@ -16,6 +16,7 @@ it('updates the team name from the profile form', function () {
     visit('/app/'.$tenant->uuid.'/settings/profile')
         ->fill('[data-testid="team-details-name"]', 'Renamed Team')
         ->click('[data-testid="team-details-save"]')
+        ->wait(1)
         ->assertNoJavaScriptErrors();
 
     assertDatabaseHas('teams', ['id' => $tenant->id, 'name' => 'Renamed Team']);

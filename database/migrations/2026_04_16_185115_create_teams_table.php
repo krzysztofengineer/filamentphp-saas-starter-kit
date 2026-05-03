@@ -14,6 +14,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('logo')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('stripe_id')->nullable()->index();
+            $table->string('pm_type')->nullable();
+            $table->string('pm_last_four', 4)->nullable();
+            $table->timestamp('trial_ends_at')->nullable();
             $table->timestamps();
         });
 

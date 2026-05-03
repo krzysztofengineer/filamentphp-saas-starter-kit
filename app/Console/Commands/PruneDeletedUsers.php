@@ -18,8 +18,8 @@ class PruneDeletedUsers extends Command
         $threshold = now()->subDays($days);
 
         $toPrune = User::query()
-            ->whereNotNull('scheduled_for_deletion_at')
-            ->where('scheduled_for_deletion_at', '<=', $threshold)
+            ->whereNotNull('deleted_at')
+            ->where('deleted_at', '<=', $threshold)
             ->get();
 
         $action = new PruneDeletedUser;

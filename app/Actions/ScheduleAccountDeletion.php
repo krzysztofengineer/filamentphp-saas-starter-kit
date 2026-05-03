@@ -8,6 +8,6 @@ class ScheduleAccountDeletion
 {
     public function handle(User $user): void
     {
-        $user->update(['scheduled_for_deletion_at' => now()]);
+        $user->update(['deleted_at' => now()]);
     }
 }

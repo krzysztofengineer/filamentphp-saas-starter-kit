@@ -21,7 +21,7 @@ class PendingDeletionBanner extends Widget implements HasActions
 
     public static function canView(): bool
     {
-        return auth()->user()?->isScheduledForDeletion() ?? false;
+        return auth()->user()?->isDeleted() ?? false;
     }
 
     public function getRemainingDays(): int
@@ -29,7 +29,7 @@ class PendingDeletionBanner extends Widget implements HasActions
         /** @var User $user */
         $user = auth()->user();
 
-        return max(0, 30 - (int) $user->scheduled_for_deletion_at->diffInDays(now()));
+        return max(0, 30 - (int) $user->deleted_at->diffInDays(now()));
     }
 
     public function cancelDeletionAction(): Action

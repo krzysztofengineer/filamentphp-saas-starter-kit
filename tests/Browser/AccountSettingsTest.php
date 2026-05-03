@@ -21,6 +21,7 @@ it('updates the user name', function () {
     visit('/app/'.$tenant->uuid.'/account/settings')
         ->fill('[data-testid="account-profile-name-input"]', 'Updated Name')
         ->click('[data-testid="account-profile-save"]')
+        ->wait(1)
         ->assertNoJavaScriptErrors();
 
     assertDatabaseHas('users', ['id' => $user->id, 'name' => 'Updated Name']);
@@ -81,7 +82,7 @@ it('schedules account deletion when the user administers no teams', function () 
         ->click('[data-testid="delete-account-confirm"]')
         ->assertPathIs('/app/login');
 
-    assertDatabaseMissing('users', ['id' => $user->id, 'scheduled_for_deletion_at' => null]);
+    assertDatabaseMissing('users', ['id' => $user->id, 'deleted_at' => null]);
 });
 
 it('blocks account deletion when the user still administers a team', function () {
@@ -96,5 +97,5 @@ it('blocks account deletion when the user still administers a team', function ()
         ->assertSee('Leave or delete the teams you administer first')
         ->assertNoJavaScriptErrors();
 
-    assertDatabaseHas('users', ['id' => $user->id, 'scheduled_for_deletion_at' => null]);
+    assertDatabaseHas('users', ['id' => $user->id, 'deleted_at' => null]);
 });

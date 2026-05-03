@@ -24,7 +24,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 
-#[Fillable(['name', 'email', 'password', 'current_team_id', 'scheduled_for_deletion_at', 'avatar'])]
+#[Fillable(['name', 'email', 'password', 'current_team_id', 'deleted_at', 'avatar'])]
 #[Hidden(['password', 'remember_token'])]
 #[ObservedBy(UserObserver::class)]
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasDefaultTenant, HasTenants, MustVerifyEmail
@@ -40,13 +40,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasDefaul
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'scheduled_for_deletion_at' => 'datetime',
+            'deleted_at' => 'datetime',
         ];
     }
 
-    public function isScheduledForDeletion(): bool
+    public function isDeleted(): bool
     {
-        return $this->scheduled_for_deletion_at !== null;
+        return $this->deleted_at !== null;
     }
 
     public function sendPasswordResetNotification($token): void
