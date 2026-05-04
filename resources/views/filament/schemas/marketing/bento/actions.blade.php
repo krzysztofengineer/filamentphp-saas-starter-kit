@@ -35,7 +35,7 @@
         <div class="actions-code-row indent2"><span class="cn">Role</span> $role,</div>
         <div class="actions-code-row indent">): <span class="cn">TeamInvitation</span></div>
         <div class="actions-code-row">{</div>
-        <div class="actions-code-row indent"><span class="cm">// one class. one purpose. yours to edit.</span></div>
+        <div class="actions-code-row indent"><span class="cm">// every write op gets its own class.</span></div>
         <div class="actions-code-row">}</div>
     </div>
 </div>
