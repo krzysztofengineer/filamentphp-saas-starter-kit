@@ -2,7 +2,7 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Auth\PendingDeletion;
+use App\Filament\Account\PendingDeletion;
 use App\Filament\AvatarProviders\UserAvatarProvider;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Clusters\AccountSettings\Pages\AccountSettings;

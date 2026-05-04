@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Auth;
+namespace App\Filament\Account;
 
 use App\Actions\CancelAccountDeletion;
 use Filament\Actions\Action;

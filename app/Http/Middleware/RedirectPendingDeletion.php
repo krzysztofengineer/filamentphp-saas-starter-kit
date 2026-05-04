@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Filament\Auth\PendingDeletion;
+use App\Filament\Account\PendingDeletion;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
