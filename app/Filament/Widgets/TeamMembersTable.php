@@ -62,7 +62,6 @@ class TeamMembersTable extends TableWidget
                         ->native(false)
                         ->disabled(fn (?User $record): bool => $record !== null && ! $this->canChangeRoleFor($record))
                         ->updateStateUsing(function (User $record, string $state): ?string {
-                            /** @var Team|null $team */
                             $team = Filament::getTenant();
 
                             if ($team === null) {
@@ -106,7 +105,6 @@ class TeamMembersTable extends TableWidget
 
     private function getMembers(): Collection
     {
-        /** @var Team|null $team */
         $team = Filament::getTenant();
 
         if ($team === null) {
@@ -134,7 +132,6 @@ class TeamMembersTable extends TableWidget
             ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'remove-member-confirm']))
             ->visible(fn (User $record): bool => $this->canRemove($record))
             ->action(function (User $record): void {
-                /** @var Team|null $team */
                 $team = Filament::getTenant();
 
                 if ($team === null) {
@@ -163,9 +160,7 @@ class TeamMembersTable extends TableWidget
 
     private function canChangeRoleFor(User $record): bool
     {
-        /** @var Team|null $team */
         $team = Filament::getTenant();
-        /** @var User|null $actor */
         $actor = auth()->user();
 
         if ($team === null || $actor === null) {
@@ -179,9 +174,7 @@ class TeamMembersTable extends TableWidget
 
     private function canRemove(User $record): bool
     {
-        /** @var Team|null $team */
         $team = Filament::getTenant();
-        /** @var User|null $actor */
         $actor = auth()->user();
 
         if ($team === null || $actor === null) {
@@ -195,7 +188,6 @@ class TeamMembersTable extends TableWidget
 
     private function isTeamOwner(User $record): bool
     {
-        /** @var Team|null $team */
         $team = Filament::getTenant();
 
         return $team?->user_id === $record->id;
@@ -216,9 +208,6 @@ class TeamMembersTable extends TableWidget
         return $team->administrators()->count() <= 1;
     }
 
-    /**
-     * @return array<string, string>
-     */
     private static function roleOptions(): array
     {
         return collect(TeamRole::cases())

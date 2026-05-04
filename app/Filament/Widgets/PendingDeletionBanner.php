@@ -3,7 +3,6 @@
 namespace App\Filament\Widgets;
 
 use App\Actions\CancelAccountDeletion;
-use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -29,7 +28,6 @@ class PendingDeletionBanner extends Widget implements HasActions, HasSchemas
 
     public function getRemainingDays(): int
     {
-        /** @var User $user */
         $user = auth()->user();
 
         $graceDays = (int) config('account.deletion_grace_days');
@@ -45,7 +43,6 @@ class PendingDeletionBanner extends Widget implements HasActions, HasSchemas
             ->color('primary')
             ->extraAttributes(['data-testid' => 'cancel-account-deletion'])
             ->action(function (): void {
-                /** @var User $user */
                 $user = auth()->user();
 
                 (new CancelAccountDeletion)->handle($user);

@@ -5,7 +5,6 @@ namespace App\Filament\Clusters\TeamSettings\Pages;
 use App\BillingInterval;
 use App\BillingPlan;
 use App\Filament\Clusters\TeamSettings\TeamSettingsCluster;
-use App\Models\Team;
 use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
@@ -26,7 +25,7 @@ class TeamBilling extends Page
 
     public static function canAccess(): bool
     {
-        return TeamSettingsCluster::canAccess();
+        return TeamSettingsCluster::canManage();
     }
 
     public function getTitle(): string
@@ -44,12 +43,8 @@ class TeamBilling extends Page
         return 'Subscription';
     }
 
-    /**
-     * @return array<int, array<string, mixed>>
-     */
     public function plansForView(): array
     {
-        /** @var Team|null $team */
         $team = Filament::getTenant();
         $hasSubscription = (bool) $team?->subscribed('default');
         $portalUrl = $hasSubscription ? route('billing.portal', ['team' => $team]) : null;
@@ -94,7 +89,6 @@ class TeamBilling extends Page
 
     public function defaultInterval(): string
     {
-        /** @var Team|null $team */
         $team = Filament::getTenant();
 
         if ($team !== null && $team->subscribed('default')) {

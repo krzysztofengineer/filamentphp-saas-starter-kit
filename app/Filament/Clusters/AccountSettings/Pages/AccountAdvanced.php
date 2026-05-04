@@ -5,7 +5,6 @@ namespace App\Filament\Clusters\AccountSettings\Pages;
 use App\Actions\ScheduleAccountDeletion;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Support\CategoryHeading;
-use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -60,7 +59,7 @@ class AccountAdvanced extends Page implements HasActions, HasForms
         return $schema->components([
             Section::make()
                 ->heading(CategoryHeading::make('heroicon-o-trash', 'danger', 'Delete account'))
-                ->description('Your account will be marked for deletion and permanently removed after '.config('account.deletion_grace_days').' days, including all of your data. Before doing this, leave or delete any teams you administer. You can only delete your account once you no longer administer any teams.')
+                ->description('Your account will be marked for deletion and permanently removed after '.config('account.deletion_grace_days').' days, including all of your data and any team you solely own. If you administer a team with other members, leave it or transfer ownership first.')
                 ->footerActions([
                     $this->deleteAccountAction(),
                 ])
@@ -80,20 +79,18 @@ class AccountAdvanced extends Page implements HasActions, HasForms
             ->modalIconColor('danger')
             ->modalHeading('Delete account')
             ->modalDescription(function (): string {
-                /** @var User $user */
                 $user = auth()->user();
 
-                if ($user->administeredTeams()->exists()) {
-                    return 'Leave or delete the teams you administer first.';
+                if ($user->administersOthers()) {
+                    return 'You administer a team with other members. Leave it or transfer ownership before deleting your account.';
                 }
 
                 return 'Your account will be permanently deleted after '.config('account.deletion_grace_days').' days. You can undo this by signing back in within that window.';
             })
             ->modalSubmitAction(function (?Action $action) {
-                /** @var User $user */
                 $user = auth()->user();
 
-                if ($user->administeredTeams()->exists()) {
+                if ($user->administersOthers()) {
                     return $action?->hidden();
                 }
 
@@ -104,10 +101,9 @@ class AccountAdvanced extends Page implements HasActions, HasForms
             })
             ->modalCancelActionLabel('Close')
             ->action(function (): void {
-                /** @var User $user */
                 $user = auth()->user();
 
-                if ($user->administeredTeams()->exists()) {
+                if ($user->administersOthers()) {
                     return;
                 }
 

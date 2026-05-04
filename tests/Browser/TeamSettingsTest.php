@@ -16,7 +16,7 @@ it('updates the team name from the profile form', function () {
     visit('/app/'.$tenant->uuid.'/settings/profile')
         ->fill('[data-testid="team-details-name"]', 'Renamed Team')
         ->click('[data-testid="team-details-save"]')
-        ->wait(1)
+        ->assertSeeIn('.fi-topbar', 'Renamed Team')
         ->assertNoJavaScriptErrors();
 
     assertDatabaseHas('teams', ['id' => $tenant->id, 'name' => 'Renamed Team']);
@@ -61,7 +61,7 @@ it('deletes the team when the administrator types the name correctly', function 
 
     actingAs($admin);
 
-    visit('/app/'.$tenant->uuid.'/settings/advanced')
+    visit('/app/'.$tenant->uuid.'/settings/profile')
         ->click('[data-testid="delete-team"]')
         ->fill('[data-testid="delete-team-name"]', 'Doomed Team')
         ->click('[data-testid="delete-team-confirm"]')
@@ -77,7 +77,7 @@ it('blocks team deletion when the name confirmation does not match', function ()
 
     actingAs($admin);
 
-    visit('/app/'.$tenant->uuid.'/settings/advanced')
+    visit('/app/'.$tenant->uuid.'/settings/profile')
         ->click('[data-testid="delete-team"]')
         ->fill('[data-testid="delete-team-name"]', 'Wrong Name')
         ->click('[data-testid="delete-team-confirm"]')
@@ -87,14 +87,18 @@ it('blocks team deletion when the name confirmation does not match', function ()
     assertDatabaseHas('teams', ['id' => $tenant->id, 'name' => 'Doomed Team']);
 });
 
-it('blocks regular members from the team settings pages', function () {
+it('hides admin-only sections from regular members on the team settings page', function () {
     $admin = User::factory()->create();
-    $tenant = $admin->currentTeam;
+    $tenant = Team::factory()->create(['user_id' => $admin->id]);
     $member = User::factory()->create();
     $tenant->members()->attach($member, ['role' => TeamRole::Member]);
     $member->update(['current_team_id' => $tenant->id]);
 
     actingAs($member);
 
-    $this->get('/app/'.$tenant->uuid.'/settings/profile')->assertForbidden();
+    visit('/app/'.$tenant->uuid.'/settings/profile')
+        ->assertNotPresent('[data-testid="team-details-name"]')
+        ->assertNotPresent('[data-testid="transfer-ownership"]')
+        ->assertNotPresent('[data-testid="delete-team"]')
+        ->assertSee('Leave team');
 });

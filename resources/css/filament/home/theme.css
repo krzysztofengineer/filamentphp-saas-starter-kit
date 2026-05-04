@@ -1006,7 +1006,7 @@ html:not(.dark) .landing-root .traffic span {
         'a a a b b b'
         'c c c f f f'
         'd d e e g g'
-        's s s s s s';
+        'h h h h h h';
     gap: 14px;
 }
 
@@ -1063,7 +1063,7 @@ html:not(.dark) .landing-root .traffic span {
 .landing-root .b-5 { grid-area: e; }
 .landing-root .b-6 { grid-area: f; }
 .landing-root .b-7 { grid-area: g; }
-.landing-root .b-strip { grid-area: s; }
+.landing-root .b-8 { grid-area: h; }
 
 @media (max-width: 980px) {
     .landing-root .bento {
@@ -1077,7 +1077,7 @@ html:not(.dark) .landing-root .traffic span {
     .landing-root .b-5,
     .landing-root .b-6,
     .landing-root .b-7,
-    .landing-root .b-strip {
+    .landing-root .b-8 {
         grid-area: auto;
         grid-column: span 2;
     }
@@ -1629,29 +1629,86 @@ html:not(.dark) .landing-root .terminal {
     color: var(--accent);
 }
 
-.landing-root .strip-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-.landing-root .strip-card .strip-text {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.landing-root .strip-card .strip-tag {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-2);
-    border: 1px solid var(--border);
-    padding: 4px 9px;
-    border-radius: 999px;
+.landing-root .actions-visual {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: 10px;
+    border: 1px dashed var(--border-2);
+    border-radius: 12px;
+    padding: 12px;
     background: var(--lp-bg);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.55;
+}
+
+@media (max-width: 720px) {
+    .landing-root .actions-visual {
+        grid-template-columns: 1fr;
+    }
+}
+
+.landing-root .actions-pane {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-elev);
+    padding: 10px 12px;
+    color: var(--text-2);
+    overflow: hidden;
+}
+
+.landing-root .actions-pane-head {
+    font-size: 10px;
+    color: var(--text-3);
+    margin-bottom: 6px;
+}
+
+.landing-root .actions-tree-row {
+    padding: 1px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.landing-root .actions-tree-row.active {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.landing-root .actions-glyph {
+    color: var(--text-3);
+}
+
+.landing-root .actions-code-row {
+    padding: 1px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.landing-root .actions-code-row.indent {
+    padding-left: 14px;
+}
+
+.landing-root .actions-code-row.indent2 {
+    padding-left: 28px;
+}
+
+.landing-root .actions-code-row .kw {
+    color: oklch(0.7 0.16 290);
+}
+
+.landing-root .actions-code-row .cn {
+    color: oklch(0.72 0.14 200);
+}
+
+.landing-root .actions-code-row .fn {
+    color: oklch(0.78 0.14 110);
+}
+
+.landing-root .actions-code-row .cm {
+    color: var(--text-3);
+    font-style: italic;
 }
 
 .landing-root .steps {

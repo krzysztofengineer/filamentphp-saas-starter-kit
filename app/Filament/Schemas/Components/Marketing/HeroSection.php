@@ -31,7 +31,6 @@ class HeroSection extends Component
 
     protected string|Htmlable|Closure|null $commandHint = null;
 
-    /** @var array<int, string>|Closure */
     protected array|Closure $stackPills = [];
 
     protected bool|Closure $showInception = true;
@@ -46,10 +45,6 @@ class HeroSection extends Component
         return $static;
     }
 
-    /**
-     * Tail of the heading rendered in the accent color.
-     * For example, heading "Ship the page" + accent "you're reading."
-     */
     public function headingAccent(string|Htmlable|Closure|null $headingAccent): static
     {
         $this->headingAccent = $headingAccent;
@@ -81,9 +76,6 @@ class HeroSection extends Component
         return $this;
     }
 
-    /**
-     * @param  array<int, string>|Closure  $pills
-     */
     public function stackPills(array|Closure $pills): static
     {
         $this->stackPills = $pills;
@@ -98,10 +90,6 @@ class HeroSection extends Component
         return $this;
     }
 
-    /**
-     * Public-facing host shown in the inception browser frame's address bar.
-     * Defaults to the host portion of `config('app.url')`.
-     */
     public function host(string|Closure|null $host): static
     {
         $this->host = $host;
@@ -144,9 +132,6 @@ class HeroSection extends Component
         return $this->evaluate($this->commandHint);
     }
 
-    /**
-     * @return array<int, string>
-     */
     public function getStackPills(): array
     {
         return $this->evaluate($this->stackPills) ?? [];

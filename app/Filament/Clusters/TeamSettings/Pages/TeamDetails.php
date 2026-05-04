@@ -2,16 +2,21 @@
 
 namespace App\Filament\Clusters\TeamSettings\Pages;
 
+use App\Actions\DeleteTeam;
+use App\Actions\LeaveTeam as LeaveTeamAction;
+use App\Actions\TransferTeamOwnership;
 use App\Actions\UpdateTeamProfile;
 use App\Filament\Clusters\TeamSettings\TeamSettingsCluster;
 use App\Filament\Support\CategoryHeading;
-use App\Models\Team;
+use App\Models\User;
+use App\TeamRole;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -20,6 +25,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -32,13 +38,12 @@ class TeamDetails extends Page implements HasActions, HasForms
 
     protected static ?string $slug = 'profile';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
     protected static ?int $navigationSort = 1;
 
     protected string $view = 'filament.clusters.team-settings.pages.team-profile';
 
-    /** @var array<string, mixed> */
     public array $data = [];
 
     public static function canAccess(): bool
@@ -48,7 +53,6 @@ class TeamDetails extends Page implements HasActions, HasForms
 
     public function mount(): void
     {
-        /** @var Team $team */
         $team = Filament::getTenant();
 
         $this->form->fill([
@@ -59,7 +63,7 @@ class TeamDetails extends Page implements HasActions, HasForms
 
     public function getTitle(): string
     {
-        return 'Team details';
+        return 'Team settings';
     }
 
     public function getHeading(): string|Htmlable|null
@@ -69,21 +73,24 @@ class TeamDetails extends Page implements HasActions, HasForms
 
     public static function getNavigationLabel(): string
     {
-        return 'Team details';
+        return 'Team settings';
     }
 
     public function form(Schema $schema): Schema
     {
-        /** @var Team $team */
         $team = Filament::getTenant();
+        $user = auth()->user();
+        $canManage = TeamSettingsCluster::canManage();
+        $isOwner = $team->user_id === $user->id;
 
         return $schema
             ->model($team)
             ->statePath('data')
             ->components([
                 Section::make()
-                    ->heading(CategoryHeading::make('heroicon-o-identification', 'primary', 'Team details'))
+                    ->heading(CategoryHeading::make('heroicon-o-identification', 'primary', 'Team profile'))
                     ->description('Edit basic team information. Changes are visible immediately to all members.')
+                    ->visible($canManage)
                     ->footerActions([
                         $this->saveAction(),
                     ])
@@ -108,6 +115,33 @@ class TeamDetails extends Page implements HasActions, HasForms
                             ->extraInputAttributes(['data-testid' => 'team-details-name'])
                             ->prefixIcon(Heroicon::OutlinedBuildingOffice2),
                     ]),
+
+                Section::make()
+                    ->heading(CategoryHeading::make('heroicon-o-arrows-right-left', 'primary', 'Transfer ownership'))
+                    ->description('Hand off your administrator role to another member. They become an Administrator and you become a regular member.')
+                    ->visible($canManage)
+                    ->footerActions([
+                        $this->transferOwnershipAction(),
+                    ])
+                    ->footerActionsAlignment(Alignment::End),
+
+                Section::make()
+                    ->heading(CategoryHeading::make('heroicon-o-trash', 'danger', 'Delete team'))
+                    ->description('Deleting this team permanently removes all of its data and member assignments. This cannot be undone.')
+                    ->visible($canManage)
+                    ->footerActions([
+                        $this->deleteTeamAction(),
+                    ])
+                    ->footerActionsAlignment(Alignment::End),
+
+                Section::make()
+                    ->heading(CategoryHeading::make('heroicon-o-arrow-left-start-on-rectangle', 'danger', 'Leave team'))
+                    ->description('You can leave this team at any time. After leaving, the team owner can re-invite you.')
+                    ->visible(! $isOwner && ! $team->isPersonal())
+                    ->footerActions([
+                        $this->leaveTeamAction(),
+                    ])
+                    ->footerActionsAlignment(Alignment::End),
             ]);
     }
 
@@ -120,7 +154,6 @@ class TeamDetails extends Page implements HasActions, HasForms
             ->action(function (): void {
                 $data = $this->form->getState();
 
-                /** @var Team $team */
                 $team = Filament::getTenant();
 
                 $this->dispatch('refresh-topbar');
@@ -135,6 +168,180 @@ class TeamDetails extends Page implements HasActions, HasForms
                     ->success()
                     ->title('Team saved.')
                     ->send();
+            });
+    }
+
+    public function transferOwnershipAction(): Action
+    {
+        $team = Filament::getTenant();
+        $actor = auth()->user();
+
+        $candidates = $team->users()
+            ->where('users.id', '!=', $actor?->id)
+            ->orderBy('users.name')
+            ->get();
+
+        $disabledTooltip = match (true) {
+            $team->isPersonal() => 'Personal teams cannot be transferred.',
+            $candidates->isEmpty() => 'Invite another member first — there is no one to transfer ownership to.',
+            default => null,
+        };
+
+        return Action::make('transferOwnership')
+            ->label('Transfer ownership')
+            ->icon(Heroicon::OutlinedArrowsRightLeft)
+            ->color('primary')
+            ->extraAttributes(['data-testid' => 'transfer-ownership'])
+            ->modalWidth(Width::Medium)
+            ->modalIcon(Heroicon::OutlinedArrowsRightLeft)
+            ->modalHeading('Transfer ownership')
+            ->modalDescription('The new administrator will take over team settings, members, and deletion. You will become a regular member and lose those permissions.')
+            ->modalSubmitActionLabel('Transfer')
+            ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'transfer-ownership-confirm']))
+            ->disabled($disabledTooltip !== null)
+            ->tooltip($disabledTooltip)
+            ->schema([
+                Select::make('new_admin_id')
+                    ->label('New administrator')
+                    ->options($candidates->pluck('name', 'id'))
+                    ->required()
+                    ->native(false)
+                    ->prefixIcon(Heroicon::OutlinedUser)
+                    ->extraAttributes(['data-testid' => 'transfer-ownership-select']),
+            ])
+            ->action(function (array $data): void {
+                $team = Filament::getTenant();
+                $actor = auth()->user();
+                $newAdmin = User::find($data['new_admin_id']);
+
+                if (! $newAdmin || ! $team->users()->whereKey($newAdmin->id)->exists()) {
+                    Notification::make()->danger()->title('That user is not a team member.')->send();
+
+                    return;
+                }
+
+                if ($team->roleFor($actor) !== TeamRole::Administrator) {
+                    Notification::make()->danger()->title('Only administrators can transfer ownership.')->send();
+
+                    return;
+                }
+
+                (new TransferTeamOwnership)->handle($team, $actor, $newAdmin);
+
+                Notification::make()
+                    ->success()
+                    ->title('Ownership transferred to '.$newAdmin->name.'.')
+                    ->send();
+
+                $this->redirect(Filament::getUrl($team));
+            });
+    }
+
+    public function deleteTeamAction(): Action
+    {
+        $team = Filament::getTenant();
+
+        if ($team->isPersonal()) {
+            return Action::make('deleteTeam')
+                ->label('Delete team')
+                ->icon(Heroicon::OutlinedTrash)
+                ->color('danger')
+                ->extraAttributes(['data-testid' => 'delete-team'])
+                ->disabled()
+                ->tooltip('Personal teams can only be removed by deleting your account.');
+        }
+
+        return Action::make('deleteTeam')
+            ->label('Delete team')
+            ->icon(Heroicon::OutlinedTrash)
+            ->color('danger')
+            ->extraAttributes(['data-testid' => 'delete-team'])
+            ->modalWidth(Width::Medium)
+            ->modalIcon(Heroicon::OutlinedExclamationTriangle)
+            ->modalIconColor('danger')
+            ->modalHeading('Delete team '.$team->name)
+            ->modalDescription('All team data and invitations will be permanently deleted. To confirm, type the team name below.')
+            ->schema([
+                TextInput::make('name_confirmation')
+                    ->label('Type the team name to confirm')
+                    ->placeholder($team->name)
+                    ->required()
+                    ->prefixIcon(Heroicon::OutlinedExclamationTriangle)
+                    ->extraInputAttributes(['data-testid' => 'delete-team-name'])
+                    ->rule('in:'.$team->name),
+            ])
+            ->modalSubmitAction(fn (?Action $action) => $action
+                ?->label('Delete '.$team->name)
+                ->color('danger')
+                ->extraAttributes(['data-testid' => 'delete-team-confirm']))
+            ->modalCancelActionLabel('Close')
+            ->action(function (array $data): void {
+                $team = Filament::getTenant();
+                $user = auth()->user();
+
+                if (($data['name_confirmation'] ?? null) !== $team->name) {
+                    Notification::make()->danger()->title('The name does not match.')->send();
+
+                    return;
+                }
+
+                $nextTeam = (new DeleteTeam)->handle($team, $user);
+
+                Notification::make()
+                    ->success()
+                    ->title('Team deleted.')
+                    ->send();
+
+                if ($nextTeam !== null) {
+                    $this->redirect(Filament::getUrl($nextTeam));
+
+                    return;
+                }
+
+                $this->redirect('/app/new');
+            });
+    }
+
+    public function leaveTeamAction(): Action
+    {
+        $team = Filament::getTenant();
+
+        return Action::make('leaveTeam')
+            ->label('Leave team')
+            ->icon(Heroicon::OutlinedArrowLeftStartOnRectangle)
+            ->color('danger')
+            ->extraAttributes(['data-testid' => 'leave-team'])
+            ->modalWidth(Width::Medium)
+            ->modalIcon(Heroicon::OutlinedExclamationTriangle)
+            ->modalIconColor('danger')
+            ->modalHeading('Leave '.$team->name.'?')
+            ->modalDescription('You will lose access to this team and all of its data. The team owner can re-invite you later.')
+            ->modalSubmitActionLabel('Leave team')
+            ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'leave-team-confirm']))
+            ->modalCancelActionLabel('Close')
+            ->action(function (): void {
+                $team = Filament::getTenant();
+                $user = auth()->user();
+
+                $isSoleAdmin = $team->administrators()->count() === 1
+                    && $team->roleFor($user) === TeamRole::Administrator;
+                $hasOtherMembers = $team->members()->where('users.id', '!=', $user->id)->exists();
+
+                if ($isSoleAdmin && $hasOtherMembers) {
+                    Notification::make()
+                        ->danger()
+                        ->title('Transfer ownership first.')
+                        ->body('You are the only administrator of this team. Promote another member or transfer ownership before leaving.')
+                        ->send();
+
+                    return;
+                }
+
+                (new LeaveTeamAction)->handle($team, $user);
+
+                Notification::make()->success()->title('You left '.$team->name.'.')->send();
+
+                $this->redirect('/app/new');
             });
     }
 }

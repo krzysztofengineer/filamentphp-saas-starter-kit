@@ -23,20 +23,6 @@ class PricingSection extends Component
 
     protected string|Htmlable|Closure|null $footnote = null;
 
-    /**
-     * Pricing plans. Each plan supports:
-     *   - key: stable identifier
-     *   - name: plan name
-     *   - badge: optional badge label
-     *   - description: short tagline (HTML allowed)
-     *   - features: list of strings (HTML allowed)
-     *   - prices.monthly|yearly: { label, period, savings?, checkout_url?, is_current? }
-     *   - is_free: bool — render the free / no-checkout CTA variant
-     *   - highlighted: bool — apply the accent border + glow
-     *   - cta_label, cta_url: override the default Sign-up CTA for the free tier
-     *
-     * @var array<int, array<string, mixed>>|Closure
-     */
     protected array|Closure $plans = [];
 
     protected string|Closure $defaultInterval = 'monthly';
@@ -69,9 +55,6 @@ class PricingSection extends Component
         return $this;
     }
 
-    /**
-     * @param  array<int, array<string, mixed>>|Closure  $plans
-     */
     public function plans(array|Closure $plans): static
     {
         $this->plans = $plans;
@@ -111,9 +94,6 @@ class PricingSection extends Component
         return $this->evaluate($this->footnote);
     }
 
-    /**
-     * @return array<int, array<string, mixed>>
-     */
     public function getPlans(): array
     {
         return $this->evaluate($this->plans) ?? [];

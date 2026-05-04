@@ -16,9 +16,6 @@ class FaqSection extends Component
 
     protected string $view = 'filament.schemas.marketing.faq-section';
 
-    /**
-     * @var array<int, array{question: string, answer: string}>|Closure
-     */
     protected array|Closure $items = [];
 
     public static function make(): static
@@ -29,9 +26,6 @@ class FaqSection extends Component
         return $static;
     }
 
-    /**
-     * @param  array<int, array{question: string, answer: string}>|Closure  $items
-     */
     public function items(array|Closure $items): static
     {
         $this->items = $items;
@@ -39,9 +33,6 @@ class FaqSection extends Component
         return $this;
     }
 
-    /**
-     * @return array<int, array{question: string, answer: string}>
-     */
     public function getItems(): array
     {
         return $this->evaluate($this->items) ?? [];

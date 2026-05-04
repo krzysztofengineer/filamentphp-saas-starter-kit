@@ -17,7 +17,7 @@ it('updates the user name', function () {
     visit('/app/'.$user->currentTeam->uuid.'/account/settings')
         ->fill('[data-testid="account-profile-name"]', 'Updated Name')
         ->click('[data-testid="account-profile-save"]')
-        ->wait(1)
+        ->assertAttributeContains('.fi-user-avatar', 'alt', 'Updated Name')
         ->assertNoJavaScriptErrors();
 
     assertDatabaseHas('users', ['id' => $user->id, 'name' => 'Updated Name']);

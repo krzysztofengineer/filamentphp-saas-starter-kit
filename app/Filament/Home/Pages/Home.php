@@ -113,28 +113,21 @@ class Home extends Page
                     ],
                     [
                         'title' => 'Browser-tested with Pest 4. Every flow.',
-                        'body' => 'Eleven Pest 4 browser tests drive a real Chromium: registration, login, logout, account settings, team details, members, invitations, ownership transfer, billing, and a full smoke pass. Green from the first commit.',
+                        'body' => 'Pest 4 browser tests drive a real Chromium across registration, login, account settings, team details, members, invitations, ownership transfer, billing, and a full smoke pass. Customize anything — the suite tells you the moment something breaks.',
                         'visual' => 'terminal',
                         'span' => 'b-6',
                     ],
                     [
                         'title' => 'AI-ready out of the box',
-                        'body' => 'Laravel Boost (MCP), <code>CLAUDE.md</code>, and Pest/Filament/Tailwind skills are pre-configured. Open Claude Code and start shipping features, not setup.',
+                        'body' => 'Laravel Boost (MCP), <code>CLAUDE.md</code>, and Pest/Filament/Tailwind skills are wired up. Ask Claude Code to retune a flow, change an Action, or add a feature — it has the schema, the docs, and the test runner on hand.',
                         'visual' => 'ai',
                         'span' => 'b-7',
                     ],
                     [
-                        'title' => '…and a hundred other small things.',
-                        'visual' => 'strip',
-                        'span' => 'b-strip',
-                        'data' => [
-                            'tags' => [
-                                'avatar + team-logo uploads', 'policies',
-                                'password reset emails', 'sitemap',
-                                'SEO + OpenGraph meta', 'Nightwatch observability',
-                                'dark mode', 'Tailwind v4 themed',
-                            ],
-                        ],
+                        'title' => 'Action pattern. One purpose per class. Yours to edit.',
+                        'body' => 'Every write — invite a member, transfer ownership, schedule deletion — is a single class in <code>app/Actions/</code>. Open one, change it, you\'re done. No service-layer scavenger hunt, no hidden orchestration. Pair it with Boost + the Pest suite and any tweak is a five-minute job.',
+                        'visual' => 'actions',
+                        'span' => 'b-8',
                     ],
                 ]),
 

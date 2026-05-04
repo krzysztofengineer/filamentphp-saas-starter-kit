@@ -28,13 +28,11 @@ it('updates the team name', function () {
 
     actingAs($user);
 
-    visit('/app')
-        ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->click('@team-settings')
-        ->assertPathIs("/app/{$team->uuid}/settings/profile")
+    visit('/app/'.$team->uuid.'/settings/profile')
         ->fill('@team-details-name', 'New name')
         ->click('@team-details-save')
-        ->wait(1);
+        ->assertSeeIn('.fi-topbar', 'New name')
+        ->assertNoJavaScriptErrors();
 
     assertEquals('New name', $team->fresh()->name);
 });

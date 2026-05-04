@@ -1,5 +1,6 @@
 <?php
 
+use App\TeamType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,6 +14,7 @@ return new class extends Migration
             $table->string('uuid')->unique();
             $table->string('name');
             $table->string('logo')->nullable();
+            $table->string('type')->default(TeamType::Company->value);
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('stripe_id')->nullable()->index();
             $table->string('pm_type')->nullable();

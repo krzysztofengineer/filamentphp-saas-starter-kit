@@ -6,7 +6,6 @@ use App\Actions\InviteToTeam;
 use App\Actions\RevokeTeamInvitation;
 use App\Actions\UpdateTeamInvitationRole;
 use App\Filament\Support\CategoryHeading;
-use App\Models\Team;
 use App\Models\TeamInvitation;
 use App\TeamRole;
 use Filament\Actions\Action;
@@ -64,9 +63,9 @@ class TeamInvitationsTable extends TableWidget
                         ->grow(false),
                 ]),
             ])
-            ->headerActions([
-                $this->inviteAction()->extraAttributes(['data-testid' => 'invite']),
-            ])
+            ->headerActions(array_filter([
+                $this->canInvite() ? $this->inviteAction()->extraAttributes(['data-testid' => 'invite']) : null,
+            ]))
             ->recordActions([
                 ActionGroup::make([
                     $this->revokeInvitationAction(),
@@ -76,18 +75,34 @@ class TeamInvitationsTable extends TableWidget
             ->emptyStateIcon('heroicon-o-envelope')
             ->emptyStateHeading('No pending invitations')
             ->emptyStateDescription('Invite someone by email to give them access to this team.')
-            ->emptyStateActions([
-                $this->inviteAction()
+            ->emptyStateActions(array_filter([
+                $this->canInvite() ? $this->inviteAction()
                     ->name('inviteFromEmptyState')
                     ->extraAttributes(['data-testid' => 'invite-empty'])
                     ->button()
-                    ->outlined(),
-            ]);
+                    ->outlined() : $this->createTeamAction(),
+            ]));
+    }
+
+    private function createTeamAction(): Action
+    {
+        return Action::make('createTeam')
+            ->label('Create a team')
+            ->icon(Heroicon::OutlinedPlus)
+            ->color('primary')
+            ->button()
+            ->outlined()
+            ->extraAttributes(['data-testid' => 'create-team-from-personal'])
+            ->url('/app/new');
+    }
+
+    private function canInvite(): bool
+    {
+        return Filament::getTenant()?->isPersonal() === false;
     }
 
     private function getInvitations(): Collection
     {
-        /** @var Team|null $team */
         $team = Filament::getTenant();
 
         if ($team === null) {
@@ -173,7 +188,6 @@ class TeamInvitationsTable extends TableWidget
             ->modalSubmitActionLabel('Revoke')
             ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'revoke-invitation-confirm']))
             ->action(function (TeamInvitation $record): void {
-                /** @var Team|null $team */
                 $team = Filament::getTenant();
 
                 if ($team === null || $record->team_id !== $team->id) {

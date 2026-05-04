@@ -29,6 +29,11 @@ class TeamSettingsCluster extends Cluster
 
     public static function canAccess(): bool
     {
-        return Auth::user()?->can('update', Filament::getTenant());
+        return Filament::getTenant()?->users()->whereKey(auth()->id())->exists();
+    }
+
+    public static function canManage(): bool
+    {
+        return Auth::user()?->can('update', Filament::getTenant()) ?? false;
     }
 }

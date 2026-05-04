@@ -18,9 +18,8 @@ it('does not allow regular members to access team members', function () {
 
     actingAs($user);
 
-    visit('/app')
-        ->click('.fi-topbar button.fi-tenant-menu-trigger')
-        ->assertNotPresent('@team-settings');
+    visit('/app/'.$team->uuid.'/settings/members')
+        ->assertSee('403');
 });
 
 it('lists all team members', function () {

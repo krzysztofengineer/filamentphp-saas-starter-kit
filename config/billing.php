@@ -1,23 +1,6 @@
 <?php
 
 return [
-    /*
-    |--------------------------------------------------------------------------
-    | Subscription Plans
-    |--------------------------------------------------------------------------
-    |
-    | Plans are the single source of truth for both the marketing landing
-    | page (`#pricing` section) and the in-app Subscription settings page.
-    | Stripe price IDs are kept in env per environment (sandbox/prod).
-    |
-    | Each plan exposes:
-    |   - name, badge, description, features    →  marketing copy
-    |   - prices.monthly|yearly                 →  amount (minor units),
-    |     label, period, savings, stripe_id
-    |   - product                               →  Stripe product id
-    |   - highlighted                           →  visual emphasis flag
-    |   - is_free                               →  no Stripe checkout
-    */
 
     'plans' => [
         'free' => [

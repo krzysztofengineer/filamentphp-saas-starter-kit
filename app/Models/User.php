@@ -6,7 +6,6 @@ use App\Filament\AvatarProviders\UserAvatarProvider;
 use App\Notifications\ResetPassword;
 use App\Observers\UserObserver;
 use App\TeamRole;
-use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;
@@ -29,12 +28,8 @@ use NotificationChannels\WebPush\HasPushSubscriptions;
 #[ObservedBy(UserObserver::class)]
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasDefaultTenant, HasTenants, MustVerifyEmail
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, HasPushSubscriptions, Notifiable;
 
-    /**
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -67,6 +62,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasDefaul
     public function administeredTeams()
     {
         return $this->teams()->wherePivot('role', TeamRole::Administrator->value);
+    }
+
+    public function administersOthers(): bool
+    {
+        return $this->administeredTeams()
+            ->whereHas('members', fn ($query) => $query->where('users.id', '!=', $this->id))
+            ->exists();
     }
 
     public function currentTeam()

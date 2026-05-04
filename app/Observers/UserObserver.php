@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Actions\CreateTeamForUser;
 use App\Models\User;
+use App\TeamType;
 
 class UserObserver
 {
@@ -13,6 +14,6 @@ class UserObserver
             return;
         }
 
-        (new CreateTeamForUser)->handle($user, "{$user->name}'s Team");
+        (new CreateTeamForUser)->handle($user, "{$user->name}'s Team", TeamType::Personal);
     }
 }

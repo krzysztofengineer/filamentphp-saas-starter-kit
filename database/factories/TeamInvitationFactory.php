@@ -3,14 +3,10 @@
 namespace Database\Factories;
 
 use App\Models\Team;
-use App\Models\TeamInvitation;
 use App\Models\User;
 use App\TeamRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<TeamInvitation>
- */
 class TeamInvitationFactory extends Factory
 {
     public function definition(): array

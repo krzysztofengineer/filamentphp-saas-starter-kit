@@ -22,7 +22,6 @@ it('has no smoke', function () {
     visit('/app/'.$tenant->uuid.'/settings/profile')->assertNoJavaScriptErrors();
     visit('/app/'.$tenant->uuid.'/settings/members')->assertNoJavaScriptErrors();
     visit('/app/'.$tenant->uuid.'/settings/subscription')->assertNoJavaScriptErrors();
-    visit('/app/'.$tenant->uuid.'/settings/advanced')->assertNoJavaScriptErrors();
     visit('/app/new')->assertNoJavaScriptErrors();
     visit('/app/password-reset/request')->assertNoJavaScriptErrors();
 });

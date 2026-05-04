@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\Storage;
 
 class UpdateTeamProfile
 {
-    /**
-     * @param  array<string, mixed>  $attributes
-     */
     public function handle(Team $team, array $attributes): void
     {
         if (array_key_exists('logo', $attributes) && filled($team->logo) && $team->logo !== $attributes['logo']) {

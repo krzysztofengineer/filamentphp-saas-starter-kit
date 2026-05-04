@@ -68,8 +68,7 @@ class AppPanelProvider extends PanelProvider
                     ->label('Team settings')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->extraAttributes(['data-testid' => 'team-settings'])
-                    ->url(fn (): string => TeamDetails::getUrl())
-                    ->visible(fn (): bool => TeamDetails::canAccess()),
+                    ->url(fn (): string => TeamDetails::getUrl()),
             ])
             ->userMenuItems([
                 Action::make('accountSettings')

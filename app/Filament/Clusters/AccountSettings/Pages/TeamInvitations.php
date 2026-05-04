@@ -36,9 +36,6 @@ class TeamInvitations extends Page
         return 'Team invitations';
     }
 
-    /**
-     * @return array<int, class-string>
-     */
     public function getWidgets(): array
     {
         return [

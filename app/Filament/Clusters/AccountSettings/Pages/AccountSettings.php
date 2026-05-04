@@ -6,7 +6,6 @@ use App\Actions\ChangeAccountPassword;
 use App\Actions\UpdateAccountProfile;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Support\CategoryHeading;
-use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -40,7 +39,6 @@ class AccountSettings extends Page implements HasActions, HasForms
 
     protected string $view = 'filament.clusters.account-settings.pages.account-settings';
 
-    /** @var array<string, mixed> */
     public array $data = [
         'name' => '',
         'email' => '',
@@ -57,7 +55,6 @@ class AccountSettings extends Page implements HasActions, HasForms
 
     public function mount(): void
     {
-        /** @var User $user */
         $user = auth()->user();
 
         $this->form->fill([
@@ -168,7 +165,6 @@ class AccountSettings extends Page implements HasActions, HasForms
             ->action(function (): void {
                 $data = $this->form->getState();
 
-                /** @var User $user */
                 $user = auth()->user();
 
                 (new UpdateAccountProfile)->handle($user, [
@@ -198,7 +194,6 @@ class AccountSettings extends Page implements HasActions, HasForms
                 $current = $state['current_password'] ?? '';
                 $new = $state['password'] ?? '';
 
-                /** @var User $user */
                 $user = auth()->user();
 
                 if ($current === '' || ! Hash::check($current, $user->password)) {

@@ -6,7 +6,6 @@ use App\Actions\AcceptTeamInvitation;
 use App\Actions\DeclineTeamInvitation;
 use App\Filament\Support\CategoryHeading;
 use App\Models\TeamInvitation;
-use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
@@ -58,7 +57,6 @@ class PendingTeamInvitationsTable extends TableWidget
             ->button()
             ->extraAttributes(['data-testid' => 'invitation-accept'])
             ->action(function (TeamInvitation $record): void {
-                /** @var User $user */
                 $user = auth()->user();
 
                 if (strtolower($user->email) !== strtolower($record->email) || $record->isAccepted()) {
@@ -86,7 +84,6 @@ class PendingTeamInvitationsTable extends TableWidget
             ->modalHeading('Decline invitation?')
             ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'invitation-decline-confirm']))
             ->action(function (TeamInvitation $record): void {
-                /** @var User $user */
                 $user = auth()->user();
 
                 if (strtolower($user->email) !== strtolower($record->email) || $record->isAccepted()) {

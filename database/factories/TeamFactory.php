@@ -5,12 +5,10 @@ namespace Database\Factories;
 use App\BillingInterval;
 use App\BillingPlan;
 use App\Models\Team;
+use App\TeamType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-/**
- * @extends Factory<Team>
- */
 class TeamFactory extends Factory
 {
     public function definition(): array
@@ -18,7 +16,13 @@ class TeamFactory extends Factory
         return [
             'uuid' => (string) Str::uuid(),
             'name' => fake()->company(),
+            'type' => TeamType::Company,
         ];
+    }
+
+    public function personal(): static
+    {
+        return $this->state(fn (array $attributes) => ['type' => TeamType::Personal]);
     }
 
     public function proPlan(BillingInterval $interval = BillingInterval::Yearly): static

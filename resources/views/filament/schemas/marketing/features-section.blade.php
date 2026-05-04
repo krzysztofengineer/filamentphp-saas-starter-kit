@@ -24,28 +24,20 @@
                 @php
                     $visual = $card['visual'] ?? null;
                     $span = $card['span'] ?? 'b-4';
-                    $isStrip = $visual === 'strip';
                 @endphp
-                <article class="card {{ $span }} @if ($isStrip) strip-card @endif">
+                <article class="card {{ $span }}">
                     @if (! empty($card['title']))
                         <h3 class="card-title">{{ $card['title'] }}</h3>
                     @endif
                     @if (! empty($card['body']))
                         <p class="card-body">{!! $card['body'] !!}</p>
                     @endif
-                    @if ($visual && ! $isStrip)
+                    @if ($visual)
                         <div class="card-visual">
                             @includeIf(
                                 'filament.schemas.marketing.bento.' . $visual,
                                 ['data' => $card['data'] ?? []]
                             )
-                        </div>
-                    @endif
-                    @if ($isStrip && ! empty($card['data']['tags'] ?? []))
-                        <div class="strip-text">
-                            @foreach ($card['data']['tags'] as $tag)
-                                <span class="strip-tag">{{ $tag }}</span>
-                            @endforeach
                         </div>
                     @endif
                 </article>

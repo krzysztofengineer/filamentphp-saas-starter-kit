@@ -16,23 +16,8 @@ class MarketingFooter extends Component
 
     protected string|Htmlable|Closure|null $copyright = null;
 
-    /**
-     * Footer link columns. Each column has:
-     *   - heading: column title
-     *   - links: array of {label, url}
-     *
-     * Property is named `linkColumns` to avoid colliding with the parent's
-     * grid `$columns` (Filament uses it for layout column counts).
-     *
-     * @var array<int, array{heading: string, links: array<int, array{label: string, url: string}>}>|Closure
-     */
     protected array|Closure $linkColumns = [];
 
-    /**
-     * Legacy flat-link list, kept for backwards compatibility.
-     *
-     * @var array<int, array{label: string, url: string}>|Closure
-     */
     protected array|Closure $linkList = [];
 
     public static function make(): static
@@ -64,9 +49,6 @@ class MarketingFooter extends Component
         return $this;
     }
 
-    /**
-     * @param  array<int, array<string, mixed>>|Closure  $linkColumns
-     */
     public function linkColumns(array|Closure $linkColumns): static
     {
         $this->linkColumns = $linkColumns;
@@ -74,9 +56,6 @@ class MarketingFooter extends Component
         return $this;
     }
 
-    /**
-     * @param  array<int, array{label: string, url: string}>|Closure  $links
-     */
     public function links(array|Closure $links): static
     {
         $this->linkList = $links;
@@ -99,17 +78,11 @@ class MarketingFooter extends Component
         return $this->evaluate($this->copyright) ?? '© '.date('Y').' '.config('app.name');
     }
 
-    /**
-     * @return array<int, array<string, mixed>>
-     */
     public function getLinkColumns(): array
     {
         return $this->evaluate($this->linkColumns) ?? [];
     }
 
-    /**
-     * @return array<int, array{label: string, url: string}>
-     */
     public function getLinks(): array
     {
         return $this->evaluate($this->linkList) ?? [];

@@ -13,9 +13,6 @@ class TeamInvitationNotification extends Notification
 
     public function __construct(public TeamInvitation $invitation) {}
 
-    /**
-     * @return array<int, string>
-     */
     public function via(object $notifiable): array
     {
         return ['mail'];

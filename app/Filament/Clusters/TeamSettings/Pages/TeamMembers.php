@@ -26,7 +26,7 @@ class TeamMembers extends Page
 
     public static function canAccess(): bool
     {
-        return TeamSettingsCluster::canAccess();
+        return TeamSettingsCluster::canManage();
     }
 
     public function getTitle(): string
