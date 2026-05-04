@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\PendingDeletion;
 use App\Filament\AvatarProviders\UserAvatarProvider;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Clusters\AccountSettings\Pages\AccountSettings;
@@ -11,6 +12,7 @@ use App\Filament\Pages\Auth\CustomLogin;
 use App\Filament\Pages\Auth\CustomRegister;
 use App\Filament\Pages\CreateTeam;
 use App\Filament\Pages\CustomDashboard;
+use App\Http\Middleware\RedirectPendingDeletion;
 use App\Http\Middleware\SaveCurrentTeam;
 use App\Models\Team;
 use Filament\Actions\Action;
@@ -24,7 +26,6 @@ use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\Support\Htmlable;
@@ -85,7 +86,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->maxContentWidth(Width::Full)
             ->colors([
-                'primary' => Color::Red,
+                'primary' => config('app.brand_color'),
             ])
             ->defaultAvatarProvider(UserAvatarProvider::class)
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -116,7 +117,9 @@ class AppPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                RedirectPendingDeletion::class,
             ])
+            ->authenticatedRoutes(fn (Panel $panel) => PendingDeletion::registerRoutes($panel))
             ->renderHook(PanelsRenderHook::HEAD_END, $forApp('partials.pwa-head'))
             ->brandLogoHeight('2rem');
     }

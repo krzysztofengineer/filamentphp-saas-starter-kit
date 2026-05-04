@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Support\Colors\Color;
+
 return [
 
     /*
@@ -14,6 +16,8 @@ return [
     */
 
     'name' => env('APP_NAME', 'filaas'),
+
+    'brand_color' => Color::Red,
 
     /*
     |--------------------------------------------------------------------------

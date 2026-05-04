@@ -3,6 +3,7 @@
 namespace App\Filament\Clusters\AccountSettings\Pages;
 
 use App\Actions\ScheduleAccountDeletion;
+use App\Filament\Auth\PendingDeletion;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Support\CategoryHeading;
 use BackedEnum;
@@ -11,6 +12,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -109,11 +111,12 @@ class AccountAdvanced extends Page implements HasActions, HasForms
 
                 (new ScheduleAccountDeletion)->handle($user);
 
-                auth()->logout();
-                request()->session()?->invalidate();
-                request()->session()?->regenerateToken();
+                Notification::make()
+                    ->success()
+                    ->title('Account scheduled for deletion.')
+                    ->send();
 
-                $this->redirect('/app/login');
+                $this->redirect(PendingDeletion::getUrl());
             });
     }
 }

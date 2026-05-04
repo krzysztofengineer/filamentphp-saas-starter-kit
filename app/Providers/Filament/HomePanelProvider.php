@@ -10,7 +10,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\Support\Htmlable;
@@ -43,7 +42,7 @@ class HomePanelProvider extends PanelProvider
             ->favicon(asset('favicon.ico'))
             ->maxContentWidth(Width::Full)
             ->colors([
-                'primary' => Color::Red,
+                'primary' => config('app.brand_color'),
             ])
             ->topNavigation()
             ->discoverPages(in: app_path('Filament/Home/Pages'), for: 'App\Filament\Home\Pages')

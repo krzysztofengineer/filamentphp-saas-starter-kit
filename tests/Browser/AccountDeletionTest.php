@@ -19,7 +19,7 @@ it('schedules account deletion for a user whose only team is their solo personal
         ->click('[data-testid="delete-account"]')
         ->assertSee('permanently deleted')
         ->click('[data-testid="delete-account-confirm"]')
-        ->assertPathIs('/app/login');
+        ->assertPathIs('/app/pending-deletion');
 
     assertDatabaseMissing('users', ['id' => $user->id, 'deleted_at' => null]);
 });
@@ -41,7 +41,7 @@ it('blocks account deletion when the user administers a team that has other memb
     assertDatabaseHas('users', ['id' => $user->id, 'deleted_at' => null]);
 });
 
-it('cancels a scheduled account deletion via the dashboard banner', function () {
+it('redirects a scheduled-for-deletion user to the pending deletion page on every request', function () {
     Config::set('account.deletion_grace_days', 14);
 
     $user = User::factory()->create([
@@ -50,11 +50,40 @@ it('cancels a scheduled account deletion via the dashboard banner', function () 
     ]);
     actingAs($user);
 
-    visit('/app/'.$user->currentTeam->uuid)
+    visit('/app/'.$user->currentTeam->uuid.'/account/settings')
+        ->assertPathIs('/app/pending-deletion')
         ->assertSee('Your account will be deleted in 11 days')
+        ->assertNoJavaScriptErrors();
+});
+
+it('cancels a scheduled account deletion from the pending deletion page', function () {
+    $user = User::factory()->create([
+        'email' => 'reconsidered@example.com',
+        'deleted_at' => now()->subDays(3),
+    ]);
+    actingAs($user);
+
+    visit('/app/pending-deletion')
         ->click('[data-testid="cancel-account-deletion"]')
+        ->assertSee('Cancel account deletion?')
+        ->click('[data-testid="cancel-account-deletion-confirm"]')
         ->assertSee('Account deletion cancelled')
         ->assertNoJavaScriptErrors();
 
     assertDatabaseHas('users', ['id' => $user->id, 'deleted_at' => null]);
+});
+
+it('lets a scheduled-for-deletion user sign out from the pending deletion page', function () {
+    $user = User::factory()->create([
+        'email' => 'goodbye@example.com',
+        'deleted_at' => now()->subDays(1),
+    ]);
+    actingAs($user);
+
+    visit('/app/pending-deletion')
+        ->click('[data-testid="pending-deletion-sign-out"]')
+        ->assertPathIs('/app/login')
+        ->assertNoJavaScriptErrors();
+
+    assertDatabaseHas('users', ['id' => $user->id, 'email' => 'goodbye@example.com']);
 });

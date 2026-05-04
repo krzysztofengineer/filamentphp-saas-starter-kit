@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\PendingDeletionBanner;
 use BackedEnum;
 use Filament\Pages\Dashboard;
 use Filament\Support\Icons\Heroicon;
@@ -33,9 +32,7 @@ class CustomDashboard extends Dashboard
 
     public function getHeaderWidgets(): array
     {
-        return [
-            PendingDeletionBanner::class,
-        ];
+        return [];
     }
 
     public function getWidgets(): array
