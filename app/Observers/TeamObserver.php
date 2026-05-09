@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Actions\AttachTeamOwner;
+use App\Actions\Teams\AttachTeamOwner;
 use App\Models\Team;
 use Illuminate\Support\Str;
 

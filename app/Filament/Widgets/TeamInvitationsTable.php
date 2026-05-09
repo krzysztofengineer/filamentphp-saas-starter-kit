@@ -2,9 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Actions\InviteToTeam;
-use App\Actions\RevokeTeamInvitation;
-use App\Actions\UpdateTeamInvitationRole;
+use App\Actions\Teams\InviteToTeam;
+use App\Actions\Teams\RevokeTeamInvitation;
+use App\Actions\Teams\UpdateTeamInvitationRole;
 use App\Filament\Support\CategoryHeading;
 use App\Models\TeamInvitation;
 use App\TeamRole;

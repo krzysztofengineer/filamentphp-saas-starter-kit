@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages;
 
-use App\Actions\CreateTeamForUser;
+use App\Actions\Teams\CreateTeamForUser;
 use App\Models\Team;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;

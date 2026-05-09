@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Actions\CreateTeamForUser;
+use App\Actions\Teams\CreateTeamForUser;
 use App\Models\User;
 use App\TeamType;
 

@@ -2,10 +2,10 @@
 
 namespace App\Filament\Clusters\TeamSettings\Pages;
 
-use App\Actions\DeleteTeam;
-use App\Actions\LeaveTeam as LeaveTeamAction;
-use App\Actions\TransferTeamOwnership;
-use App\Actions\UpdateTeamProfile;
+use App\Actions\Teams\DeleteTeam;
+use App\Actions\Teams\LeaveTeam as LeaveTeamAction;
+use App\Actions\Teams\TransferTeamOwnership;
+use App\Actions\Teams\UpdateTeamProfile;
 use App\Filament\Clusters\TeamSettings\TeamSettingsCluster;
 use App\Filament\Support\CategoryHeading;
 use App\Models\User;

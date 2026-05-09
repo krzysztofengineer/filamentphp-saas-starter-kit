@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\TransferTeamOwnership;
+use App\Actions\Teams\TransferTeamOwnership;
 use App\Models\Team;
 use App\Models\User;
 use App\TeamRole;

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Clusters\AccountSettings\Pages;
 
-use App\Actions\ScheduleAccountDeletion;
+use App\Actions\Accounts\ScheduleAccountDeletion;
 use App\Filament\Account\PendingDeletion;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Support\CategoryHeading;

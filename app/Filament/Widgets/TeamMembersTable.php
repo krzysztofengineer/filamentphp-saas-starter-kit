@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Actions\ChangeTeamRole;
-use App\Actions\RemoveTeamMember;
+use App\Actions\Teams\ChangeTeamRole;
+use App\Actions\Teams\RemoveTeamMember;
 use App\Filament\Support\CategoryHeading;
 use App\Models\Team;
 use App\Models\User;

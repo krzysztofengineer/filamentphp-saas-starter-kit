@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Actions\PruneDeletedUser;
+use App\Actions\Accounts\PruneDeletedUser;
 use App\Models\User;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;

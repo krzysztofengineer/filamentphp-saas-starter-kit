@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions;
+namespace App\Actions\Teams;
 
 use App\Models\TeamInvitation;
 use App\TeamRole;

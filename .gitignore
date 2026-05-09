@@ -24,3 +24,4 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 tests/Browser/screenshots
+.claude/settings.local.json

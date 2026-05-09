@@ -2,8 +2,8 @@
 
 namespace App\Filament\Clusters\AccountSettings\Pages;
 
-use App\Actions\ChangeAccountPassword;
-use App\Actions\UpdateAccountProfile;
+use App\Actions\Accounts\ChangeAccountPassword;
+use App\Actions\Accounts\UpdateAccountProfile;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
 use App\Filament\Support\CategoryHeading;
 use BackedEnum;

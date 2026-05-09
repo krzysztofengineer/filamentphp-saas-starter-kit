@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Actions\SaveUserCurrentTeam;
+use App\Actions\Teams\SaveUserCurrentTeam;
 use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Http\Request;

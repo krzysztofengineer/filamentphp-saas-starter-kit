@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Actions\AcceptTeamInvitation;
-use App\Actions\DeclineTeamInvitation;
+use App\Actions\Teams\AcceptTeamInvitation;
+use App\Actions\Teams\DeclineTeamInvitation;
 use App\Filament\Support\CategoryHeading;
 use App\Models\TeamInvitation;
 use Filament\Actions\Action;

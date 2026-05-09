@@ -2,7 +2,7 @@
 
 namespace App\Filament\Account;
 
-use App\Actions\CancelAccountDeletion;
+use App\Actions\Accounts\CancelAccountDeletion;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;

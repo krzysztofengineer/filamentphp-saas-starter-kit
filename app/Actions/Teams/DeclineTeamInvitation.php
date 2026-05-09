@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Actions;
+namespace App\Actions\Teams;
 
 use App\Models\TeamInvitation;
 
-class RevokeTeamInvitation
+class DeclineTeamInvitation
 {
     public function handle(TeamInvitation $invitation): void
     {
