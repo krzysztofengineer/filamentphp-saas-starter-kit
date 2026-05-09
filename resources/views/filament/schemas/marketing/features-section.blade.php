@@ -19,7 +19,7 @@
             @endif
         </div>
 
-        <div class="grid auto-rows-[minmax(220px,auto)] grid-cols-6 gap-3.5 [grid-template-areas:'a_a_a_b_b_b'_'c_c_c_f_f_f'_'d_d_e_e_g_g'_'h_h_h_h_h_h'] max-[980px]:grid-cols-2 max-[980px]:[grid-template-areas:none]">
+        <div class="grid auto-rows-[minmax(220px,auto)] grid-cols-6 gap-3.5 [grid-template-areas:'a_a_a_b_b_b'_'c_c_c_f_f_f'_'d_d_e_e_g_g'_'h_h_h_h_h_h'] max-[980px]:grid-cols-1 max-[980px]:[grid-template-areas:none]">
             @foreach ($cards as $card)
                 @php
                     $visual = $card['visual'] ?? null;
@@ -36,7 +36,7 @@
                         default => '[grid-area:d]',
                     };
                 @endphp
-                <article class="{{ $gridAreaClass }} relative flex flex-col overflow-hidden rounded-[14px] border border-(--border) bg-(--bg-elev) p-[26px] transition-[border-color,transform,background] duration-200 hover:border-(--border-2) hover:bg-[color-mix(in_oklab,var(--bg-elev)_92%,var(--lp-text)_8%)] max-[980px]:[grid-area:auto] max-[980px]:col-span-2">
+                <article class="{{ $gridAreaClass }} max-[980px]:[grid-area:auto] relative flex flex-col overflow-hidden rounded-[14px] border border-(--border) bg-(--bg-elev) p-[26px] transition-[border-color,transform,background] duration-200 hover:border-(--border-2) hover:bg-[color-mix(in_oklab,var(--bg-elev)_92%,var(--lp-text)_8%)]">
                     @if (! empty($card['title']))
                         <h3 class="mb-2 text-[18px] font-semibold tracking-[-0.015em]">{{ $card['title'] }}</h3>
                     @endif

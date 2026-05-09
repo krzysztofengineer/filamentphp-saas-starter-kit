@@ -45,9 +45,6 @@ body.fi-panel-home {
     line-height: 1.5;
     min-height: 100vh;
 
-    a { color: inherit; text-decoration: none; }
-    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
-    hr { border: 0; border-top: 1px solid var(--border); margin: 0; }
     ::selection { background: var(--accent); color: var(--accent-ink); }
 }
 
