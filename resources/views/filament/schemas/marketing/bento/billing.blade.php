@@ -9,20 +9,20 @@
     $payLabel = $data['pay_label'] ?? 'Pay $31.61';
 @endphp
 
-<div class="billing-visual" aria-hidden="true">
-    <div class="price-card h">
-        <span class="pc-tag">{{ $tag }}</span>
-        <span class="pc-price">{{ $price }}</span>
-        <span class="pc-line"></span>
-        <span class="pc-line short"></span>
+<div class="grid grid-cols-2 gap-3 rounded-xl border border-dashed border-[var(--border-2)] bg-[var(--lp-bg)] p-3.5 text-[11px] [font-family:var(--mono)]" aria-hidden="true">
+    <div class="flex flex-col gap-1.5 rounded-lg border border-[var(--accent)] bg-[var(--bg-elev)] p-3">
+        <span class="text-[10px] uppercase tracking-[0.04em] text-[var(--accent)]">{{ $tag }}</span>
+        <span class="text-[18px] font-semibold text-[var(--lp-text)]">{{ $price }}</span>
+        <span class="block h-1 w-3/5 rounded-sm bg-[var(--border)]"></span>
+        <span class="block h-1 w-2/5 rounded-sm bg-[var(--border)]"></span>
     </div>
-    <div class="arrow-mid">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+    <div class="grid place-items-center text-[var(--text-3)]">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
     </div>
-    <div class="checkout-snip">
+    <div class="col-span-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elev)] p-2.5 text-[11px] text-[var(--text-2)]">
         @foreach ($rows as $row)
-            <div class="cs-row"><span class="k">{{ $row['label'] }}</span><span class="v">{{ $row['value'] }}</span></div>
+            <div class="flex justify-between py-[3px]"><span class="text-[var(--text-3)]">{{ $row['label'] }}</span><span class="text-[var(--lp-text)]">{{ $row['value'] }}</span></div>
         @endforeach
-        <div class="cs-pay">{{ $payLabel }}</div>
+        <div class="mt-2 rounded-md bg-[var(--accent)] py-1.5 text-center font-semibold text-[var(--accent-ink)]">{{ $payLabel }}</div>
     </div>
 </div>
