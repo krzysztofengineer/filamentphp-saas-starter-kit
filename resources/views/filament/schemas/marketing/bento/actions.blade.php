@@ -14,28 +14,32 @@
     $highlight = $data['highlight'] ?? 'InviteToTeam.php';
 @endphp
 
-<div class="actions-visual" aria-hidden="true">
-    <div class="actions-pane">
-        <div class="actions-pane-head">{{ $path }}</div>
+<div class="grid grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] gap-2.5 rounded-xl border border-dashed border-(--border-2) bg-(--lp-bg) p-3 text-[11.5px] leading-[1.55] font-mono max-[720px]:grid-cols-1" aria-hidden="true">
+    <div class="overflow-hidden rounded-lg border border-(--border) bg-(--bg-elev) px-3 py-2.5 text-(--text-2)">
+        <div class="mb-1.5 text-[10px] text-(--text-3)">{{ $path }}</div>
         @foreach ($files as $file)
             @php
                 $glyph = $loop->last ? '└─' : '├─';
+                $isActive = $file === $highlight;
             @endphp
-            <div class="actions-tree-row @if ($file === $highlight) active @endif">
-                <span class="actions-glyph">{{ $glyph }}</span> {{ $file }}
+            <div @class([
+                'truncate py-px',
+                'font-semibold text-(--accent)' => $isActive,
+            ])>
+                <span class="text-(--text-3)">{{ $glyph }}</span> {{ $file }}
             </div>
         @endforeach
     </div>
-    <div class="actions-pane">
-        <div class="actions-pane-head">// {{ $highlight }}</div>
-        <div class="actions-code-row"><span class="kw">class</span> <span class="cn">InviteToTeam</span> {</div>
-        <div class="actions-code-row indent"><span class="kw">public function</span> <span class="fn">handle</span>(</div>
-        <div class="actions-code-row indent2"><span class="cn">Team</span> $team,</div>
-        <div class="actions-code-row indent2"><span class="kw">string</span> $email,</div>
-        <div class="actions-code-row indent2"><span class="cn">Role</span> $role,</div>
-        <div class="actions-code-row indent">): <span class="cn">TeamInvitation</span></div>
-        <div class="actions-code-row">{</div>
-        <div class="actions-code-row indent"><span class="cm">// every write op gets its own class.</span></div>
-        <div class="actions-code-row">}</div>
+    <div class="overflow-hidden rounded-lg border border-(--border) bg-(--bg-elev) px-3 py-2.5 text-(--text-2)">
+        <div class="mb-1.5 text-[10px] text-(--text-3)">// {{ $highlight }}</div>
+        <div class="truncate py-px"><span class="text-[oklch(0.7_0.16_290)]">class</span> <span class="text-[oklch(0.72_0.14_200)]">InviteToTeam</span> {</div>
+        <div class="truncate py-px pl-3.5"><span class="text-[oklch(0.7_0.16_290)]">public function</span> <span class="text-[oklch(0.78_0.14_110)]">handle</span>(</div>
+        <div class="truncate py-px pl-7"><span class="text-[oklch(0.72_0.14_200)]">Team</span> $team,</div>
+        <div class="truncate py-px pl-7"><span class="text-[oklch(0.7_0.16_290)]">string</span> $email,</div>
+        <div class="truncate py-px pl-7"><span class="text-[oklch(0.72_0.14_200)]">Role</span> $role,</div>
+        <div class="truncate py-px pl-3.5">): <span class="text-[oklch(0.72_0.14_200)]">TeamInvitation</span></div>
+        <div class="truncate py-px">{</div>
+        <div class="truncate py-px pl-3.5"><span class="text-(--text-3) italic">// every write op gets its own class.</span></div>
+        <div class="truncate py-px">}</div>
     </div>
 </div>
