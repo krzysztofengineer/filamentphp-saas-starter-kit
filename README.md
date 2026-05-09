@@ -92,6 +92,23 @@ Paste the printed `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` into `.env`. The `V
 * * * * * cd /path-to-app && php artisan schedule:run >> /dev/null 2>&1
 ```
 
+### Customizing the landing page
+
+The marketing landing on `/` is a Filament page like any other — `app/Filament/Home/Pages/Home.php`. Its `content()` method returns a `Schema` composed of section components: `HeroSection`, `FeaturesSection`, `HowItWorksSection`, `PricingSection`, `FaqSection`, `FinalCtaSection`, `MarketingFooter`.
+
+To rewrite the copy, edit the fluent calls in `Home.php` — `->heading(...)`, `->description(...)`, `->cards([...])`, `->plans([...])`, `->items([...])`. To add, remove or reorder sections, change the array passed to `$schema->components([...])`.
+
+Each section is a pair of files:
+
+- `app/Filament/Schemas/Components/Marketing/{Section}.php` — the component class with its fluent setters
+- `resources/views/filament/schemas/marketing/{section}.blade.php` — the Tailwind v4 markup
+
+Edit the Blade view to restyle a section without touching its class. Add a setter on the component (and pass the value through `$this->...` in `render()`) when you need a new piece of content. Run `composer run dev` (or `npm run dev`) so Vite picks up Tailwind changes.
+
+The `PricingSection` reads its plans from `config/billing.php` via `collect(config('billing.plans'))->map(...)`, so editing tier names, prices or feature lists there updates the section automatically.
+
+The pricing tiers shown on the landing reflect this kit's own commercial license. **You don't need them in your product.** Replace the `->plans(...)` call with your own tier definitions, or delete `PricingSection::make()` entirely if you're not selling subscriptions yet.
+
 ### Tests
 
 ```bash

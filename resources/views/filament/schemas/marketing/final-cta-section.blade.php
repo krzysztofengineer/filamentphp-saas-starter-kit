@@ -9,28 +9,28 @@
     $command = $getCommand();
 @endphp
 
-<section class="closing" data-testid="landing-final-cta">
+<section class="border-t border-[var(--border)] bg-[radial-gradient(800px_400px_at_50%_100%,var(--accent-soft),transparent_60%)] pt-[110px] pb-[120px] text-center" data-testid="landing-final-cta">
     <div class="container">
         @if (filled($heading))
-            <h2 class="closing-h">
+            <h2 class="mx-auto mb-6 max-w-[14ch] text-[clamp(36px,5.5vw,64px)] leading-[1.02] font-semibold tracking-[-0.035em] text-balance">
                 {{ $heading }}@if (filled($headingAccent))
-                    <span class="ac">{{ $headingAccent }}</span>
+                    <span class="text-[var(--accent)]">{{ $headingAccent }}</span>
                 @endif
             </h2>
         @endif
 
         @if (filled($description))
-            <p class="hero-sub" style="margin: 0 auto; max-width: 50ch; text-align: center;">{{ $description }}</p>
+            <p class="mx-auto max-w-[50ch] text-center text-[18px] text-[var(--text-2)] text-pretty">{{ $description }}</p>
         @endif
 
         @if (filled($command))
-            <div class="closing-row">
+            <div class="mt-[26px] flex flex-wrap items-center justify-center gap-3">
                 <x-marketing.cmd-chip :command="$command" size="lg" />
             </div>
         @endif
 
         @if (filled($primaryLabel) || filled($secondaryLabel))
-            <div class="closing-row" style="margin-top: 14px;">
+            <div class="mt-3.5 flex flex-wrap items-center justify-center gap-3">
                 @if (filled($primaryLabel))
                     <x-filament::button
                         tag="a"

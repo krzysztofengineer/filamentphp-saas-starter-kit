@@ -14,29 +14,29 @@
     $host = $getHost();
 @endphp
 
-<section class="hero" data-testid="landing-hero">
+<section class="relative pt-[76px] pb-7" data-testid="landing-hero">
     <div class="container">
         @if (filled($eyebrow))
-            <div class="hero-eyebrow">
-                <span class="dot"></span>
+            <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-elev)] py-[5px] pr-3 pl-2 text-xs text-[var(--text-3)] [font-family:var(--mono)]">
+                <span class="h-1.5 w-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_0_3px_color-mix(in_oklab,var(--accent)_25%,transparent)]"></span>
                 <span>{{ $eyebrow }}</span>
             </div>
         @endif
 
         @if (filled($heading))
-            <h1 class="hero-h">
+            <h1 class="mb-[22px] max-w-[14ch] text-[clamp(40px,6.2vw,72px)] leading-[1.02] font-semibold tracking-[-0.035em] text-balance">
                 {{ $heading }}@if (filled($headingAccent))
-                    <span class="accent">{{ $headingAccent }}</span>
+                    <span class="text-[var(--accent)]">{{ $headingAccent }}</span>
                 @endif
             </h1>
         @endif
 
         @if (filled($description))
-            <p class="hero-sub">{{ $description }}</p>
+            <p class="mb-8 max-w-[56ch] text-[18px] text-[var(--text-2)] text-pretty">{{ $description }}</p>
         @endif
 
         @if (filled($primaryLabel) || filled($secondaryLabel))
-            <div class="hero-ctas">
+            <div class="mb-[22px] flex flex-wrap items-center gap-2.5">
                 @if (filled($primaryLabel))
                     <x-filament::button
                         tag="a"
@@ -68,18 +68,20 @@
         @endif
 
         @if (filled($command))
-            <div class="hero-cmd-row">
+            <div class="mb-9 flex flex-wrap items-center gap-3">
                 <x-marketing.cmd-chip :command="$command" size="lg" />
                 @if (filled($commandHint))
-                    <span class="hint">{{ $commandHint }}</span>
+                    <span class="text-xs text-[var(--text-3)] [font-family:var(--mono)]">{{ $commandHint }}</span>
                 @endif
             </div>
         @endif
 
         @if (! empty($pills))
-            <div class="pills" aria-label="What's included">
+            <div class="flex flex-wrap gap-1.5" aria-label="What's included">
                 @foreach ($pills as $pill)
-                    <span class="pill"><span class="pill-dot"></span>{{ $pill }}</span>
+                    <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-elev)] px-2.5 py-1 text-xs tracking-[-0.005em] text-[var(--text-2)] [font-family:var(--mono)]">
+                        <span class="h-[5px] w-[5px] rounded-full bg-[var(--text-3)]"></span>{{ $pill }}
+                    </span>
                 @endforeach
             </div>
         @endif

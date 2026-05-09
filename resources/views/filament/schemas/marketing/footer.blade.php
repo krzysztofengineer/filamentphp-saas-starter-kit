@@ -6,42 +6,42 @@
     $links = $getLinks();
 @endphp
 
-<footer class="landing-footer" data-testid="landing-footer">
+<footer class="border-t border-[var(--border)] pt-14 pb-9" data-testid="landing-footer">
     <div class="container">
-        <div class="footer-grid">
-            <div class="footer-brand">
+        <div class="mb-10 grid grid-cols-2 gap-7 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-10">
+            <div>
                 <a href="#" class="wordmark">
                     <x-marketing.wordmark />
                 </a>
                 @if (filled($tagline))
-                    <p>{{ $tagline }}</p>
+                    <p class="mt-3.5 max-w-[30ch] text-[13px] text-[var(--text-3)]">{{ $tagline }}</p>
                 @endif
             </div>
 
             @foreach ($columns as $column)
-                <div class="footer-col">
-                    <h5>{{ $column['heading'] ?? '' }}</h5>
-                    <ul>
+                <div>
+                    <h5 class="mb-3.5 text-[11px] font-medium uppercase tracking-[0.06em] text-[var(--text-3)] [font-family:var(--mono)]">{{ $column['heading'] ?? '' }}</h5>
+                    <ul class="m-0 grid list-none gap-2.5 p-0">
                         @foreach (($column['links'] ?? []) as $link)
-                            <li><a href="{{ $link['url'] ?? '#' }}">{{ $link['label'] ?? '' }}</a></li>
+                            <li><a href="{{ $link['url'] ?? '#' }}" class="text-sm text-[var(--text-2)] hover:text-[var(--lp-text)]">{{ $link['label'] ?? '' }}</a></li>
                         @endforeach
                     </ul>
                 </div>
             @endforeach
 
             @if (empty($columns) && ! empty($links))
-                <div class="footer-col">
-                    <h5>Legal</h5>
-                    <ul>
+                <div>
+                    <h5 class="mb-3.5 text-[11px] font-medium uppercase tracking-[0.06em] text-[var(--text-3)] [font-family:var(--mono)]">Legal</h5>
+                    <ul class="m-0 grid list-none gap-2.5 p-0">
                         @foreach ($links as $link)
-                            <li><a href="{{ $link['url'] ?? '#' }}">{{ $link['label'] ?? '' }}</a></li>
+                            <li><a href="{{ $link['url'] ?? '#' }}" class="text-sm text-[var(--text-2)] hover:text-[var(--lp-text)]">{{ $link['label'] ?? '' }}</a></li>
                         @endforeach
                     </ul>
                 </div>
             @endif
         </div>
 
-        <div class="footer-bottom">
+        <div class="flex flex-wrap items-center justify-between gap-3.5 border-t border-[var(--border)] pt-7 text-xs text-[var(--text-3)] [font-family:var(--mono)]">
             <span>{{ $copyright }}</span>
             <x-filament::icon-button
                 icon="heroicon-o-moon"
