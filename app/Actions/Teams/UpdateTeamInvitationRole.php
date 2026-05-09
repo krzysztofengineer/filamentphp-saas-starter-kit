@@ -2,8 +2,8 @@
 
 namespace App\Actions\Teams;
 
+use App\Enums\TeamRole;
 use App\Models\TeamInvitation;
-use App\TeamRole;
 
 class UpdateTeamInvitationRole
 {

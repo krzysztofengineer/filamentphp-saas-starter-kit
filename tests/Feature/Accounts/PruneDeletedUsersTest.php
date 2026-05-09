@@ -1,9 +1,9 @@
 <?php
 
 use App\Console\Commands\PruneDeletedUsers;
+use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\User;
-use App\TeamRole;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 

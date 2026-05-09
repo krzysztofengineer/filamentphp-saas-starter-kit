@@ -3,8 +3,8 @@
 namespace App\Observers;
 
 use App\Actions\Teams\CreateTeamForUser;
+use App\Enums\TeamType;
 use App\Models\User;
-use App\TeamType;
 
 class UserObserver
 {

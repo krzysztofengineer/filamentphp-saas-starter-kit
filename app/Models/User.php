@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\TeamRole;
 use App\Filament\AvatarProviders\UserAvatarProvider;
 use App\Notifications\ResetPassword;
 use App\Observers\UserObserver;
-use App\TeamRole;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;

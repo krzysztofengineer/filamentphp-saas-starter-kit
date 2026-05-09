@@ -4,10 +4,10 @@ namespace App\Filament\Widgets;
 
 use App\Actions\Teams\ChangeTeamRole;
 use App\Actions\Teams\RemoveTeamMember;
+use App\Enums\TeamRole;
 use App\Filament\Support\CategoryHeading;
 use App\Models\Team;
 use App\Models\User;
-use App\TeamRole;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;

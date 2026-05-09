@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\User;
-use App\TeamRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TeamInvitationFactory extends Factory

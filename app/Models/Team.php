@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\TeamRole;
+use App\Enums\TeamType;
 use App\Filament\AvatarProviders\TeamLogoProvider;
 use App\Observers\TeamObserver;
-use App\TeamRole;
-use App\TeamType;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

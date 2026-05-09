@@ -49,7 +49,13 @@
     $wrappableUrl = implode("\u{200B}", mb_str_split($displayableActionUrl, 20));
 @endphp
 <x-slot:subcopy>
-@lang('Jeśli przycisk ":actionText" nie działa, skopiuj i wklej poniższy adres do przeglądarki:', ['actionText' => $actionText])
+@lang(
+    "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\n".
+    'into your web browser:',
+    [
+        'actionText' => $actionText,
+    ]
+)
 
 <span class="break-all">[{{ $wrappableUrl }}]({{ $actionUrl }})</span>
 </x-slot:subcopy>

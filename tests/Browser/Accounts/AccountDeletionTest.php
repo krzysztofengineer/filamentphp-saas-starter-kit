@@ -1,7 +1,7 @@
 <?php
 
+use App\Enums\TeamRole;
 use App\Models\User;
-use App\TeamRole;
 use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\actingAs;

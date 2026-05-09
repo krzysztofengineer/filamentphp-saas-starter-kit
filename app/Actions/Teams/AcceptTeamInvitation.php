@@ -2,9 +2,9 @@
 
 namespace App\Actions\Teams;
 
+use App\Enums\TeamRole;
 use App\Models\TeamInvitation;
 use App\Models\User;
-use App\TeamRole;
 use Illuminate\Support\Facades\DB;
 
 class AcceptTeamInvitation

@@ -1,10 +1,10 @@
 <?php
 
+use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\TeamInvitation;
 use App\Models\User;
 use App\Notifications\TeamInvitationNotification;
-use App\TeamRole;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 

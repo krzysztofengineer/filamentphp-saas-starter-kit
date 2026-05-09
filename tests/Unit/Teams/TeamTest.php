@@ -1,8 +1,8 @@
 <?php
 
+use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\User;
-use App\TeamRole;
 use Illuminate\Database\Eloquent\Model;
 
 use function PHPUnit\Framework\assertCount;

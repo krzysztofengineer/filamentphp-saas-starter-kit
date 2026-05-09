@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\BillingInterval;
+use App\Enums\BillingInterval;
+use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\TeamInvitation;
 use App\Models\User;
-use App\TeamRole;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Notification;
 

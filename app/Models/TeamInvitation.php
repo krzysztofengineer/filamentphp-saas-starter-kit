@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\TeamRole;
 use App\Observers\TeamInvitationObserver;
-use App\TeamRole;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

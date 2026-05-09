@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Billing;
 
-use App\BillingInterval;
-use App\BillingPlan;
+use App\Enums\BillingInterval;
+use App\Enums\BillingPlan;
 use App\Http\Controllers\Controller;
 use App\Models\Team;
 use Filament\Notifications\Notification;

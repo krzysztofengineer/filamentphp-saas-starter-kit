@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\TeamRole;
+use App\Enums\TeamRole;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class TeamMembership extends Pivot

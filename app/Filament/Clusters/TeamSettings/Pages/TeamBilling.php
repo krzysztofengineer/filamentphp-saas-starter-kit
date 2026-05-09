@@ -2,8 +2,8 @@
 
 namespace App\Filament\Clusters\TeamSettings\Pages;
 
-use App\BillingInterval;
-use App\BillingPlan;
+use App\Enums\BillingInterval;
+use App\Enums\BillingPlan;
 use App\Filament\Clusters\TeamSettings\TeamSettingsCluster;
 use BackedEnum;
 use Filament\Facades\Filament;

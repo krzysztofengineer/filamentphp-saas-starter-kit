@@ -1,9 +1,9 @@
 <?php
 
+use App\Enums\TeamRole;
 use App\Filament\Widgets\TeamMembersTable;
 use App\Models\Team;
 use App\Models\User;
-use App\TeamRole;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
 

@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
+use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\User;
-use App\TeamRole;
 
 class TeamPolicy
 {

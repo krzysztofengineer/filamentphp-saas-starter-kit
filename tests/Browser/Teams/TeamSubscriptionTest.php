@@ -1,7 +1,7 @@
 <?php
 
-use App\BillingInterval;
-use App\BillingPlan;
+use App\Enums\BillingInterval;
+use App\Enums\BillingPlan;
 use App\Models\Team;
 use App\Models\User;
 

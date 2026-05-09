@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use App\BillingInterval;
-use App\BillingPlan;
+use App\Enums\BillingInterval;
+use App\Enums\BillingPlan;
+use App\Enums\TeamType;
 use App\Models\Team;
-use App\TeamType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

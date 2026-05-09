@@ -2,9 +2,9 @@
 
 namespace App\Actions\Teams;
 
+use App\Enums\TeamType;
 use App\Models\Team;
 use App\Models\User;
-use App\TeamType;
 use Illuminate\Support\Facades\DB;
 
 class CreateTeamForUser

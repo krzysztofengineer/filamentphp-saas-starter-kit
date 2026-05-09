@@ -1,8 +1,8 @@
 <?php
 
+use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\User;
-use App\TeamRole;
 
 use function Pest\Laravel\actingAs;
 use function PHPUnit\Framework\assertEquals;
