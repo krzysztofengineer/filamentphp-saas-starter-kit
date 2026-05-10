@@ -121,6 +121,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->authenticatedRoutes(fn (Panel $panel) => PendingDeletion::registerRoutes($panel))
             ->renderHook(PanelsRenderHook::HEAD_END, $forApp('partials.pwa-head'))
+            ->renderHook(PanelsRenderHook::SIMPLE_LAYOUT_START, $forApp('components.simple-logo'))
             ->brandLogoHeight('2rem');
     }
 }

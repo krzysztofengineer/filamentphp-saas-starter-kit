@@ -78,7 +78,9 @@ class TeamInvitationsTable extends TableWidget
             ->paginated(false)
             ->emptyStateIcon('heroicon-o-envelope')
             ->emptyStateHeading('No pending invitations')
-            ->emptyStateDescription('Invite someone by email to give them access to this team.')
+            ->emptyStateDescription($this->canInvite()
+                ? 'Invite someone by email to give them access to this team.'
+                : 'Invitations live on shared teams — spin one up to bring collaborators in.')
             ->emptyStateActions(array_filter([
                 $this->canInvite() ? $this->inviteAction()
                     ->name('inviteFromEmptyState')
