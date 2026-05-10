@@ -22,8 +22,6 @@ class TeamMembers extends Page
 
     protected static ?int $navigationSort = 2;
 
-    protected string $view = 'filament.clusters.team-settings.pages.team-members';
-
     public static function canAccess(): bool
     {
         return TeamSettingsCluster::canManage();

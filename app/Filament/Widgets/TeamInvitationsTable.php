@@ -32,7 +32,12 @@ class TeamInvitationsTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Invitations')
+            ->header(fn () => view('components.table-section-header', [
+                'icon' => 'heroicon-o-envelope',
+                'heading' => 'Invitations',
+                'description' => 'Pending email invitations sent to potential members.',
+                'actions' => $this->getTable()->getHeaderActions(),
+            ]))
             ->records(fn (): Collection => $this->getInvitations())
             ->columns([
                 Split::make([

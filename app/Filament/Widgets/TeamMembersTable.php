@@ -30,7 +30,12 @@ class TeamMembersTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Members')
+            ->header(fn () => view('components.table-section-header', [
+                'icon' => 'heroicon-o-users',
+                'heading' => 'Members',
+                'description' => 'Manage who has access to this team and their role.',
+                'actions' => $this->getTable()->getHeaderActions(),
+            ]))
             ->records(fn (): Collection => $this->getMembers())
             ->columns([
                 Split::make([

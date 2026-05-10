@@ -17,7 +17,7 @@ return [
 
     'name' => env('APP_NAME', 'filaas'),
 
-    'brand_color' => Color::Red,
+    'brand_color' => Color::Blue,
 
     /*
     |--------------------------------------------------------------------------
