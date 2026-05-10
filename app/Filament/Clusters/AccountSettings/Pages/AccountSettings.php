@@ -11,8 +11,6 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
@@ -23,10 +21,9 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
-class AccountSettings extends Page implements HasActions, HasForms
+class AccountSettings extends Page implements HasActions
 {
     use InteractsWithActions;
-    use InteractsWithForms;
 
     protected static ?string $cluster = AccountSettingsCluster::class;
 
@@ -35,8 +32,6 @@ class AccountSettings extends Page implements HasActions, HasForms
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUser;
 
     protected static ?int $navigationSort = 1;
-
-    protected string $view = 'filament.clusters.account-settings.pages.account-settings';
 
     public array $data = [
         'name' => '',
@@ -56,7 +51,7 @@ class AccountSettings extends Page implements HasActions, HasForms
     {
         $user = auth()->user();
 
-        $this->form->fill([
+        $this->content->fill([
             'name' => $user->name,
             'email' => $user->email,
             'avatar' => $user->avatar,
@@ -78,7 +73,7 @@ class AccountSettings extends Page implements HasActions, HasForms
         return 'Account settings';
     }
 
-    public function form(Schema $schema): Schema
+    public function content(Schema $schema): Schema
     {
         return $schema
             ->statePath('data')
@@ -166,7 +161,7 @@ class AccountSettings extends Page implements HasActions, HasForms
             ->icon(Heroicon::OutlinedCheck)
             ->extraAttributes(['data-testid' => 'account-profile-save'])
             ->action(function (): void {
-                $data = $this->form->getState();
+                $data = $this->content->getState();
 
                 $user = auth()->user();
 
@@ -192,7 +187,7 @@ class AccountSettings extends Page implements HasActions, HasForms
             ->icon(Heroicon::OutlinedCheck)
             ->extraAttributes(['data-testid' => 'account-password-save'])
             ->action(function (): void {
-                $state = $this->form->getRawState();
+                $state = $this->content->getRawState();
 
                 $current = $state['current_password'] ?? '';
                 $new = $state['password'] ?? '';
@@ -219,7 +214,7 @@ class AccountSettings extends Page implements HasActions, HasForms
 
                 (new ChangeAccountPassword)->handle($user, $new);
 
-                $this->form->fill([
+                $this->content->fill([
                     'name' => $user->name,
                     'email' => $user->email,
                 ]);

@@ -16,8 +16,6 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
@@ -27,10 +25,9 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 
-class TeamDetails extends Page implements HasActions, HasForms
+class TeamDetails extends Page implements HasActions
 {
     use InteractsWithActions;
-    use InteractsWithForms;
 
     protected static ?string $cluster = TeamSettingsCluster::class;
 
@@ -39,8 +36,6 @@ class TeamDetails extends Page implements HasActions, HasForms
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
     protected static ?int $navigationSort = 1;
-
-    protected string $view = 'filament.clusters.team-settings.pages.team-profile';
 
     public array $data = [];
 
@@ -53,7 +48,7 @@ class TeamDetails extends Page implements HasActions, HasForms
     {
         $team = Filament::getTenant();
 
-        $this->form->fill([
+        $this->content->fill([
             'name' => $team->name,
             'logo' => $team->logo,
         ]);
@@ -74,7 +69,7 @@ class TeamDetails extends Page implements HasActions, HasForms
         return 'Team settings';
     }
 
-    public function form(Schema $schema): Schema
+    public function content(Schema $schema): Schema
     {
         $team = Filament::getTenant();
         $user = auth()->user();
@@ -158,7 +153,7 @@ class TeamDetails extends Page implements HasActions, HasForms
             ->icon(Heroicon::OutlinedCheck)
             ->extraAttributes(['data-testid' => 'team-details-save'])
             ->action(function (): void {
-                $data = $this->form->getState();
+                $data = $this->content->getState();
 
                 $team = Filament::getTenant();
 

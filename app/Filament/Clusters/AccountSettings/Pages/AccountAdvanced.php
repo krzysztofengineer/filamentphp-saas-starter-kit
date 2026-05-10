@@ -9,8 +9,6 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
@@ -20,10 +18,9 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 
-class AccountAdvanced extends Page implements HasActions, HasForms
+class AccountAdvanced extends Page implements HasActions
 {
     use InteractsWithActions;
-    use InteractsWithForms;
 
     protected static ?string $cluster = AccountSettingsCluster::class;
 
@@ -32,8 +29,6 @@ class AccountAdvanced extends Page implements HasActions, HasForms
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldExclamation;
 
     protected static ?int $navigationSort = 4;
-
-    protected string $view = 'filament.clusters.account-settings.pages.account-advanced';
 
     public static function canAccess(): bool
     {
