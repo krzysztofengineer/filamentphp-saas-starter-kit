@@ -19,11 +19,8 @@ Route::get('/sitemap.xml', SitemapController::class);
 
 Route::middleware('auth')->group(function () {
     Route::get('/team-invitations', RedirectToTeamInvitationsController::class)->name('team-invitations.show');
-});
-
-Route::middleware('auth')->prefix('push')->group(function () {
-    Route::post('/subscribe', [PushSubscriptionController::class, 'store']);
-    Route::delete('/subscribe', [PushSubscriptionController::class, 'destroy']);
+    Route::post('/push/subscribe', [PushSubscriptionController::class, 'store']);
+    Route::delete('/push/subscribe', [PushSubscriptionController::class, 'destroy']);
 });
 
 Route::middleware('auth')->prefix('billing/{team}')->name('billing.')->group(function () {
