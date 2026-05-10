@@ -171,7 +171,7 @@ class TeamMembersTable extends TableWidget
             return false;
         }
 
-        return $team->isAdministeredBy($actor)
+        return $actor->can('manageMembers', $team)
             && $record->id !== $actor->id
             && ! $this->isTeamOwner($record);
     }
@@ -185,7 +185,7 @@ class TeamMembersTable extends TableWidget
             return false;
         }
 
-        return $team->canBeManagedBy($actor)
+        return $actor->can('manageMembers', $team)
             && $record->id !== $actor->id
             && ! $this->isTeamOwner($record);
     }
@@ -199,9 +199,7 @@ class TeamMembersTable extends TableWidget
 
     private function wouldRemoveLastAdministrator(Team $team, User $target, ?TeamRole $newRole): bool
     {
-        $currentRole = $team->roleFor($target);
-
-        if ($currentRole !== TeamRole::Administrator) {
+        if ($target->cannot('update', $team)) {
             return false;
         }
 

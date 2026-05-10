@@ -1,11 +1,9 @@
 <?php
 
 return [
+    'title' => env('APP_NAME', 'FILAAS'),
 
-    'title' => env('APP_NAME', 'Laravel').' — Build your SaaS faster',
-
-    'description' => 'A reusable SaaS template with authentication, multi-tenant teams, Stripe billing and member invitations.',
+    'description' => 'A reusable SAAS template with authentication, multi-tenant teams, Stripe billing and member invitations.',
 
     'locale' => 'en_US',
-
 ];

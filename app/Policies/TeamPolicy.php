@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\User;
 
@@ -15,21 +14,21 @@ class TeamPolicy
 
     public function update(User $user, Team $team): bool
     {
-        return $team->members()->where('user_id', $user->id)->first()?->pivot?->role !== TeamRole::Member;
+        return $team->administrators()->whereKey($user->id)->exists();
     }
 
     public function delete(User $user, Team $team): bool
     {
-        return $team->canBeDeletedBy($user);
+        return $team->administrators()->whereKey($user->id)->exists();
     }
 
     public function manageMembers(User $user, Team $team): bool
     {
-        return $team->canBeManagedBy($user);
+        return $team->administrators()->whereKey($user->id)->exists();
     }
 
     public function manageBilling(User $user, Team $team): bool
     {
-        return $team->canBeManagedBy($user);
+        return $team->administrators()->whereKey($user->id)->exists();
     }
 }

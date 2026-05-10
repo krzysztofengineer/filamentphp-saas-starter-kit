@@ -68,36 +68,9 @@ class Team extends Model implements HasAvatar
         return $this->users()->wherePivot('role', TeamRole::Administrator->value);
     }
 
-    public function managers()
-    {
-        return $this->users()->wherePivot('role', TeamRole::Manager->value);
-    }
-
     public function invitations()
     {
         return $this->hasMany(TeamInvitation::class);
-    }
-
-    public function roleFor(User $user): ?TeamRole
-    {
-        $pivot = $this->users()->where('users.id', $user->id)->first()?->pivot;
-
-        return $pivot?->role ? TeamRole::from($pivot->role) : null;
-    }
-
-    public function isAdministeredBy(User $user): bool
-    {
-        return $this->roleFor($user) === TeamRole::Administrator;
-    }
-
-    public function canBeManagedBy(User $user): bool
-    {
-        return $this->roleFor($user)?->canManageTeam() === true;
-    }
-
-    public function canBeDeletedBy(User $user): bool
-    {
-        return $this->roleFor($user)?->canDeleteTeam() === true;
     }
 
     public function getFilamentAvatarUrl(): ?string

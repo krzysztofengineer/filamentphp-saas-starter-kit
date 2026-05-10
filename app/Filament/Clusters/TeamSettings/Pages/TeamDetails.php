@@ -6,7 +6,6 @@ use App\Actions\Teams\DeleteTeam;
 use App\Actions\Teams\LeaveTeam as LeaveTeamAction;
 use App\Actions\Teams\TransferTeamOwnership;
 use App\Actions\Teams\UpdateTeamProfile;
-use App\Enums\TeamRole;
 use App\Filament\Clusters\TeamSettings\TeamSettingsCluster;
 use App\Models\User;
 use BackedEnum;
@@ -227,7 +226,7 @@ class TeamDetails extends Page implements HasActions, HasForms
                     return;
                 }
 
-                if ($team->roleFor($actor) !== TeamRole::Administrator) {
+                if ($actor->cannot('update', $team)) {
                     Notification::make()->danger()->title('Only administrators can transfer ownership.')->send();
 
                     return;
@@ -331,7 +330,7 @@ class TeamDetails extends Page implements HasActions, HasForms
                 $user = auth()->user();
 
                 $isSoleAdmin = $team->administrators()->count() === 1
-                    && $team->roleFor($user) === TeamRole::Administrator;
+                    && $user->can('update', $team);
                 $hasOtherMembers = $team->members()->where('users.id', '!=', $user->id)->exists();
 
                 if ($isSoleAdmin && $hasOtherMembers) {

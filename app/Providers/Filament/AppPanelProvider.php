@@ -17,7 +17,6 @@ use App\Http\Middleware\SaveCurrentTeam;
 use App\Models\Team;
 use Filament\Actions\Action;
 use Filament\Enums\ThemeMode;
-use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -28,27 +27,17 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Enums\Width;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $forApp = fn (string $view): \Closure => function () use ($view): Htmlable {
-            if (Filament::getCurrentPanel()?->getId() !== 'app') {
-                return new HtmlString('');
-            }
-
-            return view($view);
-        };
-
         return $panel
             ->default()
             ->id('app')
@@ -75,6 +64,7 @@ class AppPanelProvider extends PanelProvider
                 Action::make('accountSettings')
                     ->label('Account settings')
                     ->icon('heroicon-o-user')
+                    ->extraAttributes(['data-testid' => 'user-menu-account-settings'])
                     ->url(fn (): ?string => filament()->getTenant() ? AccountSettings::getUrl() : null)
                     ->visible(fn (): bool => filament()->getTenant() !== null && AccountSettingsCluster::canAccess()),
                 Action::make('teamInvitations')
@@ -120,8 +110,8 @@ class AppPanelProvider extends PanelProvider
                 RedirectPendingDeletion::class,
             ])
             ->authenticatedRoutes(fn (Panel $panel) => PendingDeletion::registerRoutes($panel))
-            ->renderHook(PanelsRenderHook::HEAD_END, $forApp('partials.pwa-head'))
-            ->renderHook(PanelsRenderHook::SIMPLE_LAYOUT_START, $forApp('components.simple-logo'))
+            ->renderHook(PanelsRenderHook::HEAD_END, fn () => view('partials.pwa-head'))
+            ->renderHook(PanelsRenderHook::SIMPLE_LAYOUT_START, fn () => view('components.simple-logo'))
             ->brandLogoHeight('2rem');
     }
 }

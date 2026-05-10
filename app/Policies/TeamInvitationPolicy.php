@@ -9,12 +9,12 @@ class TeamInvitationPolicy
 {
     public function create(User $user, TeamInvitation $invitation): bool
     {
-        return $invitation->team->canBeManagedBy($user);
+        return $invitation->team->administrators()->whereKey($user->id)->exists();
     }
 
     public function delete(User $user, TeamInvitation $invitation): bool
     {
-        return $invitation->team->canBeManagedBy($user);
+        return $invitation->team->administrators()->whereKey($user->id)->exists();
     }
 
     public function accept(User $user, TeamInvitation $invitation): bool

@@ -16,7 +16,7 @@ class CheckoutController extends Controller
 {
     public function __invoke(Request $request, Team $team, BillingPlan $plan, BillingInterval $interval): RedirectResponse|Responsable
     {
-        if (! $team->canBeManagedBy($request->user())) {
+        if ($request->user()->cannot('manageBilling', $team)) {
             throw new AuthorizationException;
         }
 

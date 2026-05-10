@@ -44,31 +44,95 @@ SQLite by default — zero config to look around. Default panel: `/app`. Marketi
 
 ### Stripe
 
-Plug your keys and price IDs into `.env`:
+Two layers stay in sync: your **Stripe account** (products + prices) and your **app** (`.env` Stripe IDs + `config/billing.php` UI copy and amounts).
+
+#### 1. Account and API keys
+
+Create a Stripe account at [dashboard.stripe.com/register](https://dashboard.stripe.com/register), or use an existing one. For development, either flip the **Test mode** toggle at the top of the dashboard, or create a dedicated **Sandbox** (Settings → Sandboxes → *Create sandbox*) for full isolation from live data. Test mode and sandboxes both issue separate `pk_test_…` / `sk_test_…` keys.
+
+From **Developers → API keys**, paste into `.env`:
 
 ```
-STRIPE_KEY=
-STRIPE_SECRET=
-STRIPE_WEBHOOK_SECRET=
-
-STRIPE_PRODUCT_PRO=
-STRIPE_PRICE_PRO_MONTHLY=
-STRIPE_PRICE_PRO_YEARLY=
-
-STRIPE_PRODUCT_STUDIO=
-STRIPE_PRICE_STUDIO_MONTHLY=
-STRIPE_PRICE_STUDIO_YEARLY=
+STRIPE_KEY=pk_test_…
+STRIPE_SECRET=sk_test_…
 ```
 
-The `free` tier needs no Stripe IDs. Plans, descriptions, and feature lists live in `config/billing.php`.
+#### 2. Create products and prices
 
-Cashier registers `POST /stripe/webhook` automatically — point your Stripe dashboard at `https://your-domain/stripe/webhook` and copy the signing secret into `STRIPE_WEBHOOK_SECRET`.
-
-Locally, forward webhooks with the Stripe CLI:
+Two products (Pro, Studio), each with a monthly and a yearly recurring price. Click them in the dashboard at **Catalog → Products**, or use the [Stripe CLI](https://docs.stripe.com/stripe-cli):
 
 ```bash
-stripe listen --forward-to localhost:8000/stripe/webhook
+stripe products create -d "name=Pro"
+stripe products create -d "name=Studio"
+
+stripe prices create -d product=prod_… -d currency=usd -d unit_amount=2900  -d "recurring[interval]=month" -d "nickname=Pro Monthly"
+stripe prices create -d product=prod_… -d currency=usd -d unit_amount=27800 -d "recurring[interval]=year"  -d "nickname=Pro Yearly"
+stripe prices create -d product=prod_… -d currency=usd -d unit_amount=7900  -d "recurring[interval]=month" -d "nickname=Studio Monthly"
+stripe prices create -d product=prod_… -d currency=usd -d unit_amount=75800 -d "recurring[interval]=year"  -d "nickname=Studio Yearly"
 ```
+
+Paste each `prod_…` and `price_…` into `.env`:
+
+```
+STRIPE_PRODUCT_PRO=prod_…
+STRIPE_PRICE_PRO_MONTHLY=price_…
+STRIPE_PRICE_PRO_YEARLY=price_…
+
+STRIPE_PRODUCT_STUDIO=prod_…
+STRIPE_PRICE_STUDIO_MONTHLY=price_…
+STRIPE_PRICE_STUDIO_YEARLY=price_…
+```
+
+The `free` tier needs no Stripe IDs. Run `php artisan config:clear` after editing `.env`.
+
+#### 3. Edit `config/billing.php` to match
+
+`config/billing.php` is the single source of truth for everything users see — plan key, `name`, `description`, `features` array, `prices.{monthly,yearly}.{amount,label,period}`, `badge`, `highlighted`, and `is_free`. The pricing section on the marketing landing (`/`) reads from it via `PricingSection::make()`, and so does the in-app `/app/{team}/settings/subscription` page.
+
+`amount` is in cents and **must match** the `unit_amount` of the corresponding Stripe price — Stripe is what charges the card; the config is what renders.
+
+To rename, reprice, or add/remove a tier:
+
+1. Edit the entry in `config/billing.php`.
+2. Update the matching `STRIPE_PRICE_<KEY>_<INTERVAL>` env variable to point at the new Stripe price.
+3. If you renamed the plan key (e.g. `pro` → `team`), add the case in `App\Enums\BillingPlan`.
+4. Restart `composer run dev` (or rerun `npm run build`) so Vite picks up Tailwind classes touching any new section.
+
+#### 4. Webhooks
+
+Cashier registers `POST /stripe/webhook` automatically.
+
+**Production** — in **Developers → Webhooks**, add an endpoint at `https://your-domain/stripe/webhook` listening for the `customer.*`, `invoice.*`, and `payment_intent.*` event groups. Copy the endpoint's signing secret into `STRIPE_WEBHOOK_SECRET`.
+
+**Local dev** — forward events to your local app with the Stripe CLI:
+
+```bash
+stripe listen --forward-to http://saas.test/stripe/webhook
+```
+
+The first line printed (`whsec_…`) is your local signing secret. Drop it into `.env` as `STRIPE_WEBHOOK_SECRET` and keep `stripe listen` running while you test. `php artisan config:clear` after edits.
+
+#### 5. Testing checkout in dev
+
+With `composer run dev` and `stripe listen` both running:
+
+1. Log in (any seeded user — password is `password`).
+2. Open the team's **Subscription** page at `/app/{team-uuid}/settings/subscription` and click *Choose plan*.
+3. You land on Stripe Checkout. Use a [test card](https://docs.stripe.com/testing#cards):
+    - `4242 4242 4242 4242` — succeeds
+    - `4000 0027 6000 3184` — requires 3D Secure authentication
+    - `4000 0000 0000 9995` — fails with insufficient funds
+
+   Any future expiry, any 3-digit CVC, any postal code.
+4. On success you're redirected to `/billing/{team}/success`. Watch `stripe listen`: `customer.subscription.created`, `invoice.paid`, and `payment_intent.succeeded` all return `200`. The team row picks up a `stripe_id`, a row appears in `subscriptions`, and the *Subscription* page now shows *Manage subscription* on the active tier.
+
+Replay an event without going through Checkout:
+
+```bash
+stripe trigger customer.subscription.created
+```
+
+Headless equivalents live in `tests/Browser/Billing*Test.php` — run with `php artisan test --compact tests/Browser`.
 
 ### Web Push (VAPID)
 
@@ -92,23 +156,6 @@ Paste the printed `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` into `.env`. The `V
 * * * * * cd /path-to-app && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-### Customizing the landing page
-
-The marketing landing on `/` is a Filament page like any other — `app/Filament/Home/Pages/Home.php`. Its `content()` method returns a `Schema` composed of section components: `HeroSection`, `FeaturesSection`, `HowItWorksSection`, `PricingSection`, `FaqSection`, `FinalCtaSection`, `MarketingFooter`.
-
-To rewrite the copy, edit the fluent calls in `Home.php` — `->heading(...)`, `->description(...)`, `->cards([...])`, `->plans([...])`, `->items([...])`. To add, remove or reorder sections, change the array passed to `$schema->components([...])`.
-
-Each section is a pair of files:
-
-- `app/Filament/Schemas/Components/Marketing/{Section}.php` — the component class with its fluent setters
-- `resources/views/filament/schemas/marketing/{section}.blade.php` — the Tailwind v4 markup
-
-Edit the Blade view to restyle a section without touching its class. Add a setter on the component (and pass the value through `$this->...` in `render()`) when you need a new piece of content. Run `composer run dev` (or `npm run dev`) so Vite picks up Tailwind changes.
-
-The `PricingSection` reads its plans from `config/billing.php` via `collect(config('billing.plans'))->map(...)`, so editing tier names, prices or feature lists there updates the section automatically.
-
-The pricing tiers shown on the landing reflect this kit's own commercial license. **You don't need them in your product.** Replace the `->plans(...)` call with your own tier definitions, or delete `PricingSection::make()` entirely if you're not selling subscriptions yet.
-
 ### Tests
 
 ```bash
@@ -117,6 +164,84 @@ php artisan test --compact tests/Browser         # only browser tests
 ```
 
 Browser tests use Pest 4 + the `pest-plugin-browser` package, which drives a real Chromium. The first run downloads the browser binary automatically.
+
+## Customizing
+
+### Branding
+
+- App name (panel title, mail-from, manifest) — `APP_NAME` in `.env`
+- Brand color across both panels — `brand_color` in `config/app.php` (any `Filament\Support\Colors\Color::*` or hex array)
+- Wordmark — `resources/views/components/marketing/wordmark.blade.php`
+- Auth-pages mark — `resources/views/components/simple-logo.blade.php`
+- Default theme mode — `->defaultThemeMode(...)` in `app/Providers/Filament/{App,Home}PanelProvider.php`
+- Marketing landing tokens (colors, fonts) — `resources/css/filament/home/theme.css`
+
+### Landing page
+
+The landing on `/` is the Filament page `app/Filament/Home/Pages/Home.php`. Edit `content()` to change copy or reorder sections. Each section is a class under `app/Filament/Schemas/Components/Marketing/` plus a Blade view under `resources/views/filament/schemas/marketing/`.
+
+`PricingSection` reads `config/billing.php` automatically. Replace `->plans(...)` with your own tiers (or delete `PricingSection::make()`) if you're not selling subscriptions.
+
+### Adding to the admin panel
+
+```bash
+php artisan make:filament-resource MyThing
+```
+
+Drop it into the panel directly, or attach it to a cluster:
+
+```php
+protected static ?string $cluster = TeamSettingsCluster::class;
+```
+
+Top-nav, user-menu and tenant-menu items are arrays inside `app/Providers/Filament/AppPanelProvider.php::panel()`.
+
+### Teams & roles
+
+Roles are an enum at `app/Enums/TeamRole.php` (`Administrator`, `Member`). Permission checks live as methods on the enum and the `Team` model — extend both to add a third role.
+
+Every team operation (invite, accept, transfer ownership, change role, leave, delete) is its own action class under `app/Actions/Teams/`.
+
+Invitations don't expire by default. To add expiry, add `expires_at` to `team_invitations` and check it in `app/Policies/TeamInvitationPolicy.php::accept()`.
+
+### Account deletion grace period
+
+Default 30 days. Override with `ACCOUNT_DELETION_GRACE_DAYS` in `.env` (`config/account.php`). The daily `users:prune` command in `routes/console.php` permanently deletes users past the cutoff.
+
+To send a "your account will be deleted" email, hook a notification into `app/Actions/Accounts/ScheduleAccountDeletion.php`.
+
+### PWA
+
+- Manifest (name, icons, theme color, start URL) — `app/Http/Controllers/Pwa/ManifestController.php`
+- Icons — `public/icons/icon-{192,512}.png`
+- Offline page — `resources/views/pwa/offline.blade.php`
+
+### Avatars & team logos
+
+Filament `FileUpload` definitions live in `AccountSettings::saveAction()` and `TeamDetails::saveAction()`. Disks `user-avatars` and `team-logos` are in `config/filesystems.php`. The default fallback (initials via ui-avatars.com) is in `app/Filament/AvatarProviders/`.
+
+### Mail copy
+
+- Team invitation — `resources/views/mail/team-invitation.blade.php`
+- Password reset — `app/Notifications/ResetPassword.php` (no Blade; edit `toMail()`)
+
+Run `php artisan vendor:publish --tag=laravel-mail` to restyle the layout.
+
+### SEO & sitemap
+
+- Title, description, locale — `config/seo.php`
+- Meta tags — `resources/views/partials/seo-meta.blade.php`
+- Sitemap routes — `app/Http/Controllers/Seo/SitemapController.php` (lists `/`, `/privacy`, `/terms` by default)
+
+### Nightwatch
+
+Publish the config to tune sampling or redact PII:
+
+```bash
+php artisan vendor:publish --tag=nightwatch-config
+```
+
+Set `NIGHTWATCH_TOKEN` in `.env` for production ingest.
 
 ## Pricing
 

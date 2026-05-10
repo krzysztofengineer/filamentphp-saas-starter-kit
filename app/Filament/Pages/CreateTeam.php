@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Actions\Teams\CreateTeamForUser;
 use App\Models\Team;
+use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Tenancy\RegisterTenant;
@@ -54,6 +55,12 @@ class CreateTeam extends RegisterTenant
                     ->autofocus()
                     ->extraInputAttributes(['data-testid' => 'create-team-name']),
             ]);
+    }
+
+    public function getRegisterFormAction(): Action
+    {
+        return parent::getRegisterFormAction()
+            ->extraAttributes(['data-testid' => 'create-team-submit']);
     }
 
     protected function handleRegistration(array $data): Team

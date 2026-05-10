@@ -28,17 +28,6 @@ class TeamInvitation extends Model
         'role' => TeamRole::class,
     ];
 
-    protected static function booted(): void
-    {
-        static::creating(function (self $invitation): void {
-            if (empty($invitation->token)) {
-                $invitation->token = self::generateToken();
-            }
-
-            $invitation->email = strtolower($invitation->email);
-        });
-    }
-
     public static function generateToken(): string
     {
         do {

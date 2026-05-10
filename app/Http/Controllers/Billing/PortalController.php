@@ -13,7 +13,7 @@ class PortalController extends Controller
 {
     public function __invoke(Request $request, Team $team): RedirectResponse
     {
-        if (! $team->canBeManagedBy($request->user())) {
+        if ($request->user()->cannot('manageBilling', $team)) {
             throw new AuthorizationException;
         }
 

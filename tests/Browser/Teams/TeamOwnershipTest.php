@@ -49,7 +49,7 @@ it('transfers ownership to another team member', function () {
         ->assertSee('Ownership transferred');
 
     assertDatabaseHas('teams', ['id' => $tenant->id, 'user_id' => $member->id]);
-    assertTrue($tenant->fresh()->isAdministeredBy($member));
+    assertTrue($member->can('update', $tenant->fresh()));
     assertDatabaseHas('team_user', [
         'team_id' => $tenant->id,
         'user_id' => $member->id,

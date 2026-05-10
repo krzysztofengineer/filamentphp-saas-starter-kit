@@ -82,18 +82,14 @@ class AccountAdvanced extends Page implements HasActions, HasForms
             ->modalIconColor('danger')
             ->modalHeading('Delete account')
             ->modalDescription(function (): string {
-                $user = auth()->user();
-
-                if ($user->administersOthers()) {
+                if (auth()->user()->administersOthers()) {
                     return 'You administer a team with other members. Leave it or transfer ownership before deleting your account.';
                 }
 
                 return 'Your account will be permanently deleted after '.config('account.deletion_grace_days').' days. You can undo this by signing back in within that window.';
             })
             ->modalSubmitAction(function (?Action $action) {
-                $user = auth()->user();
-
-                if ($user->administersOthers()) {
+                if (auth()->user()->administersOthers()) {
                     return $action?->hidden();
                 }
 
