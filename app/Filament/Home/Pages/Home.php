@@ -20,8 +20,6 @@ class Home extends Page
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected string $view = 'filament.home.pages.home';
-
     public function mount(): void
     {
         if (auth()->check()) {

@@ -5,7 +5,6 @@ namespace App\Filament\Widgets;
 use App\Actions\Teams\ChangeTeamRole;
 use App\Actions\Teams\RemoveTeamMember;
 use App\Enums\TeamRole;
-use App\Filament\Support\CategoryHeading;
 use App\Models\Team;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -31,7 +30,7 @@ class TeamMembersTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading(CategoryHeading::make('heroicon-o-users', 'primary', 'Members'))
+            ->heading('Members')
             ->records(fn (): Collection => $this->getMembers())
             ->columns([
                 Split::make([

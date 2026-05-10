@@ -8,7 +8,6 @@ use App\Actions\Teams\TransferTeamOwnership;
 use App\Actions\Teams\UpdateTeamProfile;
 use App\Enums\TeamRole;
 use App\Filament\Clusters\TeamSettings\TeamSettingsCluster;
-use App\Filament\Support\CategoryHeading;
 use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -88,7 +87,9 @@ class TeamDetails extends Page implements HasActions, HasForms
             ->statePath('data')
             ->components([
                 Section::make()
-                    ->heading(CategoryHeading::make('heroicon-o-identification', 'primary', 'Team profile'))
+                    ->heading('Team profile')
+                    ->icon('heroicon-o-identification')
+                    ->iconColor('primary')
                     ->description('Edit basic team information. Changes are visible immediately to all members.')
                     ->visible($canManage)
                     ->footerActions([
@@ -117,7 +118,9 @@ class TeamDetails extends Page implements HasActions, HasForms
                     ]),
 
                 Section::make()
-                    ->heading(CategoryHeading::make('heroicon-o-arrows-right-left', 'primary', 'Transfer ownership'))
+                    ->heading('Transfer ownership')
+                    ->icon('heroicon-o-arrows-right-left')
+                    ->iconColor('primary')
                     ->description('Hand off your administrator role to another member. They become an Administrator and you become a regular member.')
                     ->visible($canManage)
                     ->footerActions([
@@ -126,7 +129,9 @@ class TeamDetails extends Page implements HasActions, HasForms
                     ->footerActionsAlignment(Alignment::End),
 
                 Section::make()
-                    ->heading(CategoryHeading::make('heroicon-o-trash', 'danger', 'Delete team'))
+                    ->heading('Delete team')
+                    ->icon('heroicon-o-trash')
+                    ->iconColor('danger')
                     ->description('Deleting this team permanently removes all of its data and member assignments. This cannot be undone.')
                     ->visible($canManage)
                     ->footerActions([
@@ -135,7 +140,9 @@ class TeamDetails extends Page implements HasActions, HasForms
                     ->footerActionsAlignment(Alignment::End),
 
                 Section::make()
-                    ->heading(CategoryHeading::make('heroicon-o-arrow-left-start-on-rectangle', 'danger', 'Leave team'))
+                    ->heading('Leave team')
+                    ->icon('heroicon-o-arrow-left-start-on-rectangle')
+                    ->iconColor('danger')
                     ->description('You can leave this team at any time. After leaving, the team owner can re-invite you.')
                     ->visible(! $isOwner && ! $team->isPersonal())
                     ->footerActions([

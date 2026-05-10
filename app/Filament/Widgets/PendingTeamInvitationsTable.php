@@ -4,7 +4,6 @@ namespace App\Filament\Widgets;
 
 use App\Actions\Teams\AcceptTeamInvitation;
 use App\Actions\Teams\DeclineTeamInvitation;
-use App\Filament\Support\CategoryHeading;
 use App\Models\TeamInvitation;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -24,7 +23,7 @@ class PendingTeamInvitationsTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading(CategoryHeading::make('heroicon-o-envelope-open', 'primary', 'Invitations for you'))
+            ->heading('Invitations for you')
             ->query(fn () => TeamInvitation::query()->where('email', strtolower(auth()->user()->email)))
             ->columns([
                 Split::make([

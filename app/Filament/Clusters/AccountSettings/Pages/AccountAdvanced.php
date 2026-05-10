@@ -5,7 +5,6 @@ namespace App\Filament\Clusters\AccountSettings\Pages;
 use App\Actions\Accounts\ScheduleAccountDeletion;
 use App\Filament\Account\PendingDeletion;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
-use App\Filament\Support\CategoryHeading;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -60,7 +59,9 @@ class AccountAdvanced extends Page implements HasActions, HasForms
     {
         return $schema->components([
             Section::make()
-                ->heading(CategoryHeading::make('heroicon-o-trash', 'danger', 'Delete account'))
+                ->heading('Delete account')
+                ->icon('heroicon-o-trash')
+                ->iconColor('danger')
                 ->description('Your account will be marked for deletion and permanently removed after '.config('account.deletion_grace_days').' days, including all of your data and any team you solely own. If you administer a team with other members, leave it or transfer ownership first.')
                 ->footerActions([
                     $this->deleteAccountAction(),

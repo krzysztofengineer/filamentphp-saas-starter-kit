@@ -5,7 +5,6 @@ namespace App\Filament\Clusters\AccountSettings\Pages;
 use App\Actions\Accounts\ChangeAccountPassword;
 use App\Actions\Accounts\UpdateAccountProfile;
 use App\Filament\Clusters\AccountSettings\AccountSettingsCluster;
-use App\Filament\Support\CategoryHeading;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -85,7 +84,9 @@ class AccountSettings extends Page implements HasActions, HasForms
             ->statePath('data')
             ->components([
                 Section::make()
-                    ->heading(CategoryHeading::make('heroicon-o-user', 'primary', 'Your details'))
+                    ->heading('Your details')
+                    ->icon('heroicon-o-user')
+                    ->iconColor('primary')
                     ->description('Your name shows on activity. Email is used to sign in and cannot be changed here.')
                     ->footerActions([
                         $this->saveAction(),
@@ -120,7 +121,9 @@ class AccountSettings extends Page implements HasActions, HasForms
                     ]),
 
                 Section::make()
-                    ->heading(CategoryHeading::make('heroicon-o-lock-closed', 'primary', 'Change password'))
+                    ->heading('Change password')
+                    ->icon('heroicon-o-lock-closed')
+                    ->iconColor('primary')
                     ->description('Set a new password. A good password is at least 8 characters.')
                     ->footerActions([
                         $this->changePasswordAction(),

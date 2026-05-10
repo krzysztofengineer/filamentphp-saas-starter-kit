@@ -6,10 +6,6 @@
 ])
 
 <x-filament-panels::page>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
     <section class="border-b border-(--border) pt-24 pb-8" data-testid="legal-hero">
             <div class="mx-auto max-w-[1200px] px-7 max-[700px]:px-[18px]">
                 @if (filled($eyebrow))

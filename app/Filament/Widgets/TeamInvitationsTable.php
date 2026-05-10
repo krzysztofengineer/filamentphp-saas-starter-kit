@@ -6,7 +6,6 @@ use App\Actions\Teams\InviteToTeam;
 use App\Actions\Teams\RevokeTeamInvitation;
 use App\Actions\Teams\UpdateTeamInvitationRole;
 use App\Enums\TeamRole;
-use App\Filament\Support\CategoryHeading;
 use App\Models\TeamInvitation;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -33,7 +32,7 @@ class TeamInvitationsTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading(CategoryHeading::make('heroicon-o-envelope', 'primary', 'Invitations'))
+            ->heading('Invitations')
             ->records(fn (): Collection => $this->getInvitations())
             ->columns([
                 Split::make([
