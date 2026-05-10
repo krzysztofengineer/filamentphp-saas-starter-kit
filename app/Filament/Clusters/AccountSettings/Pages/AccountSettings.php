@@ -82,7 +82,7 @@ class AccountSettings extends Page implements HasActions
                     ->heading('Your details')
                     ->icon('heroicon-o-user')
                     ->iconColor('primary')
-                    ->description('Your name shows on activity. Email is used to sign in and cannot be changed here.')
+                    ->description('Email is used to sign in and cannot be changed here.')
                     ->footerActions([
                         $this->saveAction(),
                     ])
@@ -119,7 +119,7 @@ class AccountSettings extends Page implements HasActions
                     ->heading('Change password')
                     ->icon('heroicon-o-lock-closed')
                     ->iconColor('primary')
-                    ->description('Set a new password. A good password is at least 8 characters.')
+                    ->description('Minimum 8 characters.')
                     ->footerActions([
                         $this->changePasswordAction(),
                     ])

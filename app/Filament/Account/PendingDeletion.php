@@ -86,7 +86,7 @@ class PendingDeletion extends Page implements HasActions, HasForms
             ->extraAttributes(['data-testid' => 'cancel-account-deletion'])
             ->requiresConfirmation()
             ->modalHeading('Cancel account deletion?')
-            ->modalDescription('Your account will stay active and your data will not be deleted.')
+            ->modalDescription('Your account stays active.')
             ->modalSubmitActionLabel('Yes, keep my account')
             ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'cancel-account-deletion-confirm']))
             ->action(function (): void {

@@ -33,7 +33,6 @@ class TeamMembersTable extends TableWidget
             ->header(fn () => view('components.table-section-header', [
                 'icon' => 'heroicon-o-users',
                 'heading' => 'Members',
-                'description' => 'Manage who has access to this team and their role.',
                 'actions' => $this->getTable()->getHeaderActions(),
             ]))
             ->records(fn (): Collection => $this->getMembers())
@@ -104,7 +103,7 @@ class TeamMembersTable extends TableWidget
             ->paginated(false)
             ->emptyStateIcon('heroicon-o-users')
             ->emptyStateHeading('No members yet')
-            ->emptyStateDescription('Invite people below to collaborate on this team.');
+            ->emptyStateDescription('Invite people below.');
     }
 
     private function getMembers(): Collection

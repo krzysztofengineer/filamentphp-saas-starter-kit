@@ -22,7 +22,7 @@ it('lets a member leave a team they joined', function () {
     visit('/app/'.$hostTeam->uuid.'/settings/profile')
         ->assertSee('Leave team')
         ->click('[data-testid="leave-team"]')
-        ->assertSee('You will lose access to this team')
+        ->assertSee('You will lose access immediately')
         ->click('[data-testid="leave-team-confirm"]')
         ->assertSee('You left Acme')
         ->assertNoJavaScriptErrors();

@@ -35,7 +35,6 @@ class TeamInvitationsTable extends TableWidget
             ->header(fn () => view('components.table-section-header', [
                 'icon' => 'heroicon-o-envelope',
                 'heading' => 'Invitations',
-                'description' => 'Pending email invitations sent to potential members.',
                 'actions' => $this->getTable()->getHeaderActions(),
             ]))
             ->records(fn (): Collection => $this->getInvitations())
@@ -79,8 +78,8 @@ class TeamInvitationsTable extends TableWidget
             ->emptyStateIcon('heroicon-o-envelope')
             ->emptyStateHeading('No pending invitations')
             ->emptyStateDescription($this->canInvite()
-                ? 'Invite someone by email to give them access to this team.'
-                : 'Invitations live on shared teams — spin one up to bring collaborators in.')
+                ? 'Invite someone by email.'
+                : 'Personal teams can\'t have members. Create a team first.')
             ->emptyStateActions(array_filter([
                 $this->canInvite() ? $this->inviteAction()
                     ->name('inviteFromEmptyState')
@@ -125,8 +124,8 @@ class TeamInvitationsTable extends TableWidget
             ->icon(Heroicon::OutlinedUserPlus)
             ->modalWidth(Width::Medium)
             ->modalIcon(Heroicon::OutlinedUserPlus)
-            ->modalHeading('Invite a new team member')
-            ->modalDescription('Enter their email and pick a role — they will see the invitation after signing in.')
+            ->modalHeading('Invite member')
+            ->modalDescription('Enter their email and pick a role.')
             ->modalSubmitActionLabel('Send invitation')
             ->modalSubmitAction(fn (Action $action) => $action->extraAttributes(['data-testid' => 'invite-submit']))
             ->fillForm(['role' => TeamRole::Member->value])

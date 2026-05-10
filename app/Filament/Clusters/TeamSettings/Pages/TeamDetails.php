@@ -84,7 +84,7 @@ class TeamDetails extends Page implements HasActions
                     ->heading('Team profile')
                     ->icon('heroicon-o-identification')
                     ->iconColor('primary')
-                    ->description('Edit basic team information. Changes are visible immediately to all members.')
+                    ->description('Visible to all members.')
                     ->visible($canManage)
                     ->footerActions([
                         $this->saveAction(),
@@ -115,7 +115,7 @@ class TeamDetails extends Page implements HasActions
                     ->heading('Transfer ownership')
                     ->icon('heroicon-o-arrows-right-left')
                     ->iconColor('primary')
-                    ->description('Hand off your administrator role to another member. They become an Administrator and you become a regular member.')
+                    ->description('Promote another member to Administrator and demote yourself to Member.')
                     ->visible($canManage)
                     ->footerActions([
                         $this->transferOwnershipAction(),
@@ -126,7 +126,7 @@ class TeamDetails extends Page implements HasActions
                     ->heading('Delete team')
                     ->icon('heroicon-o-trash')
                     ->iconColor('danger')
-                    ->description('Deleting this team permanently removes all of its data and member assignments. This cannot be undone.')
+                    ->description('Permanent. Removes the team and all member assignments.')
                     ->visible($canManage)
                     ->footerActions([
                         $this->deleteTeamAction(),
@@ -137,7 +137,7 @@ class TeamDetails extends Page implements HasActions
                     ->heading('Leave team')
                     ->icon('heroicon-o-arrow-left-start-on-rectangle')
                     ->iconColor('danger')
-                    ->description('You can leave this team at any time. After leaving, the team owner can re-invite you.')
+                    ->description('The team owner can re-invite you afterwards.')
                     ->visible(! $isOwner && ! $team->isPersonal())
                     ->footerActions([
                         $this->leaveTeamAction(),
@@ -196,7 +196,7 @@ class TeamDetails extends Page implements HasActions
             ->modalWidth(Width::Medium)
             ->modalIcon(Heroicon::OutlinedArrowsRightLeft)
             ->modalHeading('Transfer ownership')
-            ->modalDescription('The new administrator will take over team settings, members, and deletion. You will become a regular member and lose those permissions.')
+            ->modalDescription('You will be demoted to Member.')
             ->modalSubmitActionLabel('Transfer')
             ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'transfer-ownership-confirm']))
             ->disabled($disabledTooltip !== null)
@@ -261,7 +261,7 @@ class TeamDetails extends Page implements HasActions
             ->modalIcon(Heroicon::OutlinedExclamationTriangle)
             ->modalIconColor('danger')
             ->modalHeading('Delete team '.$team->name)
-            ->modalDescription('All team data and invitations will be permanently deleted. To confirm, type the team name below.')
+            ->modalDescription('Type the team name to confirm.')
             ->schema([
                 TextInput::make('name_confirmation')
                     ->label('Type the team name to confirm')
@@ -316,7 +316,7 @@ class TeamDetails extends Page implements HasActions
             ->modalIcon(Heroicon::OutlinedExclamationTriangle)
             ->modalIconColor('danger')
             ->modalHeading('Leave '.$team->name.'?')
-            ->modalDescription('You will lose access to this team and all of its data. The team owner can re-invite you later.')
+            ->modalDescription('You will lose access immediately. The team owner can re-invite you.')
             ->modalSubmitActionLabel('Leave team')
             ->modalSubmitAction(fn (?Action $action) => $action?->extraAttributes(['data-testid' => 'leave-team-confirm']))
             ->modalCancelActionLabel('Close')

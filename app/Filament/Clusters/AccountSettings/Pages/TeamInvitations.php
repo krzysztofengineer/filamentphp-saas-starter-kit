@@ -63,7 +63,6 @@ class TeamInvitations extends Page implements HasTable
             ->header(fn () => view('components.table-section-header', [
                 'icon' => 'heroicon-o-envelope-open',
                 'heading' => 'Invitations for you',
-                'description' => 'Team invitations waiting for you to accept or decline.',
                 'actions' => $this->getTable()->getHeaderActions(),
             ]))
             ->query(fn () => TeamInvitation::query()->where('email', strtolower(auth()->user()->email)))
@@ -85,8 +84,7 @@ class TeamInvitations extends Page implements HasTable
             ])
             ->paginated(false)
             ->emptyStateIcon('heroicon-o-envelope-open')
-            ->emptyStateHeading('No invitations')
-            ->emptyStateDescription('You have no pending team invitations.');
+            ->emptyStateHeading('No invitations');
     }
 
     private function acceptAction(): Action

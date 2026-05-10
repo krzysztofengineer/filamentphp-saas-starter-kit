@@ -17,7 +17,7 @@ it('schedules account deletion for a user whose only team is their solo personal
 
     visit('/app/'.$user->currentTeam->uuid.'/account/advanced')
         ->click('[data-testid="delete-account"]')
-        ->assertSee('permanently deleted')
+        ->assertSee('Permanently removed')
         ->click('[data-testid="delete-account-confirm"]')
         ->assertPathIs('/app/pending-deletion');
 
@@ -35,7 +35,7 @@ it('blocks account deletion when the user administers a team that has other memb
 
     visit('/app/'.$user->currentTeam->uuid.'/account/advanced')
         ->click('[data-testid="delete-account"]')
-        ->assertSee('Leave it or transfer ownership before deleting your account')
+        ->assertSee('Leave it or transfer ownership first')
         ->assertNoJavaScriptErrors();
 
     assertDatabaseHas('users', ['id' => $user->id, 'deleted_at' => null]);

@@ -57,7 +57,7 @@ class AccountAdvanced extends Page implements HasActions
                 ->heading('Delete account')
                 ->icon('heroicon-o-trash')
                 ->iconColor('danger')
-                ->description('Your account will be marked for deletion and permanently removed after '.config('account.deletion_grace_days').' days, including all of your data and any team you solely own. If you administer a team with other members, leave it or transfer ownership first.')
+                ->description('Marked for deletion now, permanently removed after '.config('account.deletion_grace_days').' days. Personal team and any teams you solely own go with it. Teams with other members require you to leave or transfer ownership first.')
                 ->footerActions([
                     $this->deleteAccountAction(),
                 ])
@@ -78,10 +78,10 @@ class AccountAdvanced extends Page implements HasActions
             ->modalHeading('Delete account')
             ->modalDescription(function (): string {
                 if (auth()->user()->administersOthers()) {
-                    return 'You administer a team with other members. Leave it or transfer ownership before deleting your account.';
+                    return 'You administer a team with other members. Leave it or transfer ownership first.';
                 }
 
-                return 'Your account will be permanently deleted after '.config('account.deletion_grace_days').' days. You can undo this by signing back in within that window.';
+                return 'Permanently removed after '.config('account.deletion_grace_days').' days. Sign back in within the window to cancel.';
             })
             ->modalSubmitAction(function (?Action $action) {
                 if (auth()->user()->administersOthers()) {

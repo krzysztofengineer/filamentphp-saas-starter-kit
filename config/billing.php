@@ -10,8 +10,6 @@ return [
             'features' => [
                 'Full source code',
                 'Commercial use up to $1k MRR',
-                'Community support',
-                'Updates while on the free tier',
             ],
             'prices' => [
                 'monthly' => [
@@ -39,9 +37,6 @@ return [
             'features' => [
                 'Everything in Free, plus:',
                 'Commercial use up to $10k MRR',
-                'Priority issue triage',
-                'Private Discord with the maintainers',
-                'Figma source for the landing page',
             ],
             'prices' => [
                 'monthly' => [
@@ -71,7 +66,6 @@ return [
                 'Everything in Pro, plus:',
                 'No revenue cap',
                 '<strong>Unlimited projects</strong> — use it on every client build',
-                '1-on-1 onboarding call',
             ],
             'prices' => [
                 'monthly' => [
