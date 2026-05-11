@@ -12,7 +12,7 @@ class ManifestController extends Controller
         return response()->json([
             'name' => config('app.name'),
             'short_name' => config('app.name'),
-            'description' => 'A reusable SaaS template.',
+            'description' => 'A reusable SAAS template.',
             'start_url' => '/app',
             'scope' => '/',
             'display' => 'standalone',

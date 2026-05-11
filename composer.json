@@ -2,8 +2,17 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "filaascom/filaas",
     "type": "project",
-    "description": "The Laravel SaaS starter kit you're already looking at — auth, multi-tenant teams, per-team Stripe subscriptions, Filament v5 admin + landing, PWA, Pest 4 browser tests, all wired up.",
-    "keywords": ["laravel", "filament", "saas", "starter-kit", "stripe", "cashier", "teams", "multi-tenant"],
+    "description": "The Laravel SAAS starter kit you're already looking at — auth, multi-tenant teams, per-team Stripe subscriptions, Filament v5 admin + landing, PWA, Pest 4 browser tests, all wired up.",
+    "keywords": [
+        "laravel",
+        "filament",
+        "saas",
+        "starter-kit",
+        "stripe",
+        "cashier",
+        "teams",
+        "multi-tenant"
+    ],
     "homepage": "https://filaas.com",
     "license": "MIT",
     "support": {

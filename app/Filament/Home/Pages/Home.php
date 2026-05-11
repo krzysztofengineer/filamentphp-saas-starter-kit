@@ -34,7 +34,7 @@ class Home extends Page
 
     public function getTitle(): string|Htmlable
     {
-        return 'FilamentPHP/Laravel SaaS starter kit';
+        return 'FilamentPHP/Laravel SAAS starter kit';
     }
 
     public function getMaxContentWidth(): ?string
@@ -48,6 +48,7 @@ class Home extends Page
         $command = 'composer create-project filaascom/filaas my-app';
         $registerUrl = route('filament.app.auth.register');
         $githubUrl = 'https://github.com/filaascom/filaas';
+        $docsUrl = 'https://github.com/filaascom/filaas/blob/master/README.md';
 
         return $schema->components([
             HeroSection::make()
@@ -164,19 +165,19 @@ class Home extends Page
 
             FaqSection::make()
                 ->eyebrow('/ faq')
-                ->heading('Things devs actually ask')
+                ->heading('FAQ')
                 ->items([
                     [
-                        'question' => 'Why does the demo look like the kit?',
-                        'answer' => 'Because it <em>is</em> the kit. The page you\'re reading is the same Filament home page that ships with '.$appName.', so what you see in the demo is what you get on install.',
+                        'question' => 'How does the starter kit look like?',
+                        'answer' => 'This landing page is exactly what you get in the kit: it\'s the same code. You can register and log in to check the user area.',
                     ],
                     [
                         'question' => 'What does the revenue cap mean?',
-                        'answer' => 'Free is for projects under $1k/month, Pro covers you up to $10k MRR, and Studio removes the cap. The code is the same on every tier; only the license changes.',
+                        'answer' => 'Free until your project reaches $1k/month, Pro covers you up to $10k MRR, and Studio removes the cap.',
                     ],
                     [
-                        'question' => 'Do I get updates?',
-                        'answer' => 'Paid tiers get continuous updates while the subscription is active. Updates ship via Composer with semver and a changelog.',
+                        'question' => 'Is the code open source?',
+                        'answer' => 'Every line of code is open source and yours to change. Customize every bit for your needs.',
                     ],
                     [
                         'question' => 'Can I remove the '.$appName.' branding?',
@@ -184,25 +185,23 @@ class Home extends Page
                     ],
                     [
                         'question' => 'What if my project crosses the cap later?',
-                        'answer' => 'Upgrade in place. The code stays put; you just move to the tier that matches your revenue. No reinstall, no migration.',
+                        'answer' => 'You can subscribe any time you reach the milestone. No need to pay upfront.',
                     ],
                     [
                         'question' => "What's the license?",
-                        'answer' => 'MIT-style up to your tier\'s cap, with a commercial addendum on paid tiers. The plain-English version is in the repo, and it\'s worth a read before you buy.',
+                        'answer' => 'MIT-style up to your tier\'s cap, with a commercial addendum on paid tiers.',
                     ],
                 ]),
 
             FinalCtaSection::make()
-                ->heading('Ship the page ')
-                ->headingAccent("you're reading.")
-                ->description('One Composer command, SQLite by default. Your own copy is running locally in about a minute.')
+                ->heading('Ship it now')
                 ->command($command)
                 ->primaryCta('Get started for free', $registerUrl)
                 ->secondaryCta('Star on GitHub', $githubUrl),
 
             MarketingFooter::make()
                 ->brand($appName)
-                ->tagline('A Filament-powered Laravel SaaS starter kit. Replace it with your product.')
+                ->tagline('A Filament-powered Laravel SAAS starter kit. Replace it with your product.')
                 ->linkColumns([
                     [
                         'heading' => 'Product',
@@ -217,6 +216,7 @@ class Home extends Page
                         'heading' => 'Resources',
                         'links' => [
                             ['label' => 'GitHub', 'url' => $githubUrl],
+                            ['label' => 'Documentation', 'url' => $docsUrl],
                         ],
                     ],
                     [

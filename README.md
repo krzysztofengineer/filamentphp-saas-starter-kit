@@ -1,6 +1,6 @@
 # filaas
 
-The Laravel SaaS starter kit you're already looking at.
+The Laravel SAAS starter kit you're already looking at.
 
 [filaas.com](https://filaas.com) · [GitHub](https://github.com/filaascom/filaas)
 
