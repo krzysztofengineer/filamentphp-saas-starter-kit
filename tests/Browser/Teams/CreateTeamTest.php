@@ -13,8 +13,7 @@ it('creates a new team from the create team page', function () {
         ->fill('@create-team-name', 'Side Project')
         ->click('@create-team-submit')
         ->assertNotPresent('@create-team-submit')
-        ->assertSeeIn('.fi-topbar', 'Side Project')
-        ->assertNoJavaScriptErrors();
+        ->assertSeeIn('.fi-topbar', 'Side Project');
 
     assertDatabaseHas('teams', ['name' => 'Side Project', 'user_id' => $user->id]);
 

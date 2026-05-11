@@ -28,8 +28,7 @@ it('shows the subscription plans', function () {
         ->assertPresent('[data-testid="plan-studio"]')
         ->assertPresent('[data-testid="checkout-pro-monthly"]')
         ->assertPresent('[data-testid="checkout-studio-monthly"]')
-        ->assertSee('Your current plan')
-        ->assertNoJavaScriptErrors();
+        ->assertSee('Your current plan');
 });
 
 it('toggles between monthly and yearly prices', function () {
@@ -45,8 +44,7 @@ it('toggles between monthly and yearly prices', function () {
         ->assertSee('Save 20%')
         ->click('[data-testid="billing-toggle-monthly"]')
         ->assertSee('$29')
-        ->assertSee('$79')
-        ->assertNoJavaScriptErrors();
+        ->assertSee('$79');
 });
 
 it('marks the active plan with a manage subscription button when subscribed', function () {

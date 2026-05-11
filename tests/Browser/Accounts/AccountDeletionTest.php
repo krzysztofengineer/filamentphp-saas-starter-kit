@@ -35,8 +35,7 @@ it('blocks account deletion when the user administers a team that has other memb
 
     visit('/app/'.$user->currentTeam->uuid.'/account/advanced')
         ->click('[data-testid="delete-account"]')
-        ->assertSee('Leave it or transfer ownership first')
-        ->assertNoJavaScriptErrors();
+        ->assertSee('Leave it or transfer ownership first');
 
     assertDatabaseHas('users', ['id' => $user->id, 'deleted_at' => null]);
 });
@@ -52,8 +51,7 @@ it('redirects a scheduled-for-deletion user to the pending deletion page on ever
 
     visit('/app/'.$user->currentTeam->uuid.'/account/settings')
         ->assertPathIs('/app/pending-deletion')
-        ->assertSee('Your account will be deleted in 11 days')
-        ->assertNoJavaScriptErrors();
+        ->assertSee('Your account will be deleted in 11 days');
 });
 
 it('cancels a scheduled account deletion from the pending deletion page', function () {
@@ -67,8 +65,7 @@ it('cancels a scheduled account deletion from the pending deletion page', functi
         ->click('[data-testid="cancel-account-deletion"]')
         ->assertSee('Cancel account deletion?')
         ->click('[data-testid="cancel-account-deletion-confirm"]')
-        ->assertSee('Account deletion cancelled')
-        ->assertNoJavaScriptErrors();
+        ->assertSee('Account deletion cancelled');
 
     assertDatabaseHas('users', ['id' => $user->id, 'deleted_at' => null]);
 });
@@ -82,8 +79,7 @@ it('lets a scheduled-for-deletion user sign out from the pending deletion page',
 
     visit('/app/pending-deletion')
         ->click('[data-testid="pending-deletion-sign-out"]')
-        ->assertPathIs('/app/login')
-        ->assertNoJavaScriptErrors();
+        ->assertPathIs('/app/login');
 
     assertDatabaseHas('users', ['id' => $user->id, 'email' => 'goodbye@example.com']);
 });

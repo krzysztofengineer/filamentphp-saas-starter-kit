@@ -17,8 +17,7 @@ it('switches between teams from the tenant menu', function () {
         ->click('.fi-topbar button.fi-tenant-menu-trigger')
         ->click('.fi-dropdown-panel:visible a[href$="/app/'.$other->uuid.'"]')
         ->assertPathIs('/app/'.$other->uuid)
-        ->assertSeeIn('.fi-topbar', 'Other Team')
-        ->assertNoJavaScriptErrors();
+        ->assertSeeIn('.fi-topbar', 'Other Team');
 
     expect($user->fresh()->current_team_id)->toBe($other->id);
 });

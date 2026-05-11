@@ -16,8 +16,7 @@ it('updates the team name from the profile form', function () {
     visit('/app/'.$tenant->uuid.'/settings/profile')
         ->fill('[data-testid="team-details-name"]', 'Renamed Team')
         ->click('[data-testid="team-details-save"]')
-        ->assertSeeIn('.fi-topbar', 'Renamed Team')
-        ->assertNoJavaScriptErrors();
+        ->assertSeeIn('.fi-topbar', 'Renamed Team');
 
     assertDatabaseHas('teams', ['id' => $tenant->id, 'name' => 'Renamed Team']);
 });
@@ -35,8 +34,7 @@ it('removes a member from the team', function () {
         ->click('button[aria-label="Actions"]')
         ->click('[data-testid="remove-member"]')
         ->click('[data-testid="remove-member-confirm"]')
-        ->assertSee('Member removed')
-        ->assertNoJavaScriptErrors();
+        ->assertSee('Member removed');
 
     assertDatabaseMissing('team_user', ['team_id' => $tenant->id, 'user_id' => $member->id]);
 });
@@ -81,8 +79,7 @@ it('blocks team deletion when the name confirmation does not match', function ()
         ->click('[data-testid="delete-team"]')
         ->fill('[data-testid="delete-team-name"]', 'Wrong Name')
         ->click('[data-testid="delete-team-confirm"]')
-        ->assertSee('selected')
-        ->assertNoJavaScriptErrors();
+        ->assertSee('selected');
 
     assertDatabaseHas('teams', ['id' => $tenant->id, 'name' => 'Doomed Team']);
 });

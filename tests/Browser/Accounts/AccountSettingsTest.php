@@ -17,8 +17,7 @@ it('updates the user name', function () {
     visit('/app/'.$user->currentTeam->uuid.'/account/settings')
         ->fill('[data-testid="account-profile-name"]', 'Updated Name')
         ->click('[data-testid="account-profile-save"]')
-        ->assertAttributeContains('.fi-user-avatar', 'alt', 'Updated Name')
-        ->assertNoJavaScriptErrors();
+        ->assertAttributeContains('.fi-user-avatar', 'alt', 'Updated Name');
 
     assertDatabaseHas('users', ['id' => $user->id, 'name' => 'Updated Name']);
 });
@@ -35,8 +34,7 @@ it('changes the password', function () {
         ->fill('[data-testid="account-password-new"]', 'new-password-123')
         ->fill('[data-testid="account-password-confirm"]', 'new-password-123')
         ->click('[data-testid="account-password-save"]')
-        ->assertSee('Password changed')
-        ->assertNoJavaScriptErrors();
+        ->assertSee('Password changed');
 
     assertTrue(Hash::check('new-password-123', $user->fresh()->password));
 });

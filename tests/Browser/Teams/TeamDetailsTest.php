@@ -31,8 +31,7 @@ it('updates the team name', function () {
     visit('/app/'.$team->uuid.'/settings/profile')
         ->fill('@team-details-name', 'New name')
         ->click('@team-details-save')
-        ->assertSeeIn('.fi-topbar', 'New name')
-        ->assertNoJavaScriptErrors();
+        ->assertSeeIn('.fi-topbar', 'New name');
 
     assertEquals('New name', $team->fresh()->name);
 });

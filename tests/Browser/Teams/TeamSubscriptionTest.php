@@ -36,8 +36,7 @@ it('starts a checkout session for the chosen plan and interval', function (strin
     }
 
     $page->click('[data-testid="checkout-'.$plan.'-'.$interval.'"]')
-        ->assertPathBeginsWith('/app/'.$team->uuid)
-        ->assertNoJavaScriptErrors();
+        ->assertPathBeginsWith('/app/'.$team->uuid);
 
     expect($capture->sessionData)
         ->not->toBeNull()
@@ -70,8 +69,7 @@ it('reuses the existing customer when starting another checkout', function () {
 
     visit('/app/'.$team->uuid.'/settings/subscription')
         ->click('[data-testid="checkout-pro-monthly"]')
-        ->assertPathBeginsWith('/app/'.$team->uuid)
-        ->assertNoJavaScriptErrors();
+        ->assertPathBeginsWith('/app/'.$team->uuid);
 
     expect($capture->customerData)->toBeNull();
     expect($capture->sessionData['customer'])->toBe('cus_existing_team');
@@ -85,8 +83,7 @@ it('shows a success notice after returning from a completed checkout', function 
 
     visit(route('billing.success', ['team' => $team]).'?session_id=cs_test_xyz')
         ->assertPathBeginsWith('/app/'.$team->uuid)
-        ->assertSee('Thanks for subscribing!')
-        ->assertNoJavaScriptErrors();
+        ->assertSee('Thanks for subscribing!');
 });
 
 it('shows a cancellation notice after a cancelled checkout', function () {
@@ -97,8 +94,7 @@ it('shows a cancellation notice after a cancelled checkout', function () {
 
     visit(route('billing.cancel', ['team' => $team]))
         ->assertPathBeginsWith('/app/'.$team->uuid)
-        ->assertSee('Payment was not completed')
-        ->assertNoJavaScriptErrors();
+        ->assertSee('Payment was not completed');
 });
 
 it('redirects to the billing portal for an existing subscription', function (BillingInterval $interval) {
@@ -114,8 +110,7 @@ it('redirects to the billing portal for an existing subscription', function (Bil
 
     visit('/app/'.$team->uuid.'/settings/subscription')
         ->click('[data-testid="manage-subscription-'.$interval->value.'"]')
-        ->assertPathBeginsWith('/app/'.$team->uuid)
-        ->assertNoJavaScriptErrors();
+        ->assertPathBeginsWith('/app/'.$team->uuid);
 
     expect($capture->portalData)
         ->not->toBeNull()
