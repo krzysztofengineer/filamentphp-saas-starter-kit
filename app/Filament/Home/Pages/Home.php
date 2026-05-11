@@ -52,9 +52,9 @@ class Home extends Page
         return $schema->components([
             HeroSection::make()
                 ->eyebrow('Filament v5  ·  Laravel 13  ·  Livewire v4  ·  v1.0')
-                ->heading('The Filament SaaS starter kit ')
-                ->headingAccent("you're already looking at.")
-                ->description('Built on Filament v5 end to end, from the team workspace to this landing page. Multi-tenant teams, per-team Stripe billing, and a Pest browser test for every flow.')
+                ->heading('The FilamentPHP')
+                ->headingAccent('SAAS starter kit ')
+                ->description('Ready to deploy SAAS starter kit with landing page, multi-tenancy and billing.')
                 ->primaryCta('Get started for free', $registerUrl)
                 ->secondaryCta('Star on GitHub', $githubUrl)
                 ->command($command)
@@ -63,40 +63,38 @@ class Home extends Page
                     'Laravel 13',
                     'Filament v5',
                     'Livewire v4',
-                    'Cashier 16',
                     'Web Push',
                     'PWA',
                     'Pest 4',
-                    'Tailwind v4',
                 ])
                 ->showInception(),
 
             FeaturesSection::make()
                 ->eyebrow("/ what's inside")
-                ->heading('The boring half, already wired up.')
-                ->description('Every Laravel SaaS rebuilds the same plumbing: auth, teams, billing, settings, tests. We built it once on top of Filament so you can spend your time on the product.')
+                ->heading('Already wired up.')
+                ->description('Every Laravel SAAS rebuilds the same stuff: auth, teams, billing, settings, tests. We built it once on top of Filament so you can spend your time on the product.')
                 ->cards([
                     [
-                        'title' => 'Multi-tenant teams',
-                        'body' => 'Teams are the tenant. Owner, admin and manager roles, email invitations, ownership transfer. Each team has its own data, members, and billing, scoped through Filament tenancy.',
+                        'title' => 'Multi-tenancy',
+                        'body' => 'Personal and company teams with owners and roles. Invitations, ownership transfer, billing and scoped data.',
                         'visual' => 'org-chart',
                         'span' => 'b-1',
                     ],
                     [
-                        'title' => 'Per-team Stripe subscriptions',
-                        'body' => 'Cashier 16 lives on the team model, so each workspace owns its own subscription. Monthly and yearly plans, hosted checkout, the customer portal, and signed webhook handling. Drop your price IDs into <code>.env</code> and you\'re done.',
+                        'title' => 'Stripe subscriptions',
+                        'body' => 'Monthly and yearly plans, hosted checkout, the customer portal, and signed webhook handling. Drop your Stripe price IDs into <code>.env</code> and you\'re done.',
                         'visual' => 'billing',
                         'span' => 'b-2',
                     ],
                     [
-                        'title' => 'Filament, top to bottom',
-                        'body' => 'Account, Team and Billing settings are Filament v5 clusters in the team workspace. So is this landing page, built from the same <code>Component</code> classes (Hero, Features, Pricing, FAQ). The whole frontend runs on one stack.',
+                        'title' => 'Based on FilamentPHP',
+                        'body' => 'Account, Team and Billing settings are Filament v5 clusters. Even this landing page is built from FilamentPHP-style components you can configure for your use case.',
                         'visual' => 'filament',
                         'span' => 'b-3',
                     ],
                     [
                         'title' => 'PWA and Web Push',
-                        'body' => 'Service worker, manifest, install prompt, offline page, and VAPID push subscriptions. The bits that usually take a weekend to wire up are already wired up.',
+                        'body' => 'Service worker, manifest, install prompt, offline page, and VAPID push subscriptions. ',
                         'visual' => 'pwa',
                         'span' => 'b-4',
                         'data' => [
@@ -104,8 +102,8 @@ class Home extends Page
                         ],
                     ],
                     [
-                        'title' => 'Account self-service',
-                        'body' => 'Members manage their own profile, password and avatar. Account deletion is soft and scheduled with a 30-day grace window; a daily job purges accounts after that, and users can cancel before it fires.',
+                        'title' => 'Profile settings',
+                        'body' => 'Members manage their own profile, password and avatar. Account deletion for GDPR compatibility.',
                         'visual' => 'realtime',
                         'span' => 'b-5',
                     ],
@@ -116,14 +114,14 @@ class Home extends Page
                         'span' => 'b-6',
                     ],
                     [
-                        'title' => 'Friendly to AI coding tools',
-                        'body' => 'Laravel Boost is configured as an MCP server, with a project <code>CLAUDE.md</code> and the Pest, Filament and Tailwind skills already in place. Claude Code can read your schema, search the docs, and run your tests, so reshaping a flow is mostly prompting.',
+                        'title' => 'Laravel Boost',
+                        'body' => 'You can ask your AI agent to quickly customize the whole app for your SAAS.',
                         'visual' => 'ai',
                         'span' => 'b-7',
                     ],
                     [
-                        'title' => 'Single-purpose Actions',
-                        'body' => 'Every write operation lives in its own class under <code>app/Actions/</code>: <code>InviteToTeam</code>, <code>TransferTeamOwnership</code>, <code>ScheduleAccountDeletion</code>, and so on. Find the file, change the code, run the tests. There\'s no service-layer maze to dig through.',
+                        'title' => 'Action pattern',
+                        'body' => 'Most actions are customizable through single use case actions.',
                         'visual' => 'actions',
                         'span' => 'b-8',
                     ],
@@ -131,33 +129,32 @@ class Home extends Page
 
             HowItWorksSection::make()
                 ->eyebrow('/ how it works')
-                ->heading("Three commands and you're on your product.")
+                ->heading('Quickest way to market')
                 ->steps([
                     [
                         'kicker' => 'scaffold',
                         'title' => 'Create the project',
-                        'description' => 'Composer pulls the kit and runs the post-install hooks.',
+                        'description' => 'Pull via composer',
                         'command' => $command,
                     ],
                     [
                         'kicker' => 'install',
                         'title' => 'Migrate and build',
-                        'description' => 'Run the migrations and build the frontend. SQLite by default, so you can poke around with no config.',
-                        'command' => 'php artisan migrate && npm run dev',
+                        'description' => 'Run the migrations and start a dev environment',
+                        'command' => 'php artisan migrate && make',
                     ],
                     [
                         'kicker' => 'ship',
                         'title' => 'Open <code class="inline">/</code>',
-                        'description' => "You'll land on this page. Edit <code class=\"inline\">app/Filament/Home/Pages/Home.php</code> to make it yours, then start building the rest.",
-                        'command' => 'open http://localhost:8000',
+                        'description' => 'Ready to develop',
+                        'command' => 'herd open',
                     ],
                 ]),
 
             PricingSection::make()
                 ->eyebrow('/ pricing')
-                ->tagline('priced by what your project earns')
                 ->heading('Free until you make money.')
-                ->description('Every tier ships the same code; only the license changes. Free covers projects under $1k/month, paid tiers extend the cap as your revenue grows.')
+                ->description('Free under $1k/month')
                 ->footnote('prices in USD · taxes added at checkout · cancel anytime')
                 ->plans(collect(config('billing.plans', []))
                     ->map(fn (array $plan, string $key): array => ['key' => $key, ...$plan])
