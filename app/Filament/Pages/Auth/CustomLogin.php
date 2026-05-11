@@ -9,6 +9,11 @@ use Filament\Schemas\Components\Component;
 
 class CustomLogin extends Login
 {
+    public function hasLogo(): bool
+    {
+        return false;
+    }
+
     protected function getRememberFormComponent(): Component
     {
         return Hidden::make('remember')

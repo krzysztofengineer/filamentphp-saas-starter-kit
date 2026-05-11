@@ -11,6 +11,11 @@ use Illuminate\Support\HtmlString;
 
 class CustomRegister extends Register
 {
+    public function hasLogo(): bool
+    {
+        return false;
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema->components([
